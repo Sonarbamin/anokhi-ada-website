@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,8 +6,8 @@
 <title>Anokhi Ada — Indian Attire &amp; Bridal Boutique, Atlanta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Yeseva+One&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<!-- Square Web Payments SDK — SANDBOX. Swap to https://web.squarecdn.com/v1/square.js for production once live. -->
-<script type="text/javascript" src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+<!-- Square Web Payments SDK — PRODUCTION. Live payments will process from here. -->
+<script type="text/javascript" src="https://web.squarecdn.com/v1/square.js"></script>
 <style>
   :root{
     --ivory:#FBF3E7;
@@ -632,8 +632,8 @@
   document.getElementById('cartOverlay').addEventListener('click', closeCart);
 
   // ---- SQUARE CONFIG — replace these three placeholders once you have your accounts set up ----
-  var SQUARE_APP_ID = 'sandbox-sq0idb-TMFBfcLTSbDvLwDxposYWw';       // from Square Developer Dashboard (sandbox)
-  var SQUARE_LOCATION_ID = 'LKVB9FZNFH5XG';     // from Square Developer Dashboard (sandbox)
+  var SQUARE_APP_ID = 'sq0idp-Rm5m4IXk61bUQCcTzFgEeQ';       // from Square Developer Dashboard (PRODUCTION)
+  var SQUARE_LOCATION_ID = '24ZPTRK4EWKE3';     // from Square Developer Dashboard (PRODUCTION)
   var PAYMENT_BACKEND_URL = 'https://anokhi-ada-backend.vercel.app/api/process-payment'; // your deployed backend, see setup guide
 
   var squarePayments = null;
@@ -751,3 +751,4 @@
 
 </body>
 </html>
+ html>
