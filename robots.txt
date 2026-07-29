@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://anokhi-ada-website.vercel.app/sitemap.xml
