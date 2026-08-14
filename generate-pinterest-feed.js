@@ -74,20 +74,46 @@ function fail(message) {
 
 // ------------------------------------------------------------- extraction ---
 
+// The shop is split across one section per category. Products are read from
+// all of them, and each product's link points at its own category section so
+// a click lands near the piece rather than at the top of a 37-item page.
+const SHOP_SECTIONS = ['suits', 'sarees', 'chaniya-cholis', 'lehengas', 'gowns'];
+
 function extractProducts(html) {
-  // Only the Lookbook section. The Sale grid is populated at runtime by JS and
-  // has no cards in the source, but scoping keeps this honest if that changes.
-  const start = html.indexOf('id="lookbook"');
+  // Everything from the first category section to the Sale section. The Sale
+  // grid is filled in at runtime and has no cards in the source, but scoping
+  // keeps this honest if that ever changes.
+  const start = html.indexOf('id="' + SHOP_SECTIONS[0] + '"');
   const end = html.indexOf('id="sale"');
   if (start === -1 || end === -1 || end <= start) {
-    fail('could not locate the #lookbook section in index.html');
+    fail(
+      'could not locate the shop sections in index.html — expected id="' +
+      SHOP_SECTIONS[0] + '" before id="sale". If the categories were renamed, ' +
+      'update SHOP_SECTIONS.'
+    );
   }
-  const lookbook = html.slice(start, end);
+  const shop = html.slice(start, end);
 
-  const cards = lookbook.match(
+  // Which category each card sits in, so its link can point there.
+  const sectionOf = [];
+  let current = SHOP_SECTIONS[0];
+  const marker = /id="([a-z-]+)"|<div class="look-card">/g;
+  let m;
+  while ((m = marker.exec(shop)) !== null) {
+    if (m[1]) {
+      if (SHOP_SECTIONS.indexOf(m[1]) !== -1) current = m[1];
+    } else {
+      sectionOf.push(current);
+    }
+  }
+
+  const cards = shop.match(
     /<div class="look-card">[\s\S]*?Ask a Question<\/a>\s*<\/div>\s*<\/div>/g
   );
-  if (!cards || !cards.length) fail('no .look-card blocks found in #lookbook');
+  if (!cards || !cards.length) fail('no .look-card blocks found in the shop sections');
+  if (cards.length !== sectionOf.length) {
+    fail('found ' + cards.length + ' cards but mapped ' + sectionOf.length + ' to sections');
+  }
 
   return cards.map((card, i) => {
     const pick = (re, label) => {
@@ -107,7 +133,7 @@ function extractProducts(html) {
     // First image in the card is the lead photo — the full view where one exists.
     const image = pick(/src="images\/([^"]+)"/, 'image');
 
-    return { id: slugify(name), name, description, price, image };
+    return { id: slugify(name), name, description, price, image, section: sectionOf[i] };
   });
 }
 
@@ -121,7 +147,7 @@ function renderFeed(products) {
         '      <g:id>' + p.id + '</g:id>',
         '      <title>' + escapeXml(p.name) + '</title>',
         '      <description>' + escapeXml(p.description) + '</description>',
-        '      <link>' + SITE + '/#lookbook</link>',
+        '      <link>' + SITE + '/#' + p.section + '</link>',
         '      <g:image_link>' + SITE + '/images/' + p.image + '</g:image_link>',
         '      <g:price>' + p.price + '.00 USD</g:price>',
         '      <g:availability>in stock</g:availability>',
