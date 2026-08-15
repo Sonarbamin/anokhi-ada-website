@@ -4405,9 +4405,25 @@
       if(menu.classList.contains('open')){ close(); } else { open(); }
     });
 
-    // Clicking a category both navigates and closes the panel.
+    // Clicking a category scrolls there and closes the panel — but WITHOUT
+    // leaving #suits (or similar) in the address bar. A plain anchor link
+    // does leave it, and then a refresh reloads straight into the middle of
+    // that section instead of the top of the page, which is disorienting.
+    // The shop-bar chips already behave this way; this makes the menu match.
+    //
+    // Deep links people have actually been given (#product-slug, shared from
+    // Instagram or a Pinterest pin) are untouched — those arrive with a hash
+    // and still scroll to the piece as intended.
     menu.querySelectorAll('a').forEach(function(a){
-      a.addEventListener('click', close);
+      a.addEventListener('click', function(e){
+        var id = (a.getAttribute('href') || '').replace('#', '');
+        var sec = document.getElementById(id);
+        close();
+        if(sec){
+          e.preventDefault();
+          sec.scrollIntoView({ behavior:'smooth', block:'start' });
+        }
+      });
     });
 
     // Anywhere outside dismisses it, as a menu should.
