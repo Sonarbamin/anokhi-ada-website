@@ -5416,10 +5416,14 @@
       var currentAddress = (currentStreet || currentCity || currentState || currentZip)
         ? (currentStreet + ', ' + currentCity + ', ' + currentState + ' ' + currentZip)
         : '';
+      // The endpoint now verifies reCAPTCHA before answering, so promo codes
+      // can't be brute-forced by a script setting its own Origin header.
+      await ensureRecaptcha();
+      var promoToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'promo' });
       var response = await fetch(PROMO_VALIDATE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code, email: currentEmail, phone: currentPhone, address: currentAddress })
+        body: JSON.stringify({ code: code, email: currentEmail, phone: currentPhone, address: currentAddress, recaptchaToken: promoToken })
       });
       var result = await response.json();
 
