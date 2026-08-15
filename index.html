@@ -648,6 +648,10 @@
     padding:11px 2px; font-family:'Jost',Arial,sans-serif; font-size:16px; border-radius:0;
   }
   .contact-form input:focus, .contact-form textarea:focus{ border-bottom-color:var(--gold-light); }
+  /* Spam honeypot. Moved off-screen rather than display:none — some bots skip
+     hidden fields but fill anything present in the DOM. aria-hidden and
+     tabindex=-1 keep it away from screen readers and keyboard users. */
+  .hp-field{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
   .contact-form input::placeholder, .contact-form textarea::placeholder{ color:rgba(251,243,231,0.72); }
   .contact-form button{ background:var(--gold); border:none; color:var(--maroon-deep); padding:15px; font-weight:600; letter-spacing:0.04em; border-radius:2px; text-transform:uppercase; font-size:13.5px; }
   .contact-form button:hover{ background:var(--gold-light); }
@@ -4194,6 +4198,10 @@
       <input type="tel" placeholder="Phone number" id="enqPhone" maxlength="20">
       <label for="enqMessage" class="sr-only">Tell us what you're looking for</label>
       <textarea rows="4" placeholder="Tell us what you're looking for — occasion, date, style" id="enqMessage" maxlength="1000"></textarea>
+      <div class="hp-field" aria-hidden="true">
+        <label for="enqWebsite">Leave this field empty</label>
+        <input type="text" id="enqWebsite" name="website" tabindex="-1" autocomplete="off">
+      </div>
       <div id="enquiry-status" style="font-size:13px; color:#8C3A22; display:none;" aria-live="polite" aria-atomic="true"></div>
       <button type="submit" id="enquirySubmitBtn">Send Enquiry</button>
       <p style="font-size:12.5px; color:rgba(251,243,231,0.75); margin:10px 0 0; text-align:center;">We typically reply within 24 hours.</p>
@@ -5622,6 +5630,9 @@
       email: document.getElementById('enqEmail').value,
       phone: document.getElementById('enqPhone').value,
       message: document.getElementById('enqMessage').value,
+      // Honeypot — always empty for a real person. The server discards any
+      // submission that has it filled.
+      website: document.getElementById('enqWebsite').value,
     };
 
     btn.disabled = true;
