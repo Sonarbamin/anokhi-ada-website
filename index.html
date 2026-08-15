@@ -204,7 +204,7 @@
     .shop-bar-divider{ display:none; }
     .shop-bar-label{ display:none; }
     /* Horizontal scroll beats wrapping to three lines on a phone. */
-    .shop-bar-group{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .shop-bar-group{ flex-wrap:nowrap; overflow-x:auto; }
     .shop-bar-group::-webkit-scrollbar{ display:none; }
   }
 
@@ -357,7 +357,7 @@
   .cart-header{ display:flex; justify-content:space-between; align-items:center; padding:22px 24px; border-bottom:1px solid var(--line); }
   .cart-header h3{ font-size:22px; color:var(--maroon); }
   .cart-close{ background:none; border:none; font-size:22px; cursor:pointer; color:var(--maroon); width:44px; height:44px; display:flex; align-items:center; justify-content:center; margin:-10px -10px -10px 0; }
-  .cart-items{ flex:1; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding:16px 24px; }
+  .cart-items{ flex:1; overflow-y:auto; overscroll-behavior:contain; padding:16px 24px; }
   .cart-empty{ color:#6e615b; font-size:14px; padding:30px 0; text-align:center; }
   .cart-item{ display:flex; gap:12px; padding:14px 0; border-bottom:1px solid var(--line); }
   .cart-item-swatch{ width:56px; height:56px; border-radius:2px; flex:0 0 56px; }
@@ -390,7 +390,7 @@
        bar, so a modal can extend under it. dvh tracks the visible area, with
        vh kept as the fallback for older browsers. */
     max-height:90vh; max-height:90dvh; overflow-y:auto;
-    overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
     padding-bottom:calc(32px + env(safe-area-inset-bottom, 0px));
   }
   .modal-box h3{ font-size:26px; color:var(--maroon); margin-bottom:6px; }
@@ -565,7 +565,7 @@
   .size-guide-panel{
     background:var(--ivory); border:1px solid var(--line); border-radius:2px;
     width:100%; max-width:560px; max-height:90vh; max-height:90dvh; overflow-y:auto;
-    overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
     padding:28px 28px calc(24px + env(safe-area-inset-bottom, 0px)); position:relative;
   }
   .size-guide-panel h2{
