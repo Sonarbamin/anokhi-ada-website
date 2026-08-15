@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Map — Anokhi Ada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Yeseva+One&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#FBF3E7;
+    --maroon:#5C1A2B;
+    --maroon-deep:#3D1120;
+    --gold:#B8863B;
+    --line:rgba(36,16,20,0.14);
+  }
+  *{ box-sizing:border-box; }
+  /* Visible keyboard focus (WCAG 2.4.7). Browsers draw a default ring, but it
+     is easily lost against these background tints — this makes it explicit. */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--maroon, #332920);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+  /* ---- MOBILE BASELINE ----
+     text-size-adjust stops iOS Safari inflating text when a phone rotates to
+     landscape; tap-highlight removes the grey flash painted over tapped links;
+     touch-action skips the ~300ms tap delay some Android browsers apply. */
+  html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  a, button{ -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  body{
+    margin:0; background:var(--ivory); color:#241014;
+    font-family:'Jost',sans-serif; line-height:1.6;
+  }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:700px; margin:0 auto; padding:80px 32px; }
+  h1{
+    font-family:'Cormorant Garamond',serif; font-size:clamp(36px,5vw,54px);
+    color:var(--maroon); margin-bottom:8px;
+  }
+  p.sub{ color:#6b5a53; font-size:15px; margin-bottom:40px; }
+  .section-list{ list-style:none; padding:0; margin:0; }
+  .section-list li{ border-bottom:1px solid var(--line); }
+  .section-list a{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:20px 4px; font-size:18px; transition:color 0.2s ease;
+  }
+  .section-list a:hover{ color:var(--gold); }
+  .section-list .arrow{ font-size:20px; color:var(--gold); }
+  .back{
+    display:inline-block; margin-top:44px; font-size:13px; letter-spacing:0.05em;
+    text-transform:uppercase; border-bottom:1px solid var(--maroon); padding-bottom:2px;
+  }
+</style>
+</head>
+<body>
+  <main>
+<div class="wrap">
+    <h1>Site Map</h1>
+    <p class="sub">Every section of the Anokhi Ada website, in one place.</p>
+    <ul class="section-list">
+      <li><a href="index.html#top">Home <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#all-collections">All Collections <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#suits">Suits <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#sarees">Sarees <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#chaniya-cholis">Chaniya Cholis <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#lehengas">Lehengas <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#indo-western">Indo Western <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#gowns">Gowns <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#bridal">Bridal <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#services">Private Styling <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#about">About <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#faq">FAQ <span class="arrow">&#8250;</span></a></li>
+      <li><a href="index.html#contact">Contact <span class="arrow">&#8250;</span></a></li>
+      <li><a href="shipping-returns.html">Shipping &amp; Returns <span class="arrow">&#8250;</span></a></li>
+    </ul>
+    <a href="index.html" class="back">&#8249; Back to Home</a>
+  </div>
+</main>
+</body>
+</html>
