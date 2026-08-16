@@ -257,6 +257,9 @@
     padding:14px 24px; border-bottom:1px solid var(--line); text-transform:none; font-size:13px;
   }
 
+  /* On phones the label drops to "BOOK STYLING" — 12 characters instead of
+     22, about 45% shorter — so the enlarged logo and the button can share the
+     bar without either being squeezed. Desktop keeps the full wording. */
   .btn-appt{ background:var(--maroon); color:var(--ivory); padding:11px 22px; border-radius:2px; font-size:13px; font-weight:600; letter-spacing:0.04em; border:1px solid var(--maroon); transition:all 0.2s ease; white-space:nowrap; }
   .btn-appt:hover{ background:var(--maroon-deep); }
   .nav-right{ display:flex; align-items:center; gap:16px; }
@@ -704,7 +707,12 @@
     .facts{ grid-template-columns:repeat(3,minmax(0,1fr)); }
     .foot-grid{ grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important; }
     .nav-right .btn-appt{ padding:10px 14px; font-size:12px; }
-    img[alt="Anokhi Ada logo"]{ height:78px !important; }
+    .btn-appt-long{ display:none; }
+    /* The logo file was 79% blank margin, so old heights were mostly padding:
+       156px rendered a mark only ~50px tall. Cropped, 72px is a VISIBLY larger
+       logo than the old 156px setting while taking less than half the bar
+       height. max-width stays as a guard on very narrow screens. */
+    img[alt="Anokhi Ada logo"]{ height:72px !important; max-width:44vw; object-fit:contain; }
   }
   @media (max-width:520px){
     .wrap{ padding:0 20px; } .nav-inner{ padding:16px 20px; }
@@ -3578,7 +3586,7 @@
 
 <nav class="nav" aria-label="Main navigation">
   <div class="nav-inner">
-    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" style="display:flex; align-items:center; gap:10px;"><img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo" style="height:268px; width:auto; mix-blend-mode:multiply;"><span class="logo wordmark">Anokhi<span> Ada</span><span style="font-family:'Jost',Arial,sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--maroon); font-weight:500; display:block; margin-top:2px;">by Sona Amin</span></a>
+    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" style="display:flex; align-items:center; gap:10px;"><img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo" style="height:96px; width:auto; mix-blend-mode:multiply;"><span class="logo wordmark">Anokhi<span> Ada</span><span style="font-family:'Jost',Arial,sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--maroon); font-weight:500; display:block; margin-top:2px;">by Sona Amin</span></a>
     <div class="nav-links">
       <div class="nav-dropdown">
         <button type="button" class="nav-shop-toggle" aria-expanded="false" aria-controls="shopMenu">SHOP <span class="nav-caret" aria-hidden="true">&#9660;</span></button>
@@ -3601,7 +3609,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 10l-1 10h14l-1-10z"/><path d="M8 10c0-3.5 2-6 4-6s4 2.5 4 6"/><line x1="5.5" y1="14" x2="18.5" y2="14"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
         <span class="cart-count" id="cartCount">0</span>
       </button>
-      <a href="#contact" class="btn-appt">BOOK A PRIVATE STYLING</a>
+      <a href="#contact" class="btn-appt">BOOK <span class="btn-appt-long">A PRIVATE </span>STYLING</a>
     </div>
     <button class="burger" aria-label="Menu">☰</button>
   </div>
