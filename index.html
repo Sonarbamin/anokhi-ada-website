@@ -104,7 +104,9 @@
 
   /* ---- NAV ---- */
   .nav{ position:sticky; top:0; padding-left:env(safe-area-inset-left, 0px); padding-right:env(safe-area-inset-right, 0px); z-index:50; background:rgba(251,243,231,0.94); backdrop-filter:blur(6px); border-bottom:1px solid var(--line); }
-  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:20px 32px; max-width:var(--maxw); margin:0 auto; }
+  /* Padding trimmed so the larger logo doesn't add height, and the container
+     matched to the hero band so the header and hero share a left edge. */
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:14px 32px; max-width:1340px; margin:0 auto; }
   .logo{ font-size:28px; color:var(--maroon); }
   .logo span{ color:#775726; }
   .nav-links{ display:flex; align-items:center; gap:26px; font-size:12.5px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; }
@@ -428,8 +430,17 @@
   .burger{ display:none; background:none; border:none; font-size:22px; color:var(--maroon); }
 
   /* ---- HERO ---- */
-  .hero{ padding:80px 0 60px; border-bottom:1px solid var(--line); }
-  .hero-grid{ display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,0.95fr); gap:60px; align-items:center; }
+  /* Was 80px/60px. Tightening the vertical rhythm brings the image and the
+     headline into one composition instead of two things floating apart. */
+  .hero{ padding:56px 0 44px; border-bottom:1px solid var(--line); }
+  /* Columns evened out and the gap tightened. Combined with the wider hero
+     band below, the image grows about 15% while the text column grows too —
+     important, because "ANOKHI ADA" at 88px nearly fills its column already
+     and a narrower one would wrap the headline onto two lines. */
+  .hero-grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:44px; align-items:center; }
+  /* The hero reads as the one full-width statement on the page; everything
+     below keeps the standard container. */
+  .hero .wrap{ max-width:1340px; }
   .eyebrow{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:var(--emerald); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
   .eyebrow::before{ content:""; width:26px; height:1px; background:var(--emerald); }
   .hero h1{ font-size:clamp(42px,5.2vw,68px); line-height:1.08; color:var(--maroon); }
@@ -693,7 +704,7 @@
     .facts{ grid-template-columns:repeat(3,minmax(0,1fr)); }
     .foot-grid{ grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important; }
     .nav-right .btn-appt{ padding:10px 14px; font-size:12px; }
-    img[alt="Anokhi Ada logo"]{ height:70px !important; }
+    img[alt="Anokhi Ada logo"]{ height:78px !important; }
   }
   @media (max-width:520px){
     .wrap{ padding:0 20px; } .nav-inner{ padding:16px 20px; }
@@ -3567,7 +3578,7 @@
 
 <nav class="nav" aria-label="Main navigation">
   <div class="nav-inner">
-    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" style="display:flex; align-items:center; gap:10px;"><img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo" style="height:240px; width:auto; mix-blend-mode:multiply;"><span class="logo wordmark">Anokhi<span> Ada</span><span style="font-family:'Jost',Arial,sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--maroon); font-weight:500; display:block; margin-top:2px;">by Sona Amin</span></a>
+    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" style="display:flex; align-items:center; gap:10px;"><img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo" style="height:268px; width:auto; mix-blend-mode:multiply;"><span class="logo wordmark">Anokhi<span> Ada</span><span style="font-family:'Jost',Arial,sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--maroon); font-weight:500; display:block; margin-top:2px;">by Sona Amin</span></a>
     <div class="nav-links">
       <div class="nav-dropdown">
         <button type="button" class="nav-shop-toggle" aria-expanded="false" aria-controls="shopMenu">SHOP <span class="nav-caret" aria-hidden="true">&#9660;</span></button>
