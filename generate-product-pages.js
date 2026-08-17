@@ -375,7 +375,7 @@ ${shots}
              ${escapeHtml(p.size.replace('Size ', 'size '))}. Once it sells it is gone,
              and all sales are final.</p>
           <p><strong>Shipping.</strong> ${p.section === 'bridal'
-             ? 'Bridal pieces ship at a flat $40.00 anywhere in the US, insured and specially packed.'
+             ? 'Bridal pieces ship at a flat $40.00 anywhere in the US.'
              : '$9.99 within Georgia, $14.99 elsewhere in the US.'}
              Studio pickup in Atlanta is free.
              <a href="../shipping-returns.html">Full shipping &amp; returns</a>.</p>
