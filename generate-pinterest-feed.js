@@ -177,7 +177,11 @@ function renderFeed(products) {
         '      <g:id>' + p.id + '</g:id>',
         '      <title>' + escapeXml(p.name) + '</title>',
         '      <description>' + escapeXml(p.description) + '</description>',
-        '      <link>' + SITE + '/#' + p.id + '</link>',
+        // Each product's own page, not a fragment of the homepage. Google
+        // Merchant Center treats many products sharing one URL as a mismatched
+        // landing page; Pinterest just sends people to the top of a 47-item
+        // scroll. g:id is unchanged, so existing pins keep their history.
+        '      <link>' + SITE + '/products/' + p.id + '.html</link>',
         '      <g:image_link>' + SITE + '/images/' + p.image + '</g:image_link>',
         '      <g:price>' + p.price + '.00 USD</g:price>',
         '      <g:availability>in stock</g:availability>',
