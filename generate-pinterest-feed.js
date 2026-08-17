@@ -80,7 +80,7 @@ function fail(message) {
 // lands on the piece itself rather than the top of a 37-item page. Google
 // Merchant Center in particular treats many products sharing one URL as a
 // mismatched landing page.
-const SHOP_SECTIONS = ['suits', 'sarees', 'chaniya-cholis', 'lehengas', 'indo-western', 'gowns'];
+const SHOP_SECTIONS = ['suits', 'sarees', 'chaniya-cholis', 'lehengas', 'indo-western', 'gowns', 'bridal'];
 
 // Google's product taxonomy, per category.
 //
@@ -103,6 +103,7 @@ const CATEGORY_BY_SECTION = {
   'lehengas':       TRADITIONAL + ' > Saris & Lehengas',
   'indo-western':   TRADITIONAL,
   'gowns':          APPAREL + ' > Dresses',
+  'bridal':         TRADITIONAL + ' > Saris & Lehengas',
 };
 const CATEGORY_FALLBACK = TRADITIONAL;
 
