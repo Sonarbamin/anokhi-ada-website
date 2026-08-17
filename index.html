@@ -4967,7 +4967,7 @@
       </details>
       <details class="faq-item">
         <summary>How long does shipping take?</summary>
-        <p>We ship within the United States only. Shipping &amp; handling is $9.99 per order within Georgia, $14.99 elsewhere in the US. Orders ship within 3–5 business days of purchase, plus 5–7 business days in transit. Rush delivery is available at checkout for an extra $15.00. It covers both stages — dispatch within 1–2 business days and an expedited courier service, typically 2–3 business days in transit — so your order arrives in roughly 3–5 business days rather than up to 12. See our <a href="shipping-returns.html" style="color:var(--maroon);">Shipping &amp; Returns page</a> for the full timeline.</p>
+        <p>We ship within the United States only. Shipping &amp; handling is $9.99 per order within Georgia and $14.99 elsewhere in the US. Bridal pieces ship at a flat $40.00 anywhere in the US — they travel insured and specially packed — and an order containing one pays that fee alone, not both. Orders ship within 3–5 business days of purchase, plus 5–7 business days in transit. Rush delivery is available at checkout for an extra $15.00. It covers both stages — dispatch within 1–2 business days and an expedited courier service, typically 2–3 business days in transit — so your order arrives in roughly 3–5 business days rather than up to 12. See our <a href="shipping-returns.html" style="color:var(--maroon);">Shipping &amp; Returns page</a> for the full timeline.</p>
       </details>
       <details class="faq-item">
         <summary>I need it for a specific date &mdash; will it arrive in time?</summary>
@@ -5149,7 +5149,7 @@
 <div class="modal-overlay" id="checkoutOverlay">
   <div class="modal-box" id="checkoutBox" role="dialog" aria-modal="true" aria-labelledby="checkoutHeading">
     <h3 id="checkoutHeading">Checkout</h3>
-    <p class="sub">Ships within the US only, 3–5 business days. Shipping &amp; handling $9.99 in Georgia, $14.99 elsewhere, or add rush delivery below for $15.00. Collecting from the studio is free. Every piece ships as-is, with no alterations — all sales are final on these one-of-a-kind pieces.</p>
+    <p class="sub">Ships within the US only, 3–5 business days. Shipping &amp; handling $9.99 in Georgia, $14.99 elsewhere, or $40.00 for bridal pieces, which ship insured. Rush delivery below adds $15.00. Collecting from the studio is free. Every piece ships as-is, with no alterations — all sales are final on these one-of-a-kind pieces.</p>
     <div id="checkoutSummary" style="background:rgba(36,16,20,0.04); border-radius:2px; padding:14px 16px; margin-bottom:16px;"></div>
     <div class="promo-row">
       <label for="promoCodeInput" class="sr-only">Promo code</label>
@@ -5160,7 +5160,7 @@
     <div class="fulfil-choice" role="radiogroup" aria-label="How would you like to receive your order?">
       <label for="fulfilShip" class="fulfil-row">
         <input type="radio" name="fulfilment" id="fulfilShip" value="ship" checked>
-        <span><strong>Ship it to me</strong><br><span class="fulfil-note">$9.99 within Georgia, $14.99 elsewhere in the US.</span></span>
+        <span><strong>Ship it to me</strong><br><span class="fulfil-note">$9.99 within Georgia, $14.99 elsewhere in the US. Bridal pieces $40.00.</span></span>
       </label>
       <label for="fulfilPickup" class="fulfil-row">
         <input type="radio" name="fulfilment" id="fulfilPickup" value="pickup">
@@ -5550,6 +5550,11 @@
       if(typeof data.shippingGeorgia === 'number') SHIPPING_GEORGIA = data.shippingGeorgia;
       if(typeof data.shippingOutOfState === 'number') SHIPPING_OUT_OF_STATE = data.shippingOutOfState;
       if(typeof data.rushSurcharge === 'number') RUSH_SURCHARGE = data.rushSurcharge;
+      if(typeof data.shippingBridal === 'number') SHIPPING_BRIDAL = data.shippingBridal;
+      // The server owns the list of bridal pieces. Taking it from the response
+      // rather than keeping a second copy here is what stops the displayed fee
+      // and the charged fee ever disagreeing.
+      if(Array.isArray(data.bridalPieces)) BRIDAL_NAMES = data.bridalPieces;
       if(data.pickupState) PICKUP_STATE = data.pickupState;
       if(typeof data.pickupTaxRate === 'number') pickupTaxRate = data.pickupTaxRate;
       renderCart();
@@ -5602,8 +5607,31 @@
   // api/_tax-rates.js — change both together. Part of shipping & handling, so
   // in Georgia it's taxed with the rest of the order.
   var RUSH_SURCHARGE = 15.00;
-  function getShippingFee(state, rush){
-    var base = isGeorgia(state) ? SHIPPING_GEORGIA : SHIPPING_OUT_OF_STATE;
+  // ---- Bridal shipping ----
+  // Bridal pieces are bulky and high-value, so they ship insured and specially
+  // packed at a flat rate wherever they go. Mirrors SHIPPING_BRIDAL in
+  // api/_tax-rates.js — change both together.
+  //
+  // BRIDAL_NAMES is only a starting point for the first paint; /api/pricing
+  // replaces it with the server's own list, which is what actually gets
+  // charged. Keeping a hand-maintained copy as the permanent source would be
+  // the same drift trap the tax table had.
+  var SHIPPING_BRIDAL = 40.00;
+  var BRIDAL_NAMES = [
+    'Orange Raw Silk Bridal Lehenga',
+    'Pink Tissue Mirror Work Bridal Lehenga',
+    'Red Raw Silk Bridal Lehenga',
+    'Ivory Net Bridal Lehenga',
+    'Blush Tissue Bridal Lehenga',
+    'Red Thread Work Bridal Lehenga'
+  ];
+  // A bag mixing bridal with regular stock pays the bridal fee ONCE, not both.
+  function cartHasBridal(){
+    return cart.some(function(item){ return BRIDAL_NAMES.indexOf(item.name) !== -1; });
+  }
+  function getShippingFee(state, rush, hasBridal){
+    var base = hasBridal ? SHIPPING_BRIDAL
+                         : (isGeorgia(state) ? SHIPPING_GEORGIA : SHIPPING_OUT_OF_STATE);
     return rush ? base + RUSH_SURCHARGE : base;
   }
   // ---- Studio pickup ----
@@ -6129,9 +6157,13 @@
     var addrForShipping = pickup ? { state: PICKUP_STATE, zip: '' }
                                  : (addrOverride || currentTaxAddress());
     var rush = wantsRush();
+    // Bridal overrides the destination rate, so the floor shown before an
+    // address arrives has to be the bridal fee too — otherwise the figure
+    // would only ever rise once they start typing.
+    var hasBridal = cartHasBridal();
     var shipping = (!cart.length || pickup) ? 0
-      : (addrForShipping ? getShippingFee(addrForShipping.state, rush)
-                         : SHIPPING_GEORGIA + (rush ? RUSH_SURCHARGE : 0));
+      : (addrForShipping ? getShippingFee(addrForShipping.state, rush, hasBridal)
+                         : (hasBridal ? SHIPPING_BRIDAL : SHIPPING_GEORGIA) + (rush ? RUSH_SURCHARGE : 0));
     // taxKnown is false until there's enough of an address to source the sale.
     // Callers that must show a single number (the wallet sheet) fall back to
     // the pre-tax total; the server recomputes and charges the real figure.
