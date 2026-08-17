@@ -409,6 +409,24 @@ ${shots}
         if(buy){ buy.textContent = 'Sold'; }
         var ask = document.querySelector('.ask');
         if(ask){ ask.textContent = 'Ask About Similar Pieces'; }
+
+        // Google reads the JSON-LD, not the notice above, and Googlebot does
+        // render JavaScript. Left alone, this page would keep declaring a sold
+        // piece InStock — which is what puts a sold lehenga into a shopping
+        // result and sends someone to a dead listing.
+        try{
+          var ldEl = document.querySelector('script[type="application/ld+json"]');
+          if(ldEl){
+            var ld = JSON.parse(ldEl.textContent);
+            var node = (ld['@graph'] || []).find(function(n){ return n['@type'] === 'Product'; });
+            if(node && node.offers){
+              node.offers.availability = 'https://schema.org/OutOfStock';
+              ldEl.textContent = JSON.stringify(ld, null, 2);
+            }
+          }
+        } catch(err){
+          console.error('Could not update structured data availability:', err);
+        }
       })
       .catch(function(err){ console.error('Could not check inventory:', err); });
   })();
