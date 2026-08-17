@@ -5088,7 +5088,7 @@
     if(!bar) return;
 
     var SHOP_SECTIONS = ['all-collections','suits','sarees','chaniya-cholis',
-                         'lehengas','indo-western','gowns'];
+                         'lehengas','indo-western','gowns','bridal'];
     var emptyMsg = document.getElementById('shopEmpty');
 
     // The bar sticks below the header, whose height varies with the viewport —
@@ -5136,7 +5136,10 @@
       // rather than left as an empty title the customer has to scroll past.
       SHOP_SECTIONS.forEach(function(id){
         var sec = document.getElementById(id);
-        if(!sec || id === 'all-collections') return;
+        // 'all-collections' is the wrapper, and Bridal carries commissioning
+        // copy and a CTA besides its cards — neither should vanish when a size
+        // filter empties the grid. Their cards still hide individually.
+        if(!sec || id === 'all-collections' || id === 'bridal') return;
         var visible = Array.prototype.filter.call(
           sec.querySelectorAll('.look-card'),
           function(c){ return c.style.display !== 'none'; }
