@@ -353,7 +353,10 @@ ${JSON.stringify(ld, null, 2)}
       <img src="../images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo">
       <span>Anokhi Ada</span>
     </a>
-    <a href="../index.html" class="back-link">&#8592; Back to shop</a>
+    <!-- Back to the piece itself, not the top of the homepage. The card carries
+         id="<slug>" and scroll-margin-top, so the browser lands on it clear of
+         the sticky header rather than dumping the visitor at the hero. -->
+    <a href="../index.html#${p.id}" class="back-link">&#8592; Back to shop</a>
   </div>
 </header>
 
