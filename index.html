@@ -1965,6 +1965,15 @@
         // If the chosen category is hidden by the current size filter, drop the
         // filter rather than scrolling to nothing.
         if(sec.style.display === 'none') applyFilter('all');
+
+        // Highlight straight away rather than waiting for the scroll observer.
+        // That observer only fires when a section CROSSES into its detection
+        // band, so tapping a category you are already beside changed nothing
+        // and the tap looked ignored. It still takes over as you scroll on.
+        document.querySelectorAll('[data-jump]').forEach(function(other){
+          other.classList.toggle('active', other === btn);
+        });
+
         scrollToElement(sec);
       });
     });
