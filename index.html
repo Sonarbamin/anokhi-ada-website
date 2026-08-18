@@ -1883,7 +1883,11 @@
 
     var activeSize = 'all';
 
-    function applyFilter(size){
+    // scrollToResults is passed only from a chip tap. Filtering on its own
+    // leaves the page where it was — which, once the sections around you are
+    // hidden, means landing in the middle of some unrelated category rather
+    // than on the first piece in your size.
+    function applyFilter(size, scrollToResults){
       activeSize = size;
       var shown = 0;
 
@@ -1913,10 +1917,23 @@
       document.querySelectorAll('[data-size]').forEach(function(btn){
         btn.setAttribute('aria-pressed', String(btn.getAttribute('data-size') === size));
       });
+
+      if(scrollToResults){
+        // Land on the first piece that survived the filter. Cards carry
+        // scroll-margin-top, so it sits clear of the sticky header. With
+        // nothing left, show the "no pieces in that size" message instead of
+        // scrolling to a blank stretch of page.
+        var first = null;
+        for(var i = 0; i < cards.length; i++){
+          if(cards[i].style.display !== 'none'){ first = cards[i]; break; }
+        }
+        var target = first || emptyMsg;
+        if(target) target.scrollIntoView({ block:'start' });
+      }
     }
 
     document.querySelectorAll('[data-size]').forEach(function(btn){
-      btn.addEventListener('click', function(){ applyFilter(btn.getAttribute('data-size')); });
+      btn.addEventListener('click', function(){ applyFilter(btn.getAttribute('data-size'), true); });
     });
 
     // Category jumps. scrollIntoView respects the CSS scroll-margin already on
