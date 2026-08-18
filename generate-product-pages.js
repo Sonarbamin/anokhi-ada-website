@@ -218,6 +218,15 @@ const STYLES = `
   .shots{ display:flex; flex-direction:column; gap:12px; }
   .shot{ aspect-ratio:4/5; background:var(--ivory-dim); overflow:hidden; }
   .shot img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* Discourage casual copying of the photographs: no drag-to-desktop, no
+     long-press "Save Image" sheet on iOS, no text selection around the image.
+     This is a deterrent, not protection — a screenshot still works, and so does
+     anyone who opens developer tools. Watermarking is the only real defence. */
+  img{
+    -webkit-user-drag:none; user-drag:none;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none; user-select:none;
+  }
   .eyebrow{ font-family:'Space Mono',monospace; font-size:11.5px;
             letter-spacing:0.14em; text-transform:uppercase; color:var(--gold);
             margin-bottom:12px; }
@@ -404,6 +413,12 @@ ${shots}
 <script>
   // One-of-a-kind stock: ask the same endpoint the shop asks, so a sold piece
   // says so here too rather than inviting a click through to a dead Add to Bag.
+  // Right-click / long-press on a photo does not offer "Save Image". Same
+  // caveat as the CSS above: a deterrent for the casual case, nothing more.
+  document.addEventListener('contextmenu', function(e){
+    if(e.target && e.target.tagName === 'IMG'){ e.preventDefault(); }
+  });
+
   (function(){
     var NAME = ${jsonString(p.name)};
     fetch('https://anokhi-ada-backend.vercel.app/api/inventory')

@@ -4,6 +4,12 @@
 <!-- Google tag (gtag.js) — Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-N71808F1HJ"></script>
 <script>
+  // Right-click / long-press on a photo does not offer "Save Image". A
+  // deterrent for the casual case only — screenshots and developer tools are
+  // unaffected, and no client-side trick changes that.
+  document.addEventListener('contextmenu', function(e){
+    if(e.target && e.target.tagName === 'IMG'){ e.preventDefault(); }
+  });
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -532,6 +538,14 @@
   }
   .shop-section .add-cart-btn:hover{ background:var(--maroon); color:var(--ivory); }
   .saree-gallery{ background:var(--ivory-dim); }
+  /* Discourage casual copying of the photographs: no drag-to-desktop, no
+     long-press "Save Image" sheet on iOS. A deterrent only — a screenshot
+     still works. Watermarking is the only real defence. */
+  img{
+    -webkit-user-drag:none; user-drag:none;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none; user-select:none;
+  }
   .gallery-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.35s ease; pointer-events:none; }
   .gallery-img.active{ opacity:1; pointer-events:auto; }
   .gallery-nav{
