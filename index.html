@@ -1883,6 +1883,10 @@
 
     var activeSize = 'all';
 
+    // Set by a category tap; the scroll observer ignores updates until it
+    // passes. See the note in the [data-jump] handler.
+    var suppressObserverUntil = 0;
+
     // Shared so the header menu, which lives in its own block, positions its
     // jumps exactly like the chips do.
     // Both the nav and the shop bar are sticky, stacked one under the other,
@@ -1966,6 +1970,12 @@
         // filter rather than scrolling to nothing.
         if(sec.style.display === 'none') applyFilter('all');
 
+        // Hold off the scroll observer briefly. Without this it recalculates
+        // mid-jump, when the section above still qualifies, and repaints the
+        // highlight onto the previous chip — the tap appears to select the
+        // wrong category.
+        suppressObserverUntil = Date.now() + 700;
+
         // Highlight straight away rather than waiting for the scroll observer.
         // That observer only fires when a section CROSSES into its detection
         // band, so tapping a category you are already beside changed nothing
@@ -2003,13 +2013,25 @@
     // Which section sits in the band just beneath the sticky header. The
     // bottom margin of -75% narrows the observed band to the top quarter of
     // the viewport, so exactly one section qualifies at a time.
+    var qualifying = new Set();
     var currentObserver = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
-        if(!e.isIntersecting) return;
-        var id = e.target.id;
-        jumpBtns.forEach(function(btn){
-          btn.classList.toggle('active', btn.getAttribute('data-jump') === id);
-        });
+        if(e.isIntersecting) qualifying.add(e.target.id);
+        else qualifying.delete(e.target.id);
+      });
+
+      if(Date.now() < suppressObserverUntil) return;
+
+      // Two sections can qualify at once as one scrolls out and the next
+      // scrolls in. Take the LOWER of them in document order — that is the one
+      // being scrolled into, and the one the shopper means. Taking whichever
+      // entry happened to report last is what highlighted the category above.
+      var current = null;
+      SHOP_SECTIONS.forEach(function(id){ if(qualifying.has(id)) current = id; });
+      if(!current) return;
+
+      jumpBtns.forEach(function(btn){
+        btn.classList.toggle('active', btn.getAttribute('data-jump') === current);
       });
     }, { rootMargin: '-160px 0px -75% 0px' });
 
