@@ -1883,6 +1883,27 @@
 
     var activeSize = 'all';
 
+    // Shared so the header menu, which lives in its own block, positions its
+    // jumps exactly like the chips do.
+    // Both the nav and the shop bar are sticky, stacked one under the other,
+    // and their combined height changes with screen width. A fixed
+    // scroll-margin can only ever be right at one size — too small and the
+    // card's top hides behind the bars, which is what put the photo half off
+    // screen. Measuring at the moment of the scroll is right everywhere.
+    function stickyOffset(){
+      var nav = document.querySelector('.nav');
+      var navH = nav ? nav.offsetHeight : 0;
+      var barH = (bar && bar.classList.contains('visible')) ? bar.offsetHeight : 0;
+      return navH + barH + 14; // a little breathing room above the card
+    }
+
+    function scrollToElement(el){
+      if(!el) return;
+      var top = el.getBoundingClientRect().top + window.pageYOffset - stickyOffset();
+      window.scrollTo({ top: top < 0 ? 0 : top });
+    }
+    window.anokhiScrollTo = scrollToElement;
+
     // scrollToResults is passed only from a chip tap. Filtering on its own
     // leaves the page where it was — which, once the sections around you are
     // hidden, means landing in the middle of some unrelated category rather
@@ -1927,8 +1948,7 @@
         for(var i = 0; i < cards.length; i++){
           if(cards[i].style.display !== 'none'){ first = cards[i]; break; }
         }
-        var target = first || emptyMsg;
-        if(target) target.scrollIntoView({ block:'start' });
+        scrollToElement(first || emptyMsg);
       }
     }
 
@@ -1936,8 +1956,8 @@
       btn.addEventListener('click', function(){ applyFilter(btn.getAttribute('data-size'), true); });
     });
 
-    // Category jumps. scrollIntoView respects the CSS scroll-margin already on
-    // each section, so the heading isn't hidden behind the sticky header.
+    // Category jumps, positioned by scrollToElement so the heading clears the
+    // stacked sticky bars at any screen width.
     document.querySelectorAll('[data-jump]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var sec = document.getElementById(btn.getAttribute('data-jump'));
@@ -1945,7 +1965,7 @@
         // If the chosen category is hidden by the current size filter, drop the
         // filter rather than scrolling to nothing.
         if(sec.style.display === 'none') applyFilter('all');
-        sec.scrollIntoView({ block:'start' });
+        scrollToElement(sec);
       });
     });
 
@@ -2029,7 +2049,14 @@
         close();
         if(sec){
           e.preventDefault();
-          sec.scrollIntoView({ block:'start' });
+          // Same measured positioning as the shop chips, so a jump from the
+          // menu lands on the heading rather than short of it. Falls back if
+          // the shop bar block hasn't defined the helper.
+          if(typeof window.anokhiScrollTo === 'function'){
+            window.anokhiScrollTo(sec);
+          } else {
+            sec.scrollIntoView({ block:'start' });
+          }
         }
       });
     });
