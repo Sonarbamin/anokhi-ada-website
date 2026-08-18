@@ -51,6 +51,15 @@
   .shots{ display:flex; flex-direction:column; gap:12px; }
   .shot{ aspect-ratio:4/5; background:var(--ivory-dim); overflow:hidden; }
   .shot img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* Discourage casual copying of the photographs: no drag-to-desktop, no
+     long-press "Save Image" sheet on iOS, no text selection around the image.
+     This is a deterrent, not protection — a screenshot still works, and so does
+     anyone who opens developer tools. Watermarking is the only real defence. */
+  img{
+    -webkit-user-drag:none; user-drag:none;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none; user-select:none;
+  }
   .eyebrow{ font-family:'Space Mono',monospace; font-size:11.5px;
             letter-spacing:0.14em; text-transform:uppercase; color:var(--gold);
             margin-bottom:12px; }
@@ -204,6 +213,12 @@
 <script>
   // One-of-a-kind stock: ask the same endpoint the shop asks, so a sold piece
   // says so here too rather than inviting a click through to a dead Add to Bag.
+  // Right-click / long-press on a photo does not offer "Save Image". Same
+  // caveat as the CSS above: a deterrent for the casual case, nothing more.
+  document.addEventListener('contextmenu', function(e){
+    if(e.target && e.target.tagName === 'IMG'){ e.preventDefault(); }
+  });
+
   (function(){
     var NAME = "Purple Lace Ready-to-Wear Saree";
     fetch('https://anokhi-ada-backend.vercel.app/api/inventory')
@@ -216,6 +231,24 @@
         if(buy){ buy.textContent = 'Sold'; }
         var ask = document.querySelector('.ask');
         if(ask){ ask.textContent = 'Ask About Similar Pieces'; }
+
+        // Google reads the JSON-LD, not the notice above, and Googlebot does
+        // render JavaScript. Left alone, this page would keep declaring a sold
+        // piece InStock — which is what puts a sold lehenga into a shopping
+        // result and sends someone to a dead listing.
+        try{
+          var ldEl = document.querySelector('script[type="application/ld+json"]');
+          if(ldEl){
+            var ld = JSON.parse(ldEl.textContent);
+            var node = (ld['@graph'] || []).find(function(n){ return n['@type'] === 'Product'; });
+            if(node && node.offers){
+              node.offers.availability = 'https://schema.org/OutOfStock';
+              ldEl.textContent = JSON.stringify(ld, null, 2);
+            }
+          }
+        } catch(err){
+          console.error('Could not update structured data availability:', err);
+        }
       })
       .catch(function(err){ console.error('Could not check inventory:', err); });
   })();
