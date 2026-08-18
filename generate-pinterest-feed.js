@@ -111,6 +111,18 @@ const CATEGORY_BY_SECTION = {
 };
 const CATEGORY_FALLBACK = TRADITIONAL;
 
+// g:id overrides. Google caps the id attribute at 50 characters; a couple of
+// product names slugify to more than that. The override changes ONLY the feed
+// id — the product's page URL, its card anchor and its link here all keep the
+// full slug, so nothing a customer sees or has bookmarked moves.
+//
+// Once an id is in here it must never change again: to Google and Pinterest a
+// changed id is a different product, and the old one's history goes with it.
+const ID_OVERRIDES = {
+  'yellow-printed-wide-leg-pants-and-embroidered-crop-top':
+    'yellow-printed-pants-embroidered-crop-top',
+};
+
 function extractProducts(html) {
   // Everything from the first category section to the Sale section. The Sale
   // grid is filled in at runtime and has no cards in the source, but scoping
@@ -171,7 +183,13 @@ function extractProducts(html) {
     // First image in the card is the lead photo — the full view where one exists.
     const image = pick(/src="images\/([^"]+)"/, 'image');
 
-    return { id: slugify(name), name, description, price, image, section: sectionOf[i] };
+    // slug drives the link and the product page; id is what Google and
+    // Pinterest key on, and may be shortened by ID_OVERRIDES.
+    const slug = slugify(name);
+    return {
+      id: ID_OVERRIDES[slug] || slug,
+      slug, name, description, price, image, section: sectionOf[i],
+    };
   });
 }
 
@@ -189,7 +207,7 @@ function renderFeed(products) {
         // Merchant Center treats many products sharing one URL as a mismatched
         // landing page; Pinterest just sends people to the top of a 47-item
         // scroll. g:id is unchanged, so existing pins keep their history.
-        '      <link>' + SITE + '/products/' + p.id + '.html</link>',
+        '      <link>' + SITE + '/products/' + p.slug + '.html</link>',
         '      <g:image_link>' + SITE + '/images/' + p.image + '</g:image_link>',
         '      <g:price>' + p.price + '.00 USD</g:price>',
         '      <g:availability>in stock</g:availability>',
@@ -239,6 +257,14 @@ function validate(products) {
     seen.set(p.id, p.name);
 
     if (!p.id) problems.push('"' + p.name + '" produced an empty id');
+    // Google caps g:id at 50 characters and truncates past it, which silently
+    // splits one product into two identities. Add an ID_OVERRIDES entry.
+    if (p.id.length > 50) {
+      problems.push(
+        '"' + p.name + '" has a ' + p.id.length + '-character id (' + p.id +
+        '). Google allows 50 — add a shorter one to ID_OVERRIDES.'
+      );
+    }
     if (!/^\d+$/.test(p.price)) problems.push('"' + p.name + '" has a bad price: ' + p.price);
     if (!/\.(jpe?g|png|webp)$/i.test(p.image)) {
       problems.push('"' + p.name + '" has a bad image filename: ' + p.image);
