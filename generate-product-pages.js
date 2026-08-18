@@ -53,6 +53,10 @@ const STATIC_PAGES = [
 const SHOP_SECTIONS = ['suits', 'sarees', 'chaniya-cholis', 'lehengas',
                        'indo-western', 'gowns', 'bridal'];
 
+// The section immediately after the last shop category. Everything between
+// the first category and this marker is treated as the catalogue.
+const SHOP_END_MARKER = 'services';
+
 const SECTION_LABEL = {
   'suits':          'Suits',
   'sarees':         'Sarees',
@@ -108,11 +112,14 @@ function today() {
 // ------------------------------------------------------------- extraction ---
 
 function extractProducts(html) {
+  // The shop runs from the first category section to the one that follows the
+  // last of them. This used to end at id="sale"; that section was removed when
+  // it had nothing in it, so the boundary is now the section after Bridal.
   const start = html.indexOf('id="' + SHOP_SECTIONS[0] + '"');
-  const end = html.indexOf('id="sale"');
+  const end = html.indexOf('id="' + SHOP_END_MARKER + '"');
   if (start === -1 || end === -1 || end <= start) {
     fail('could not locate the shop sections in index.html — expected id="' +
-         SHOP_SECTIONS[0] + '" before id="sale".');
+         SHOP_SECTIONS[0] + '" before id="' + SHOP_END_MARKER + '".');
   }
   const shop = html.slice(start, end);
 

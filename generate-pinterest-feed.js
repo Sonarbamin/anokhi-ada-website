@@ -82,6 +82,10 @@ function fail(message) {
 // mismatched landing page.
 const SHOP_SECTIONS = ['suits', 'sarees', 'chaniya-cholis', 'lehengas', 'indo-western', 'gowns', 'bridal'];
 
+// The section immediately after the last shop category. Everything between
+// the first category and this marker is treated as the catalogue.
+const SHOP_END_MARKER = 'services';
+
 // Google's product taxonomy, per category.
 //
 // Every item used to be sent as the two-level "Apparel & Accessories >
@@ -111,13 +115,17 @@ function extractProducts(html) {
   // Everything from the first category section to the Sale section. The Sale
   // grid is filled in at runtime and has no cards in the source, but scoping
   // keeps this honest if that ever changes.
+  // The shop runs from the first category section to the one that follows the
+  // last of them. This used to end at id="sale"; that section was removed when
+  // it had nothing in it, so the boundary is now the section after Bridal.
   const start = html.indexOf('id="' + SHOP_SECTIONS[0] + '"');
-  const end = html.indexOf('id="sale"');
+  const end = html.indexOf('id="' + SHOP_END_MARKER + '"');
   if (start === -1 || end === -1 || end <= start) {
     fail(
       'could not locate the shop sections in index.html — expected id="' +
-      SHOP_SECTIONS[0] + '" before id="sale". If the categories were renamed, ' +
-      'update SHOP_SECTIONS.'
+      SHOP_SECTIONS[0] + '" before id="' + SHOP_END_MARKER + '". If the ' +
+      'categories were renamed or a section was added after Bridal, update ' +
+      'SHOP_SECTIONS and SHOP_END_MARKER.'
     );
   }
   const shop = html.slice(start, end);
