@@ -49,6 +49,16 @@ function decodeEntities(str) {
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'")
     .replace(/&eacute;/g, '\u00e9')
+    // Card copy uses typographic entities freely. Any not decoded here survive
+    // as literal text — an item description reading "pearl work &mdash;" is
+    // what a shopper then sees in a Google listing.
+    .replace(/&mdash;/g, '\u2014')
+    .replace(/&ndash;/g, '\u2013')
+    .replace(/&rsquo;/g, '\u2019')
+    .replace(/&lsquo;/g, '\u2018')
+    .replace(/&ldquo;/g, '\u201c')
+    .replace(/&rdquo;/g, '\u201d')
+    .replace(/&hellip;/g, '\u2026')
     .replace(/&nbsp;/g, ' ')
     .replace(/&#(\d+);/g, (_, d) => String.fromCharCode(parseInt(d, 10)))
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
@@ -110,6 +120,18 @@ const CATEGORY_BY_SECTION = {
   'bridal':         TRADITIONAL + ' > Saris & Lehengas',
 };
 const CATEGORY_FALLBACK = TRADITIONAL;
+
+// Shipping, stated per product rather than left to the account-level setting.
+// Merchant Center would otherwise apply one flat rate to everything, quoting
+// $14.99 on a bridal lehenga that actually ships at $40 — and under-quoting
+// shipping is exactly the discrepancy Google penalises.
+//
+// These mirror getShippingFee() in the backend's api/_tax-rates.js. Change
+// both together. Rush delivery is deliberately absent: it is an upgrade the
+// customer chooses at checkout, not the standard service.
+const SHIPPING_GEORGIA = '9.99 USD';
+const SHIPPING_OUT_OF_STATE = '14.99 USD';
+const SHIPPING_BRIDAL = '40.00 USD';
 
 // g:id overrides. Google caps the id attribute at 50 characters; a couple of
 // product names slugify to more than that. The override changes ONLY the feed
@@ -195,6 +217,23 @@ function extractProducts(html) {
 
 // --------------------------------------------------------------- rendering ---
 
+// Bridal ships at one flat rate wherever it goes, so it needs a single entry.
+// Everything else is cheaper inside Georgia, which takes two: the specific
+// region first, then the country-wide fallback.
+function shippingFor(product) {
+  const entry = (price, region) =>
+    [
+      '      <g:shipping>',
+      '        <g:country>US</g:country>',
+      region ? '        <g:region>' + region + '</g:region>' : null,
+      '        <g:price>' + price + '</g:price>',
+      '      </g:shipping>',
+    ].filter(Boolean).join('\n');
+
+  if (product.section === 'bridal') return entry(SHIPPING_BRIDAL);
+  return entry(SHIPPING_GEORGIA, 'GA') + '\n' + entry(SHIPPING_OUT_OF_STATE);
+}
+
 function renderFeed(products) {
   const items = products
     .map(p =>
@@ -211,6 +250,7 @@ function renderFeed(products) {
         '      <g:image_link>' + SITE + '/images/' + p.image + '</g:image_link>',
         '      <g:price>' + p.price + '.00 USD</g:price>',
         '      <g:availability>in stock</g:availability>',
+        shippingFor(p),
         '      <g:brand>Anokhi Ada</g:brand>',
         '      <g:condition>new</g:condition>',
         // Every piece is one-of-a-kind and handmade, so it genuinely has no
@@ -274,6 +314,15 @@ function validate(products) {
     if (p.name.length > 500) problems.push('"' + p.name + '" title exceeds 500 chars');
     if (p.description.length > 10000) {
       problems.push('"' + p.name + '" description exceeds 10000 chars');
+    }
+    // A leftover HTML entity means decodeEntities missed one. It would be
+    // shown to shoppers verbatim, so stop the build rather than publish it.
+    const leftover = (p.name + ' ' + p.description).match(/&[a-z]+;|&#\d+;/i);
+    if (leftover) {
+      problems.push(
+        '"' + p.name + '" still contains the HTML entity ' + leftover[0] +
+        ' — add it to decodeEntities().'
+      );
     }
   });
 
