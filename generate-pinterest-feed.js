@@ -121,6 +121,45 @@ const CATEGORY_BY_SECTION = {
 };
 const CATEGORY_FALLBACK = TRADITIONAL;
 
+// Google requires colour, size, gender and age group on apparel in the US, and
+// shows products missing them less often. Size comes off the card. Gender and
+// age group are the same for everything sold here.
+const GENDER = 'female';
+const AGE_GROUP = 'adult';
+
+// Colour is read from the start of the product name, which is how the catalogue
+// is written: "Blush Tissue Bridal Lehenga" is blush. Longer names come first
+// so "Light Blue" wins over "Blue". Anything that doesn't begin with a colour,
+// or where the piece is genuinely two-tone, gets an explicit entry in
+// COLOR_OVERRIDES below and the build fails until it has one.
+const COLOR_WORDS = [
+  'Light Blue', 'Mint Green', 'Dusty Rose', 'Blush Pink', 'Blush',
+  'Chartreuse', 'Lavender', 'Fuchsia', 'Emerald', 'Mustard', 'Maroon',
+  'Taupe', 'Purple', 'Orange', 'Yellow', 'Silver', 'Brown', 'Green',
+  'Black', 'White', 'Ivory', 'Grey', 'Pink', 'Blue', 'Gold', 'Rust',
+  'Nude', 'Red',
+];
+
+// Up to three colours, separated by "/", is what Google accepts for a
+// multi-coloured piece.
+const COLOR_OVERRIDES = {
+  'color-blocked-silk-anarkali-set': 'Purple/Red/Orange',
+  'vintage-hand-embroidered-chaniya-choli': 'Mustard/Red',
+  'grey-tissue-crop-top-and-red-pleated-skirt': 'Grey/Red',
+  'black-and-gold-antique-work-evening-gown': 'Black/Gold',
+  'yellow-printed-wide-leg-pants-and-embroidered-crop-top': 'Yellow/Red',
+  'grey-tissue-draped-lehenga-and-embroidered-blouse': 'Grey/Purple',
+  'red-raw-silk-bridal-lehenga': 'Red/Ivory',
+};
+
+function colorFor(product) {
+  if (COLOR_OVERRIDES[product.slug]) return COLOR_OVERRIDES[product.slug];
+  for (let i = 0; i < COLOR_WORDS.length; i++) {
+    if (product.name.indexOf(COLOR_WORDS[i]) === 0) return COLOR_WORDS[i];
+  }
+  return null; // validate() turns this into a build failure
+}
+
 // Shipping, stated per product rather than left to the account-level setting.
 // Merchant Center would otherwise apply one flat rate to everything, quoting
 // $14.99 on a bridal lehenga that actually ships at $40 — and under-quoting
@@ -202,6 +241,9 @@ function extractProducts(html) {
       pick(/class="look-tag">([^<]+)</, 'description')
     );
     const price = pick(/data-price="(\d+)"/, 'price');
+    // "Size M" on the card becomes "M" for the feed.
+    const size = decodeEntities(pick(/class="look-size">([^<]*)</, 'size'))
+      .replace(/^Size\s*/i, '').trim();
     // First image in the card is the lead photo — the full view where one exists.
     const image = pick(/src="images\/([^"]+)"/, 'image');
 
@@ -210,7 +252,7 @@ function extractProducts(html) {
     const slug = slugify(name);
     return {
       id: ID_OVERRIDES[slug] || slug,
-      slug, name, description, price, image, section: sectionOf[i],
+      slug, name, description, price, size, image, section: sectionOf[i],
     };
   });
 }
@@ -251,6 +293,11 @@ function renderFeed(products) {
         '      <g:price>' + p.price + '.00 USD</g:price>',
         '      <g:availability>in stock</g:availability>',
         shippingFor(p),
+        '      <g:color>' + escapeXml(colorFor(p)) + '</g:color>',
+        '      <g:size>' + escapeXml(p.size) + '</g:size>',
+        '      <g:size_system>US</g:size_system>',
+        '      <g:gender>' + GENDER + '</g:gender>',
+        '      <g:age_group>' + AGE_GROUP + '</g:age_group>',
         '      <g:brand>Anokhi Ada</g:brand>',
         '      <g:condition>new</g:condition>',
         // Every piece is one-of-a-kind and handmade, so it genuinely has no
@@ -297,6 +344,13 @@ function validate(products) {
     seen.set(p.id, p.name);
 
     if (!p.id) problems.push('"' + p.name + '" produced an empty id');
+    if (!p.size) problems.push('"' + p.name + '" has no size on its card');
+    if (!colorFor(p)) {
+      problems.push(
+        '"' + p.name + '" does not start with a known colour. Add "' + p.slug +
+        '" to COLOR_OVERRIDES, or add the colour to COLOR_WORDS.'
+      );
+    }
     // Google caps g:id at 50 characters and truncates past it, which silently
     // splits one product into two identities. Add an ID_OVERRIDES entry.
     if (p.id.length > 50) {

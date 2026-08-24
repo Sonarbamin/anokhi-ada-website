@@ -21,6 +21,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Red</g:color>
+      <g:size>L</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -43,6 +48,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Orange</g:color>
+      <g:size>L</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -65,6 +75,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Light Blue</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -87,6 +102,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Purple/Red/Orange</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -109,6 +129,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Purple</g:color>
+      <g:size>L</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -131,6 +156,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Mint Green</g:color>
+      <g:size>L</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -153,6 +183,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Ivory</g:color>
+      <g:size>L</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -175,6 +210,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Pink</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -197,6 +237,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Mustard</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -219,6 +264,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Fuchsia</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -241,6 +291,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Rust</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -263,6 +318,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Light Blue</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -285,6 +345,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Emerald</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -307,6 +372,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Ivory</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -329,6 +399,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Purple</g:color>
+      <g:size>S</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -351,6 +426,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Dusty Rose</g:color>
+      <g:size>S</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -373,6 +453,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Mustard</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -395,6 +480,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Purple</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -417,6 +507,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Mustard/Red</g:color>
+      <g:size>L</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -439,6 +534,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Nude</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -461,6 +561,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Grey/Red</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -483,6 +588,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Blush</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -505,6 +615,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Lavender</g:color>
+      <g:size>S</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -527,6 +642,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Mustard</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -549,6 +669,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Purple</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -571,6 +696,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Chartreuse</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -593,6 +723,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Grey/Purple</g:color>
+      <g:size>L</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -615,6 +750,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Blue</g:color>
+      <g:size>S</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -637,6 +777,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Taupe</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -659,6 +804,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Green</g:color>
+      <g:size>S</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -681,6 +831,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Blush Pink</g:color>
+      <g:size>S</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -703,6 +858,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Lavender</g:color>
+      <g:size>S</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -725,6 +885,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Yellow/Red</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -747,6 +912,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Blush Pink</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -769,6 +939,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Black</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -791,6 +966,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Brown</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -813,6 +993,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Maroon</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -835,6 +1020,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Yellow</g:color>
+      <g:size>S</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -857,6 +1047,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>White</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -879,6 +1074,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Pink</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -901,6 +1101,11 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
+      <g:color>Black/Gold</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -918,6 +1123,11 @@
         <g:country>US</g:country>
         <g:price>40.00 USD</g:price>
       </g:shipping>
+      <g:color>Orange</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -935,6 +1145,11 @@
         <g:country>US</g:country>
         <g:price>40.00 USD</g:price>
       </g:shipping>
+      <g:color>Pink</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -952,6 +1167,11 @@
         <g:country>US</g:country>
         <g:price>40.00 USD</g:price>
       </g:shipping>
+      <g:color>Red/Ivory</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -969,6 +1189,11 @@
         <g:country>US</g:country>
         <g:price>40.00 USD</g:price>
       </g:shipping>
+      <g:color>Ivory</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -986,6 +1211,11 @@
         <g:country>US</g:country>
         <g:price>40.00 USD</g:price>
       </g:shipping>
+      <g:color>Blush</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
@@ -1003,6 +1233,11 @@
         <g:country>US</g:country>
         <g:price>40.00 USD</g:price>
       </g:shipping>
+      <g:color>Red</g:color>
+      <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
       <g:brand>Anokhi Ada</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
