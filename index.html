@@ -357,12 +357,6 @@
   .look-media img, .about-visual img, .lightbox-overlay img{
     -webkit-user-drag:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
   }
-  .watermark-tile{
-    position:absolute; inset:0; pointer-events:none; z-index:4;
-    background-image:url('images/watermark-tile.svg');
-    background-repeat:repeat;
-  }
-
   .cart-overlay{
     position:fixed; inset:0; background:rgba(36,16,20,0.5); z-index:90; opacity:0; pointer-events:none; transition:opacity 0.25s ease;
   }
@@ -543,7 +537,7 @@
   .saree-gallery{ background:var(--ivory-dim); }
   /* Discourage casual copying of the photographs: no drag-to-desktop, no
      long-press "Save Image" sheet on iOS. A deterrent only — a screenshot
-     still works. Watermarking is the only real defence. */
+     still works, and no client-side trick changes that. */
   img{
     -webkit-user-drag:none; user-drag:none;
     -webkit-touch-callout:none;
@@ -1720,7 +1714,6 @@
   <span class="lightbox-counter" id="lightboxCounter"></span>
   <div class="lightbox-img-wrap" style="position:relative; display:inline-flex;">
     <img id="lightboxImg" src="" alt="">
-    <div class="watermark-tile" style="position:absolute; inset:0; pointer-events:none;"></div>
   </div>
   <div class="lightbox-zoom-controls">
     <button class="lightbox-zoom-btn" id="lightboxZoomOut" aria-label="Zoom out">&minus;</button>
@@ -3302,12 +3295,6 @@
     lightbox.classList.add('open');
     activateModal(lightbox, closeLightbox);
   }
-  document.querySelectorAll('.look-media').forEach(function(media){
-    var overlay = document.createElement('div');
-    overlay.className = 'watermark-tile';
-    media.appendChild(overlay);
-  });
-
   document.addEventListener('contextmenu', function(e){
     if(e.target.tagName === 'IMG'){ e.preventDefault(); }
   });
