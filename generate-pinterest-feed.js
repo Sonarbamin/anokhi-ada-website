@@ -143,6 +143,7 @@ const COLOR_WORDS = [
 // Up to three colours, separated by "/", is what Google accepts for a
 // multi-coloured piece.
 const COLOR_OVERRIDES = {
+  'red-bandhani-top-and-white-straight-pants': 'Red/White',
   'rani-pink-short-kurta-and-wide-leg-pants': 'Pink',
   'color-blocked-silk-anarkali-set': 'Purple/Red/Orange',
   'vintage-hand-embroidered-chaniya-choli': 'Mustard/Red',
