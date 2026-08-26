@@ -465,6 +465,25 @@
   .hero-frame-inner{ width:100%; height:100%; position:relative; overflow:hidden; background:
       radial-gradient(circle at 20% 20%, rgba(184,134,59,0.25), transparent 55%),
       linear-gradient(160deg, var(--maroon) 0%, var(--maroon-deep) 60%, var(--emerald) 130%); }
+  /* ---- HERO SLIDESHOW ----
+     The frame is already 4:5, the same shape as the slides, so each one fills
+     it without cropping. Slides stack on top of one another and cross-fade;
+     the corner flourishes sit above them. */
+  .hero-slide{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+               opacity:0; transition:opacity 0.5s ease; }
+  .hero-slide.active{ opacity:1; }
+  .hero-nav{ position:absolute; top:50%; transform:translateY(-50%); z-index:4;
+             width:38px; height:38px; border:none; border-radius:50%;
+             background:rgba(251,243,231,0.86); color:var(--maroon);
+             font-size:22px; line-height:1; cursor:pointer; }
+  .hero-nav:hover{ background:var(--ivory); }
+  .hero-prev{ left:12px; }
+  .hero-next{ right:12px; }
+  .hero-dots{ position:absolute; z-index:4; left:0; right:0; bottom:14px;
+              display:flex; justify-content:center; gap:8px; }
+  .hero-dot{ width:8px; height:8px; padding:0; border-radius:50%; cursor:pointer;
+             border:1px solid rgba(251,243,231,0.9); background:rgba(36,16,20,0.25); }
+  .hero-dot.active{ background:var(--ivory); }
   .corner{ position:absolute; width:64px; height:64px; opacity:0.85; }
   .corner.tl{ top:8px; left:8px; }
   .corner.br{ bottom:8px; right:8px; transform:rotate(180deg); }
@@ -652,26 +671,6 @@
      the old 18px indent on .look-enquire dated from when it sat beside the
      button as the only link, and left the pair visibly out of line once
      "View Details" was added. */
-  /* ---- STYLE NOTES ----
-     A slideshow of the seasonal graphics. One at a time, 4:5 so nothing is
-     cropped, with the same arrow-and-dot controls used on the product
-     galleries so it behaves the way the rest of the site does. */
-  .note-slider{ max-width:460px; margin:28px auto 0; }
-  .note-stage{ position:relative; aspect-ratio:4/5; background:var(--ivory-dim); overflow:hidden; }
-  .note-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-             opacity:0; transition:opacity 0.35s ease; pointer-events:none; }
-  .note-img.active{ opacity:1; }
-  .note-nav{ position:absolute; top:50%; transform:translateY(-50%); z-index:3;
-             width:38px; height:38px; border:none; border-radius:50%;
-             background:rgba(251,243,231,0.86); color:var(--maroon);
-             font-size:22px; line-height:1; cursor:pointer; }
-  .note-nav:hover{ background:var(--ivory); }
-  .note-prev{ left:10px; }
-  .note-next{ right:10px; }
-  .note-dots{ display:flex; justify-content:center; gap:8px; margin-top:14px; }
-  .note-dot{ width:8px; height:8px; padding:0; border-radius:50%; cursor:pointer;
-             border:1px solid var(--gold); background:none; }
-  .note-dot.active{ background:var(--gold); }
   .look-details, .look-enquire{
     display:block; width:100%; min-width:0; margin-left:0; font-size:13px;
     letter-spacing:0.05em; text-transform:uppercase; text-decoration:underline;
@@ -1226,7 +1225,7 @@
     </div>
     <div class="hero-frame">
       <div class="hero-frame-inner">
-        <img src="images/anokhi-ada-navratri-lehenga.jpg" alt="Navratri in Full Bloom — Anokhi Ada. Purple mirror-work blouse with a floral-print lehenga and purple dupatta. Vibrant hues, artful details, a festive silhouette made for every twirl." style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" fetchpriority="high">
+        <img class="hero-slide active" data-index="0" src="images/anokhi-ada-navratri-lehenga.jpg" alt="Navratri in Full Bloom — Anokhi Ada. Purple mirror-work blouse with a floral-print lehenga and purple dupatta. Vibrant hues, artful details, a festive silhouette made for every twirl." loading="eager" fetchpriority="high"><img class="hero-slide" data-index="1" src="images/style-note-what-to-wear.jpg" alt="Two women in festive lehengas — a navy and yellow lehenga with a sheer navy dupatta, and a mustard mirror-work blouse with a red skirt and teal dupatta." loading="lazy"><img class="hero-slide" data-index="2" src="images/style-note-royal-evening.jpg" alt="Two women seated in evening lehengas — a black floral lehenga with a beaded blouse, and a purple mirror-work blouse with a printed skirt." loading="lazy"><img class="hero-slide" data-index="3" src="images/style-note-subtle-glam.jpg" alt="A mustard mirror-work blouse worn with a red tissue sharara and a teal embroidered dupatta." loading="lazy"><img class="hero-slide" data-index="4" src="images/style-note-modern-heirloom.jpg" alt="A black floral-print lehenga with a beaded crop top, embroidered waistband and sheer black dupatta." loading="lazy"><img class="hero-slide" data-index="5" src="images/style-note-navratri-moodboard.jpg" alt="Three festive looks side by side — navy and yellow, black with a fuchsia dupatta, and mustard with red." loading="lazy"><button type="button" class="hero-nav hero-prev" aria-label="Previous slide">&#8249;</button><button type="button" class="hero-nav hero-next" aria-label="Next slide">&#8250;</button><div class="hero-dots"><button type="button" class="hero-dot active" data-index="0" aria-label="Show slide 1 of 6" aria-current="true"></button><button type="button" class="hero-dot" data-index="1" aria-label="Show slide 2 of 6" aria-current="false"></button><button type="button" class="hero-dot" data-index="2" aria-label="Show slide 3 of 6" aria-current="false"></button><button type="button" class="hero-dot" data-index="3" aria-label="Show slide 4 of 6" aria-current="false"></button><button type="button" class="hero-dot" data-index="4" aria-label="Show slide 5 of 6" aria-current="false"></button><button type="button" class="hero-dot" data-index="5" aria-label="Show slide 6 of 6" aria-current="false"></button></div>
         <svg class="corner tl" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 60 C4 30 30 4 60 4" fill="none" stroke="#D9AE6C" stroke-width="1.4"/><circle cx="4" cy="60" r="3" fill="#D9AE6C"/></svg>
         <svg class="corner br" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 60 C4 30 30 4 60 4" fill="none" stroke="#D9AE6C" stroke-width="1.4"/><circle cx="4" cy="60" r="3" fill="#D9AE6C"/></svg>
       </div>
@@ -1566,34 +1565,6 @@
   </div>
 </section>
 
-
-<section class="section" id="style-notes" style="scroll-margin-top:300px;">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Style Notes</h2>
-      <p>A few notes on dressing for the season &mdash; which silhouettes suit an evening reception, which carry a garba, and which pieces earn their place year after year. Come and talk it through with us if you&rsquo;d rather decide in person.</p>
-    </div>
-
-    <div class="note-slider">
-      <div class="note-stage">
-        <img class="note-img active" data-index="0" src="images/style-note-what-to-wear.jpg" alt="Two women in festive lehengas — a navy and yellow lehenga with a sheer navy dupatta, and a mustard mirror-work blouse with a red skirt and teal dupatta. Anokhi Ada style note: knowing what to wear when." loading="lazy" width="1080" height="1350">
-        <img class="note-img" data-index="1" src="images/style-note-royal-evening.jpg" alt="Two women seated in evening lehengas — a black floral lehenga with a beaded blouse, and a purple mirror-work blouse with a printed skirt. Anokhi Ada style note on lehengas for a royal evening." loading="lazy" width="1080" height="1350">
-        <img class="note-img" data-index="2" src="images/style-note-subtle-glam.jpg" alt="A mustard mirror-work blouse worn with a red tissue sharara and a teal embroidered dupatta. Anokhi Ada style note on dual-tone tissue shararas." loading="lazy" width="1080" height="1350">
-        <img class="note-img" data-index="3" src="images/style-note-modern-heirloom.jpg" alt="A black floral-print lehenga with a beaded crop top, embroidered waistband and sheer black dupatta. Anokhi Ada style note on lehengas as a modern heirloom." loading="lazy" width="1080" height="1350">
-        <img class="note-img" data-index="4" src="images/style-note-navratri-moodboard.jpg" alt="Three festive looks side by side — navy and yellow, black with a fuchsia dupatta, and mustard with red. Anokhi Ada Navratri moodboard." loading="lazy" width="1080" height="1350">
-        <button type="button" class="note-nav note-prev" aria-label="Previous style note">&#8249;</button>
-        <button type="button" class="note-nav note-next" aria-label="Next style note">&#8250;</button>
-      </div>
-      <div class="note-dots">
-        <button type="button" class="note-dot active" data-index="0" aria-label="Show style note 1 of 5" aria-current="true"></button>
-        <button type="button" class="note-dot" data-index="1" aria-label="Show style note 2 of 5" aria-current="false"></button>
-        <button type="button" class="note-dot" data-index="2" aria-label="Show style note 3 of 5" aria-current="false"></button>
-        <button type="button" class="note-dot" data-index="3" aria-label="Show style note 4 of 5" aria-current="false"></button>
-        <button type="button" class="note-dot" data-index="4" aria-label="Show style note 5 of 5" aria-current="false"></button>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="section" id="about" style="scroll-margin-top:300px;">
   <div class="wrap about-grid about">
@@ -3472,25 +3443,21 @@
 </script>
 
 <script>
-  // Style Notes slideshow, advancing on its own every 6 seconds.
+  // Hero slideshow, advancing every 6 seconds.
   //
-  // Auto-advance is the thing people complain about when it moves the page
-  // under them, so it yields in the cases where that happens: it pauses on
-  // hover and on keyboard focus, it stops for good the moment someone uses the
-  // arrows or dots (they have said what they want to look at), it pauses while
-  // the tab is in the background, and it never starts at all for a visitor
-  // whose device asks for reduced motion.
+  // It yields wherever auto-advance would otherwise be irritating: pauses on
+  // hover and on keyboard focus, stops for good once someone uses the arrows
+  // or dots, pauses while the tab is in the background, and never starts for a
+  // visitor whose device asks for reduced motion.
   (function(){
-    var stage = document.querySelector('.note-stage');
-    if(!stage) return;
-    var slider = stage.closest('.note-slider') || stage;
-    var imgs = Array.prototype.slice.call(stage.querySelectorAll('.note-img'));
-    var dots = Array.prototype.slice.call(document.querySelectorAll('.note-dot'));
-    var i = 0;
-    var timer = null;
-    var stopped = false;
+    var frame = document.querySelector('.hero-frame-inner');
+    if(!frame) return;
+    var imgs = Array.prototype.slice.call(frame.querySelectorAll('.hero-slide'));
+    var dots = Array.prototype.slice.call(frame.querySelectorAll('.hero-dot'));
+    if(imgs.length < 2) return;
+    var i = 0, timer = null, stopped = false;
 
-    var DELAY = 6000; // long enough to read a slide before it moves
+    var DELAY = 6000;
     var reduced = window.matchMedia &&
                   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -3502,20 +3469,15 @@
         d.setAttribute('aria-current', k === i ? 'true' : 'false');
       });
     }
-
     function start(){
       if(stopped || reduced || timer) return;
       timer = setInterval(function(){ show(i + 1); }, DELAY);
     }
-    function pause(){
-      if(timer){ clearInterval(timer); timer = null; }
-    }
-    // A tap on the controls means the visitor is driving now. Handing the
-    // slideshow back afterwards would fight them for control of the page.
+    function pause(){ if(timer){ clearInterval(timer); timer = null; } }
     function stopForGood(){ stopped = true; pause(); }
 
-    stage.querySelector('.note-prev').addEventListener('click', function(){ stopForGood(); show(i - 1); });
-    stage.querySelector('.note-next').addEventListener('click', function(){ stopForGood(); show(i + 1); });
+    frame.querySelector('.hero-prev').addEventListener('click', function(){ stopForGood(); show(i - 1); });
+    frame.querySelector('.hero-next').addEventListener('click', function(){ stopForGood(); show(i + 1); });
     dots.forEach(function(d){
       d.addEventListener('click', function(){
         stopForGood();
@@ -3523,10 +3485,10 @@
       });
     });
 
-    slider.addEventListener('mouseenter', pause);
-    slider.addEventListener('mouseleave', start);
-    slider.addEventListener('focusin', pause);
-    slider.addEventListener('focusout', start);
+    frame.addEventListener('mouseenter', pause);
+    frame.addEventListener('mouseleave', start);
+    frame.addEventListener('focusin', pause);
+    frame.addEventListener('focusout', start);
     document.addEventListener('visibilitychange', function(){
       if(document.hidden) pause(); else start();
     });
