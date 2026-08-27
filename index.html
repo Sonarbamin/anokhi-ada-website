@@ -215,6 +215,64 @@
     display:none; padding:40px 0; text-align:center; color:#6b5a53; font-size:15px;
   }
   .shop-empty.visible{ display:block; }
+
+  /* ---- SIZE WAITLIST ----
+     Shown in the same block as the "no pieces in that size" message. A visitor
+     who filters to a size we have nothing in is the one visitor we know
+     something concrete about — their size — and until now they left no trace.
+     The form sits inside the empty state rather than the footer so it is
+     offered at the moment it is relevant, with the size already known. */
+  .waitlist{
+    max-width:420px; margin:22px auto 0; text-align:left;
+    border-top:1px solid var(--line); padding-top:22px;
+  }
+  .waitlist-intro{
+    font-size:14px; color:#6b5a53; margin:0 0 14px; text-align:center; line-height:1.55;
+  }
+  .waitlist-form{ display:flex; flex-direction:column; gap:11px; }
+  .waitlist-form input[type="email"],
+  .waitlist-form input[type="tel"]{
+    background:none; border:none; border-bottom:1px solid var(--line); color:var(--maroon);
+    padding:11px 2px; font-family:'Jost',Arial,sans-serif; font-size:16px; border-radius:0;
+    width:100%;
+  }
+  .waitlist-form input:focus{ border-bottom-color:var(--gold); }
+  .waitlist-form input::placeholder{ color:#9b8b83; }
+  /* The phone field only appears once WhatsApp is ticked — asking for a number
+     nobody intends to use is friction for the majority who just want email. */
+  .waitlist-phone{ display:none; }
+  .waitlist-phone.visible{ display:block; }
+  .waitlist-check{
+    display:flex; align-items:flex-start; gap:9px;
+    font-size:13.5px; color:#6b5a53; line-height:1.5; cursor:pointer;
+  }
+  .waitlist-check input{
+    margin:2px 0 0; width:17px; height:17px; flex:0 0 auto; accent-color:var(--gold);
+  }
+  .waitlist-form button{
+    background:var(--maroon); border:none; color:var(--ivory); padding:14px;
+    font-family:'Jost',Arial,sans-serif; font-weight:600; letter-spacing:0.04em;
+    border-radius:2px; text-transform:uppercase; font-size:13px; cursor:pointer;
+    transition:background 0.2s ease;
+  }
+  .waitlist-form button:hover:not(:disabled){ background:var(--maroon-deep); }
+  .waitlist-form button:disabled{ opacity:0.65; cursor:default; }
+  .waitlist-status{ font-size:13px; color:#8C3A22; display:none; }
+  .waitlist-status.visible{ display:block; }
+  .waitlist-fine{ font-size:12px; color:#8a7a72; margin:2px 0 0; line-height:1.5; }
+  .waitlist-done{
+    display:none; text-align:center; font-size:15px; color:var(--maroon); padding:6px 0;
+  }
+  .waitlist-done.visible{ display:block; }
+
+  /* Footer variant. Same component, but it opens the footer rather than
+     closing an empty grid, so it gets its own top rule and a little more
+     breathing room above the three columns. */
+  .waitlist-footer{
+    border-top:none; border-bottom:1px solid var(--line);
+    padding-top:0; padding-bottom:34px; margin:0 auto 38px;
+  }
+  .waitlist-footer .waitlist-intro{ font-size:15px; margin-bottom:16px; }
   @media (max-width:900px){
     .shop-bar-inner{ padding:9px 20px; gap:10px; }
     .shop-bar-divider{ display:none; }
@@ -1503,7 +1561,44 @@
   </div>
 </section>
 
-<div class="wrap"><p class="shop-empty" id="shopEmpty">No pieces in that size right now. <button type="button" class="shop-chip" data-size="all">Show all sizes</button></p></div>
+<div class="wrap"><div class="shop-empty" id="shopEmpty">
+  <p style="margin:0;">No pieces in that size right now. <button type="button" class="shop-chip" data-size="all">Show all sizes</button></p>
+
+  <div class="waitlist">
+    <p class="waitlist-intro">Every piece is one of a kind, and new stock arrives often.
+      Leave your details and we&rsquo;ll write to you when something comes in
+      <span class="waitlist-size-label">in your size</span>.</p>
+
+    <form class="waitlist-form" data-source="size-filter">
+      <label for="wlEmail-size" class="sr-only">Email address</label>
+      <input type="email" id="wlEmail-size" class="wl-email" placeholder="Email address" required maxlength="100" autocomplete="email">
+
+      <label class="waitlist-check" for="wlWhatsapp-size">
+        <input type="checkbox" id="wlWhatsapp-size" class="wl-optin">
+        <span>Message me on WhatsApp too &mdash; often the quickest way to see a new piece</span>
+      </label>
+
+      <div class="waitlist-phone">
+        <label for="wlPhone-size" class="sr-only">Mobile number for WhatsApp</label>
+        <input type="tel" id="wlPhone-size" class="wl-phone" placeholder="Mobile number, with country code" maxlength="20" autocomplete="tel">
+      </div>
+
+      <!-- Honeypot. Off-screen rather than display:none, matching the enquiry
+           form — some bots skip hidden fields but fill anything in the DOM. -->
+      <div class="hp-field" aria-hidden="true">
+        <label for="wlWebsite-size">Leave this field empty</label>
+        <input type="text" id="wlWebsite-size" class="wl-website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="waitlist-status" aria-live="polite" aria-atomic="true"></div>
+      <button type="submit">Notify Me</button>
+      <p class="waitlist-fine">We only write about new arrivals, and you can stop at any time.
+        Your details are never shared or sold.</p>
+    </form>
+
+    <p class="waitlist-done">Thank you &mdash; we&rsquo;ll be in touch when something arrives.</p>
+  </div>
+</div></div>
 
 <section class="section shop-section" id="gowns" style="scroll-margin-top:300px;">
   <div class="wrap">
@@ -1682,6 +1777,46 @@
 
 <footer>
   <div class="wrap">
+
+    <!-- Second placement of the same signup. The size-filter copy only appears
+         when a filter empties the grid, which is a narrow moment; this one is
+         reachable from any page position. Both post to the same endpoint and
+         are told apart by data-source, so the two placements can be compared
+         and the weaker one dropped. -->
+    <div class="waitlist waitlist-footer">
+      <p class="waitlist-intro"><strong style="color:var(--maroon); font-weight:600;">New pieces, first look.</strong><br>
+        One-of-a-kind stock moves quickly. Leave your details and we&rsquo;ll write
+        when something new arrives.</p>
+
+      <form class="waitlist-form" data-source="footer">
+        <label for="wlEmail-foot" class="sr-only">Email address</label>
+        <input type="email" id="wlEmail-foot" class="wl-email" placeholder="Email address" required maxlength="100" autocomplete="email">
+
+        <label class="waitlist-check" for="wlWhatsapp-foot">
+          <input type="checkbox" id="wlWhatsapp-foot" class="wl-optin">
+          <span>Message me on WhatsApp too &mdash; often the quickest way to see a new piece</span>
+        </label>
+
+        <div class="waitlist-phone">
+          <label for="wlPhone-foot" class="sr-only">Mobile number for WhatsApp</label>
+          <input type="tel" id="wlPhone-foot" class="wl-phone" placeholder="Mobile number, with country code" maxlength="20" autocomplete="tel">
+        </div>
+
+        <div class="hp-field" aria-hidden="true">
+          <label for="wlWebsite-foot">Leave this field empty</label>
+          <input type="text" id="wlWebsite-foot" class="wl-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="waitlist-status" aria-live="polite" aria-atomic="true"></div>
+        <button type="submit">Notify Me</button>
+        <p class="waitlist-fine">We only write about new arrivals, and you can stop at any time.
+          Your details are never shared or sold. See our
+          <a href="privacy-policy.html" style="color:#6b5a53; text-decoration:underline;">Privacy Policy</a>.</p>
+      </form>
+
+      <p class="waitlist-done">Thank you &mdash; we&rsquo;ll be in touch when something arrives.</p>
+    </div>
+
     <div class="foot-grid" style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr); gap:40px; margin-bottom:36px;">
       <div>
         <span class="wordmark" style="color:var(--maroon); font-size:20px;">Anokhi Ada</span>
@@ -1979,6 +2114,18 @@
       });
 
       if(emptyMsg) emptyMsg.classList.toggle('visible', shown === 0);
+
+      // Tell the waitlist form which size was asked for. This is the whole
+      // value of capturing here rather than in the footer: the visitor has
+      // already told us their size, so we never have to ask.
+      if(shown === 0){
+        var SIZE_WORDS = { S:'Small', M:'Medium', L:'Large' };
+        var label = document.querySelector('.waitlist-size-label');
+        if(label){
+          label.textContent = SIZE_WORDS[size] ? 'in ' + SIZE_WORDS[size] : 'in your size';
+        }
+        window.anokhiWaitlistSize = size;
+      }
 
       document.querySelectorAll('[data-size]').forEach(function(btn){
         btn.setAttribute('aria-pressed', String(btn.getAttribute('data-size') === size));
@@ -3239,6 +3386,95 @@
       btn.textContent = original;
     }
   });
+
+  // ---- Size waitlist ----
+  //
+  // Posts to its own endpoint with its own reCAPTCHA action, so the rate limit
+  // and the score threshold can be tuned separately from enquiries: this form
+  // is cheap to submit and will attract more bot traffic than the enquiry form
+  // does.
+  //
+  // The phone number is optional and only sent when the WhatsApp box is
+  // ticked. Ticking the box IS the opt-in — it is what Meta requires before a
+  // business may message someone, and the server records it alongside the
+  // number so there is a record of consent per subscriber. A number captured
+  // without it must never be messaged.
+  var WAITLIST_BACKEND_URL = 'https://anokhi-ada-backend.vercel.app/api/subscribe';
+
+  (function(){
+    var forms = document.querySelectorAll('.waitlist-form');
+    if(!forms.length) return;
+
+    forms.forEach(function(form){
+      var wrap = form.closest('.waitlist');
+      var wantsWhatsapp = form.querySelector('.wl-optin');
+      var phoneWrap = form.querySelector('.waitlist-phone');
+      var phoneInput = form.querySelector('.wl-phone');
+      var statusEl = form.querySelector('.waitlist-status');
+      var doneEl = wrap.querySelector('.waitlist-done');
+      var btn = form.querySelector('button[type="submit"]');
+      var source = form.getAttribute('data-source') || 'unknown';
+
+      // Reveal the phone field only on opt-in, and make it required once shown
+      // so the browser catches an empty number before we bother the server.
+      wantsWhatsapp.addEventListener('change', function(){
+        phoneWrap.classList.toggle('visible', wantsWhatsapp.checked);
+        phoneInput.required = wantsWhatsapp.checked;
+        if(!wantsWhatsapp.checked) phoneInput.value = '';
+      });
+
+      form.addEventListener('submit', async function(e){
+        e.preventDefault();
+        statusEl.classList.remove('visible');
+
+        var payload = {
+          email: form.querySelector('.wl-email').value,
+          // Size the visitor filtered to when they hit the empty state. Sent so
+          // Sona can write to just the people waiting on a size when one piece
+          // arrives, rather than mailing the whole list about something most of
+          // them cannot buy. Null from the footer, where no size was asked for.
+          size: (source === 'size-filter') ? (window.anokhiWaitlistSize || null) : null,
+          // Which placement produced the signup, so the two can be compared.
+          source: source,
+          whatsappOptIn: wantsWhatsapp.checked,
+          phone: wantsWhatsapp.checked ? phoneInput.value : '',
+          website: form.querySelector('.wl-website').value,
+        };
+
+        btn.disabled = true;
+        var original = btn.textContent;
+        btn.textContent = 'Saving…';
+
+        try{
+          await ensureRecaptcha();
+          payload.recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'waitlist' });
+
+          var response = await fetch(WAITLIST_BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if(!response.ok){ throw new Error('Could not save. Please try again.'); }
+
+          if(window.gtag){
+            gtag('event', 'sign_up', {
+              method: wantsWhatsapp.checked ? 'email_whatsapp' : 'email',
+              source: source
+            });
+          }
+
+          form.style.display = 'none';
+          doneEl.classList.add('visible');
+        } catch(err){
+          console.error('Waitlist signup error:', err);
+          statusEl.textContent = 'Something went wrong — please try again, or send us an enquiry instead.';
+          statusEl.classList.add('visible');
+          btn.disabled = false;
+          btn.textContent = original;
+        }
+      });
+    });
+  })();
 
   // ---- Photo gallery (Designer Saree) ----
   document.querySelectorAll('.saree-gallery').forEach(function(gallery){
