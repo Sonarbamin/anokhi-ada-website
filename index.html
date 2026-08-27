@@ -265,6 +265,31 @@
   }
   .waitlist-done.visible{ display:block; }
 
+  /* ---- CUSTOMER REVIEWS ----
+     Two columns on desktop, one on mobile. Cards are quiet — the words are
+     the point, so nothing here competes with them. */
+  .review-grid{
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:22px; max-width:960px; margin:0 auto;
+  }
+  .review-card{
+    margin:0; background:rgba(36,16,20,0.03); border:1px solid var(--line);
+    border-radius:2px; padding:24px 26px;
+  }
+  .review-stars{ color:var(--gold); font-size:14px; letter-spacing:2px; margin-bottom:12px; }
+  .review-card p{
+    margin:0 0 16px; font-size:15px; line-height:1.7; color:#4a3d38;
+    font-family:'Cormorant Garamond',Georgia,serif; font-size:18px;
+  }
+  .review-card cite{
+    font-style:normal; font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--gold); font-weight:500;
+  }
+  .review-foot{
+    text-align:center; font-size:13.5px; color:#6b5a53; margin:26px 0 0;
+  }
+  .review-foot a{ color:var(--maroon); }
+
   /* Footer variant. Same component, but it opens the footer rather than
      closing an empty grid, so it gets its own top rule and a little more
      breathing room above the three columns. */
@@ -830,6 +855,7 @@
   @media (max-width:900px){
     .nav-links{ display:none; } .burger{ display:block; }
     .hero-grid{ grid-template-columns:minmax(0,1fr); }
+    .review-grid{ grid-template-columns:minmax(0,1fr); gap:16px; }
     /* Match the hero image's own 4:5 ratio. This was 16/9, which cropped away
        more than half the picture on a phone — including the campaign text
        baked into the artwork. */
@@ -1726,6 +1752,71 @@
         <div class="fact"><div class="num mono">Bridal</div><div class="lbl">&amp; Trousseau Focus</div></div>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="section" id="reviews" style="scroll-margin-top:300px;">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What Customers Say</h2>
+      <p>Reviews left on Google by people who have shopped with us.</p>
+    </div>
+
+    <!-- Attributed to Google rather than presented as our own testimonials:
+         the reviews are public, one click away, and saying where they came
+         from is more convincing than a quote with no source.
+
+         Deliberately NO aggregateRating markup here. Google does not show star
+         rich results for reviews a business hosts about itself on
+         LocalBusiness types, and marking up reviews collected elsewhere as
+         on-site content is against their guidelines. The value of this section
+         is the customer reading it, not the search result. -->
+    <div class="review-grid">
+
+      <blockquote class="review-card">
+        <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>Had a great experience working with Anokhi Ada for my wedding outfits. With so
+          many choices out there, it&rsquo;s easy to feel overwhelmed, but the team took the
+          time to sit down with my wife and me to help us dial in the right look for every
+          event. There was zero pressure at any point, and the process felt completely
+          seamless. The outfits turned out great and look fantastic in all our photos.
+          Highly recommend them.</p>
+        <cite>Tarang</cite>
+      </blockquote>
+
+      <blockquote class="review-card">
+        <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>If anyone is looking for unique designer outfits they should go to no other place
+          than Anokhi Ada. The collection is as unique as the shop of the name. Starting
+          with colors, styles, materials etc. you will not find better quality selections
+          than with Anokhi Ada. I highly recommend to go first to Anokhi Ada before you go
+          any other places.</p>
+        <cite>Monal</cite>
+      </blockquote>
+
+      <blockquote class="review-card">
+        <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>I have bought so many outfits from Anokhi Ada over the years and wear them all the
+          time. I keep coming back because the owners are wonderful people and the quality
+          is consistently great. My absolute favorite piece is a sari that I wear to all
+          major family occasions, but honestly, every piece I&rsquo;ve gotten from them is
+          beautiful and easy to wear. Easily the best collection of Indian clothing
+          I&rsquo;ve come across!</p>
+        <cite>Parul</cite>
+      </blockquote>
+
+      <blockquote class="review-card">
+        <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>All my outfits from Anokhi Ada turn out to be such stylish looks. I get tons of
+          compliments and love shopping with Sona.</p>
+        <cite>Monika</cite>
+      </blockquote>
+
+    </div>
+
+    <p class="review-foot">All seven reviews are on our
+      <a href="https://g.page/r/Cf3-2SpcnRrLEBM/review" target="_blank" rel="noopener">Google profile</a>,
+      where you can also leave your own.</p>
   </div>
 </section>
 
