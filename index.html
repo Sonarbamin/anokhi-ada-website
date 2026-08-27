@@ -538,7 +538,13 @@
   .btn-outline:hover{ background:var(--maroon); color:var(--ivory); }
 
   .hero-frame{ position:relative; aspect-ratio:4/5; border:1px solid var(--gold); padding:14px; }
-  .hero-frame-inner{ width:100%; height:100%; position:relative; overflow:hidden; background:
+  /* Positioned against the frame rather than sized with height:100%. A
+     percentage height has to resolve against the parent's height, and here the
+     parent's height comes from aspect-ratio rather than an explicit value —
+     which some iOS Safari versions fail to resolve, collapsing this box to
+     zero and hiding every slide inside it. inset matches the frame's 14px
+     padding, so the result is identical where height:100% already worked. */
+  .hero-frame-inner{ position:absolute; inset:14px; overflow:hidden; background:
       radial-gradient(circle at 20% 20%, rgba(184,134,59,0.25), transparent 55%),
       linear-gradient(160deg, var(--maroon) 0%, var(--maroon-deep) 60%, var(--emerald) 130%); }
   /* ---- HERO SLIDESHOW ----
