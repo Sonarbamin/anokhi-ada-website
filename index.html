@@ -2394,13 +2394,41 @@
       });
   }
 
-  // Fee constants, so nothing about pricing is hard-coded in two places. The
-  // literals below are only a starting point for the first paint; the server's
-  // values replace them as soon as they arrive, and the server's are what get
-  // charged either way.
+  // ---- Fee constants ----
+  // The single declaration site for everything the browser needs to DISPLAY a
+  // total. The literals are only a starting point for the first paint;
+  // /api/pricing replaces them below as soon as it answers, and the server's
+  // values are what actually get charged either way.
+  //
+  // These mirror api/_tax-rates.js — change both together.
+  //
+  // Shipping is charged once per order, not per item. Out of state costs more
+  // to fulfil, so it is priced higher. This is a delivery fee and is labelled
+  // as one; it is not a stand-in for sales tax, which is Georgia-only.
   var SHIPPING_GEORGIA = 9.99;
   var SHIPPING_OUT_OF_STATE = 14.99;
+  // Optional rush surcharge on top of the base fee. Part of shipping and
+  // handling, so in Georgia it is taxed with the rest of the order.
   var RUSH_SURCHARGE = 15.00;
+  // Bridal pieces are bulky and high-value, so they cost more to send and go
+  // at a flat rate wherever they go.
+  var SHIPPING_BRIDAL = 40.00;
+  // Starting point for the first paint only. /api/pricing replaces this with
+  // the server's own list, which is what actually gets charged. Keeping a
+  // hand-maintained copy as the permanent source would be the same drift trap
+  // the tax table had.
+  var BRIDAL_NAMES = [
+    'Orange Raw Silk Bridal Lehenga',
+    'Pink Tissue Mirror Work Bridal Lehenga',
+    'Red Raw Silk Bridal Lehenga',
+    'Ivory Net Bridal Lehenga',
+    'Blush Tissue Bridal Lehenga',
+    'Red Thread Work Bridal Lehenga'
+  ];
+  // A collected order is sourced to the STUDIO, not the buyer's address — the
+  // customer takes possession in Atlanta — so the studio's own rate applies
+  // however far away they live. That rate arrives from /api/pricing as
+  // pickupTaxRate; this is only the state, used for display.
   var PICKUP_STATE = 'GA';
   // Held separately from taxRateCache: that cache is keyed by address, and a
   // customer whose delivery ZIP matched the studio's would otherwise overwrite
@@ -2461,34 +2489,11 @@
   }
 
   // ---- Shipping & handling ----
-  // Charged once per order, not per item. Out of state costs more to fulfil,
-  // so it's priced higher. Mirrors getShippingFee() in api/_tax-rates.js —
-  // change both together. This is a delivery fee and is labelled as one; it
-  // is not a stand-in for sales tax, which is Georgia-only.
-  var SHIPPING_GEORGIA = 9.99;
-  var SHIPPING_OUT_OF_STATE = 14.99;
-  // Optional rush surcharge on top of the base fee. Mirrors RUSH_SURCHARGE in
-  // api/_tax-rates.js — change both together. Part of shipping & handling, so
-  // in Georgia it's taxed with the rest of the order.
-  var RUSH_SURCHARGE = 15.00;
-  // ---- Bridal shipping ----
-  // Bridal pieces are bulky and high-value, so they cost more to send and go
-  // at a flat rate wherever they go. Mirrors SHIPPING_BRIDAL in
-  // api/_tax-rates.js — change both together.
+  // Fee constants are declared once, further up, next to the /api/pricing
+  // fetch that overwrites them. They were previously declared a second time
+  // here as well: harmless, because both copies said the same thing and the
+  // server's values replaced both, but it meant editing one had no effect.
   //
-  // BRIDAL_NAMES is only a starting point for the first paint; /api/pricing
-  // replaces it with the server's own list, which is what actually gets
-  // charged. Keeping a hand-maintained copy as the permanent source would be
-  // the same drift trap the tax table had.
-  var SHIPPING_BRIDAL = 40.00;
-  var BRIDAL_NAMES = [
-    'Orange Raw Silk Bridal Lehenga',
-    'Pink Tissue Mirror Work Bridal Lehenga',
-    'Red Raw Silk Bridal Lehenga',
-    'Ivory Net Bridal Lehenga',
-    'Blush Tissue Bridal Lehenga',
-    'Red Thread Work Bridal Lehenga'
-  ];
   // A bag mixing bridal with regular stock pays the bridal fee ONCE, not both.
   function cartHasBridal(){
     return cart.some(function(item){ return BRIDAL_NAMES.indexOf(item.name) !== -1; });
@@ -2499,11 +2504,6 @@
     return rush ? base + RUSH_SURCHARGE : base;
   }
   // ---- Studio pickup ----
-  // A collected order is sourced to the STUDIO, not the buyer's address — the
-  // customer takes possession in Atlanta — so the studio's own rate applies
-  // however far away they live. That rate arrives from /api/pricing as
-  // pickupTaxRate; this is only the state, used for display.
-  var PICKUP_STATE = 'GA';
   function isPickup(){
     var el = document.getElementById('fulfilPickup');
     return !!(el && el.checked);
