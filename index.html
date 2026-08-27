@@ -2318,7 +2318,29 @@
       var raw = window.localStorage.getItem(CART_STORAGE_KEY);
       if(!raw) return [];
       var parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
+      if(!Array.isArray(parsed)) return [];
+      // Storage is editable by whoever is sitting at the browser, so what
+      // comes back is not necessarily what was written. Checking only that it
+      // is an array let a tampered or half-written entry through, which then
+      // rendered as "$NaN" in the drawer. Coerce each row into the shape the
+      // rest of the code assumes, and drop anything that cannot be.
+      //
+      // Nothing here is a money control: the server recomputes every total
+      // from PRODUCT_PRICES and ignores what the browser sends. This is about
+      // the drawer rendering sensibly.
+      return parsed.filter(function(item){
+        return item && typeof item === 'object' && typeof item.name === 'string';
+      }).map(function(item){
+        var price = Number(item.price);
+        var qty = Math.floor(Number(item.qty));
+        return {
+          name: item.name,
+          price: isFinite(price) && price >= 0 ? price : 0,
+          qty: isFinite(qty) && qty > 0 ? qty : 1,
+          color: typeof item.color === 'string' ? item.color : '',
+          image: typeof item.image === 'string' ? item.image : null,
+        };
+      });
     } catch(err){
       // Corrupted data, or localStorage unavailable (e.g. private browsing
       // with storage disabled) — fail safe with an empty cart rather than
@@ -2547,12 +2569,12 @@
       var row = document.createElement('div');
       row.className = 'cart-item';
       var thumb = item.image
-        ? '<img class="cart-item-swatch" style="object-fit:cover;" src="' + item.image + '" alt="' + item.name + '">'
-        : '<div class="cart-item-swatch" style="background:' + item.color + '"></div>';
+        ? '<img class="cart-item-swatch" style="object-fit:cover;" src="' + escapeHtml(item.image) + '" alt="' + escapeHtml(item.name) + '">'
+        : '<div class="cart-item-swatch" style="background:' + escapeHtml(item.color) + '"></div>';
       row.innerHTML =
         thumb +
         '<div class="cart-item-body">' +
-          '<div class="cart-item-name">' + item.name + (item.qty > 1 ? ' &times; ' + item.qty : '') + '</div>' +
+          '<div class="cart-item-name">' + escapeHtml(item.name) + (item.qty > 1 ? ' &times; ' + escapeHtml(item.qty) : '') + '</div>' +
           '<div class="cart-item-price">' + formatMoney(item.price * item.qty) + '</div>' +
           '<button class="cart-item-remove" data-idx="' + idx + '">Remove</button>' +
         '</div>';
