@@ -273,6 +273,24 @@
     padding-top:0; padding-bottom:34px; margin:0 auto 38px;
   }
   .waitlist-footer .waitlist-intro{ font-size:15px; margin-bottom:16px; }
+
+  /* ---- REVIEW BAND ----
+     Sits between the signup and the footer columns. Quiet by design: a shop
+     asking for reviews should read as a request, not a pop-up. */
+  .review-band{
+    display:flex; align-items:center; justify-content:center;
+    gap:18px; flex-wrap:wrap; text-align:center;
+    border-bottom:1px solid var(--line); padding-bottom:30px; margin-bottom:34px;
+  }
+  .review-band-text{ font-size:14px; color:#6b5a53; margin:0; line-height:1.55; }
+  .review-band-text strong{ color:var(--maroon); font-weight:600; }
+  .review-band-btn{
+    display:inline-block; border:1px solid var(--maroon); color:var(--maroon);
+    padding:11px 22px; border-radius:2px; font-size:12.5px; font-weight:500;
+    letter-spacing:0.06em; text-transform:uppercase; text-decoration:none;
+    min-height:42px; line-height:20px; transition:background 0.2s ease, color 0.2s ease;
+  }
+  .review-band-btn:hover{ background:var(--maroon); color:var(--ivory); }
   @media (max-width:900px){
     .shop-bar-inner{ padding:9px 20px; gap:10px; }
     .shop-bar-divider{ display:none; }
@@ -1831,6 +1849,17 @@
       <p class="waitlist-done">Thank you &mdash; we&rsquo;ll be in touch when something arrives.</p>
     </div>
 
+    <!-- Google review link. It already sits in the ClothingStore JSON-LD as
+         sameAs, but markup asks nobody for anything — a customer has to see it.
+         Placed above the footer columns rather than in them so it reads as an
+         invitation, not another contact detail. -->
+    <div class="review-band">
+      <p class="review-band-text"><strong>Shopped with us before?</strong>
+        A few words on Google helps the next person find the studio.</p>
+      <a class="review-band-btn" href="https://g.page/r/Cf3-2SpcnRrLEBM/review"
+         target="_blank" rel="noopener">Leave a Review</a>
+    </div>
+
     <div class="foot-grid" style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr); gap:40px; margin-bottom:36px;">
       <div>
         <span class="wordmark" style="color:var(--maroon); font-size:20px;">Anokhi Ada</span>
@@ -1867,7 +1896,7 @@
     </div>
     <div class="foot-inner" style="border-top:1px solid var(--line); padding-top:20px;">
       <span>© 2026 Anokhi Ada · Atlanta, GA</span>
-      <span><a href="sitemap.html" style="color:#6b5a53;">Sitemap</a> · <a href="shipping-returns.html" style="color:#6b5a53;">Shipping &amp; Returns</a> · <a href="privacy-policy.html" style="color:#6b5a53;">Privacy Policy</a> · <a href="terms-of-use.html" style="color:#6b5a53;">Terms of Use</a> · <a href="https://g.page/r/Cf3-2SpcnRrLEBM/review" target="_blank" rel="noopener" style="color:#6b5a53;">Leave a Review</a> · Designed for Anokhi Ada</span>
+      <span><a href="sitemap.html" style="color:#6b5a53;">Sitemap</a> · <a href="shipping-returns.html" style="color:#6b5a53;">Shipping &amp; Returns</a> · <a href="privacy-policy.html" style="color:#6b5a53;">Privacy Policy</a> · <a href="terms-of-use.html" style="color:#6b5a53;">Terms of Use</a> · Designed for Anokhi Ada</span>
     </div>
   </div>
 </footer>
