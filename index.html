@@ -833,7 +833,13 @@
     /* Match the hero image's own 4:5 ratio. This was 16/9, which cropped away
        more than half the picture on a phone — including the campaign text
        baked into the artwork. */
-    .hero-frame{ order:-1; aspect-ratio:4/5; max-width:420px; margin:0 auto; }
+    /* width:100% is load-bearing. `margin:0 auto` on a grid item disables the
+       default stretch alignment, so without an explicit width the frame is
+       sized shrink-to-fit — and since everything inside it is positioned, there
+       is no in-flow content to size against, collapsing it to a ~60px sliver
+       with only the gold border visible. max-width then caps it and the auto
+       margins centre it, which is what they were there for. */
+    .hero-frame{ order:-1; aspect-ratio:4/5; width:100%; max-width:420px; margin:0 auto; }
     .services{ grid-template-columns:minmax(0,1fr); }
     .about-grid{ grid-template-columns:minmax(0,1fr); }
     .lookbook-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
