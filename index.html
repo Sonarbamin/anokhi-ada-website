@@ -209,6 +209,26 @@
     background:var(--maroon); border-color:var(--maroon); color:var(--ivory);
   }
   .shop-chip .chip-count{ opacity:0.6; font-weight:400; margin-left:4px; }
+  .shop-bar-search{ flex:1 1 210px; min-width:170px; position:relative; }
+  .shop-search-input{
+    width:100%; background:var(--ivory-dim); border:1px solid var(--line-strong);
+    color:var(--ink); padding:7px 28px 7px 13px; border-radius:999px;
+    font-family:'Jost',Arial,sans-serif; font-size:13px;
+  }
+  /* Safari draws its own clear button on type=search; ours is styled to match
+     the bar and sits in the same place, so hide the native one. */
+  .shop-search-input::-webkit-search-cancel-button,
+  .shop-search-input::-webkit-search-decoration{ -webkit-appearance:none; display:none; }
+  .shop-search-clear{
+    position:absolute; right:9px; top:50%; transform:translateY(-50%);
+    background:none; border:0; padding:2px 4px; cursor:pointer;
+    font-size:16px; line-height:1; color:#8a7a72;
+  }
+  .shop-search-clear:hover{ color:var(--ink); }
+  .shop-bar-count{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.08em;
+    color:var(--gold-text); white-space:nowrap;
+  }
   /* Divider between the two groups, hidden once they wrap onto separate lines. */
   .shop-bar-divider{ width:1px; height:20px; background:var(--line); }
   .shop-empty{
@@ -327,6 +347,11 @@
     .shop-bar-label{ display:none; }
     /* Horizontal scroll beats wrapping to three lines on a phone. */
     .shop-bar-group{ flex-wrap:nowrap; overflow-x:auto; }
+    /* The search field is the exception: it gets its own full-width row rather
+       than scrolling off the side, and 16px type because anything smaller makes
+       iOS Safari zoom the whole page the moment the field is tapped. */
+    .shop-bar-search{ flex:1 1 100%; overflow:visible; order:-1; }
+    .shop-search-input{ font-size:16px; padding:8px 30px 8px 14px; }
     .shop-bar-group::-webkit-scrollbar{ display:none; }
   }
 
@@ -1404,6 +1429,22 @@
       <button type="button" class="shop-chip" data-size="M" aria-pressed="false">M<span class="chip-count" data-size-count="M"></span></button>
       <button type="button" class="shop-chip" data-size="L" aria-pressed="false">L<span class="chip-count" data-size-count="L"></span></button>
     </div>
+    <div class="shop-bar-divider" aria-hidden="true"></div>
+    <div class="shop-bar-group" role="group" aria-label="Filter by price">
+      <span class="shop-bar-label">Price</span>
+      <button type="button" class="shop-chip" data-price="all" aria-pressed="true">All</button>
+      <button type="button" class="shop-chip" data-price="0-299" aria-pressed="false">Under $300<span class="chip-count" data-price-count="0-299"></span></button>
+      <button type="button" class="shop-chip" data-price="300-599" aria-pressed="false">$300&ndash;600<span class="chip-count" data-price-count="300-599"></span></button>
+      <button type="button" class="shop-chip" data-price="600-999" aria-pressed="false">$600&ndash;1,000<span class="chip-count" data-price-count="600-999"></span></button>
+      <button type="button" class="shop-chip" data-price="1000-" aria-pressed="false">$1,000+<span class="chip-count" data-price-count="1000-"></span></button>
+    </div>
+    <div class="shop-bar-divider" aria-hidden="true"></div>
+    <div class="shop-bar-group shop-bar-search">
+      <label for="shopSearch" class="sr-only">Search pieces by colour, fabric or garment</label>
+      <input type="search" id="shopSearch" class="shop-search-input" placeholder="Search colour, fabric, garment" autocomplete="off">
+      <button type="button" class="shop-search-clear" id="shopSearchClear" aria-label="Clear search" hidden>&times;</button>
+    </div>
+    <span class="shop-bar-count" id="shopCount" role="status" aria-live="polite" aria-atomic="true"></span>
   </div>
 </div>
 <div class="paisley-row" aria-hidden="true">
@@ -1690,7 +1731,7 @@
 
 <div class="wrap"><div class="shop-empty" id="shopEmpty">
   <div class="shop-empty-msg">
-    <p style="margin:0;">Nothing available in that size right now. <button type="button" class="shop-chip" data-size="all">Show all sizes</button></p>
+    <p style="margin:0;">Nothing available to match that right now. <button type="button" class="shop-chip" data-clear-filters>Clear filters</button></p>
   </div>
 
   <div class="waitlist">
@@ -2273,9 +2314,59 @@
       return m ? m[1] : '';
     }
 
+    // A card's price in dollars, read from the same figure the customer sees.
+    function priceOf(card){
+      var el = card.querySelector('.sale-now');
+      if(!el) return null;
+      var digits = el.textContent.replace(/[^0-9]/g, '');
+      return digits ? Number(digits) : null;
+    }
+
+    // Price bands. Upper bounds are EXCLUSIVE so no piece can land in two of
+    // them, and the bands together cover every price with no gap.
+    var PRICE_BANDS = {
+      '0-299':   { min: 0,    max: 300 },
+      '300-599': { min: 300,  max: 600 },
+      '600-999': { min: 600,  max: 1000 },
+      '1000-':   { min: 1000, max: Infinity }
+    };
+    function priceMatches(card, band){
+      if(band === 'all') return true;
+      var b = PRICE_BANDS[band];
+      var price = priceOf(card);
+      if(!b || price === null) return false;
+      return price >= b.min && price < b.max;
+    }
+
+    // What a search looks at: the product name AND the description under it.
+    // Including the description is what makes "sequin", "mirror work" or
+    // "pockets" find things without anyone tagging a single piece by hand.
+    // Cached per card — the text never changes after load.
+    var searchText = new WeakMap();
+    function haystackOf(card){
+      var cached = searchText.get(card);
+      if(cached) return cached;
+      var name = card.querySelector('.look-name');
+      var tag = card.querySelector('.look-tag');
+      var text = ((name ? name.textContent : '') + ' ' + (tag ? tag.textContent : ''))
+        .toLowerCase().replace(/\s+/g, ' ');
+      searchText.set(card, text);
+      return text;
+    }
+    // Every term must appear somewhere, so "mustard saree" narrows rather than
+    // widening — two words should mean fewer results, not more.
+    function queryMatches(card, terms){
+      if(!terms.length) return true;
+      var hay = haystackOf(card);
+      for(var i = 0; i < terms.length; i++){
+        if(hay.indexOf(terms[i]) === -1) return false;
+      }
+      return true;
+    }
+
     var cards = Array.prototype.slice.call(document.querySelectorAll('.shop-section .look-card'));
 
-    // Counts on the size chips, so the bar answers "is there anything for me?"
+    // Counts on the chips, so the bar answers "is there anything for me?"
     // before a single tap.
     var counts = { S:0, M:0, L:0 };
     cards.forEach(function(c){ var s = sizeOf(c); if(counts[s] !== undefined) counts[s]++; });
@@ -2283,8 +2374,16 @@
       var el = document.querySelector('[data-size-count="' + k + '"]');
       if(el) el.textContent = ' ' + counts[k];
     });
+    Object.keys(PRICE_BANDS).forEach(function(band){
+      var el = document.querySelector('[data-price-count="' + band + '"]');
+      if(!el) return;
+      var n = cards.filter(function(c){ return priceMatches(c, band); }).length;
+      el.textContent = ' ' + n;
+    });
 
     var activeSize = 'all';
+    var activePrice = 'all';
+    var activeQuery = '';
 
     // Set by a category tap; the scroll observer ignores updates until it
     // passes. See the note in the [data-jump] handler.
@@ -2313,19 +2412,24 @@
 
     // Sold flags arrive from the inventory endpoint long after this runs, so
     // the counts above are recomputed once they land. See the inventory fetch.
-    window.anokhiRefreshFilter = function(){ applyFilter(activeSize, false); };
+    window.anokhiRefreshFilter = function(){ applyFilters(false); };
 
     // scrollToResults is passed only from a chip tap. Filtering on its own
     // leaves the page where it was — which, once the sections around you are
     // hidden, means landing in the middle of some unrelated category rather
     // than on the first piece in your size.
-    function applyFilter(size, scrollToResults){
-      activeSize = size;
+    function applyFilters(scrollToResults){
+      var terms = activeQuery.split(/\s+/).filter(Boolean);
+      // Any one of the three counts as filtering. Everything below that used to
+      // ask "is a size chosen?" asks this instead.
+      var anyFilter = activeSize !== 'all' || activePrice !== 'all' || terms.length > 0;
       var shown = 0;      // cards left on screen, sold ones included
       var available = 0;  // cards that can actually be bought
 
       cards.forEach(function(card){
-        var match = (size === 'all') || (sizeOf(card) === size);
+        var match = (activeSize === 'all' || sizeOf(card) === activeSize)
+                 && priceMatches(card, activePrice)
+                 && queryMatches(card, terms);
         card.style.display = match ? '' : 'none';
         if(match){
           shown++;
@@ -2349,8 +2453,17 @@
           sec.querySelectorAll('.look-card'),
           function(c){ return c.style.display !== 'none'; }
         ).length;
-        sec.style.display = (size === 'all' || visible > 0) ? '' : 'none';
+        sec.style.display = (!anyFilter || visible > 0) ? '' : 'none';
       });
+
+      // How much of the catalogue survived. A live region, so a screen reader
+      // hears the result of typing rather than being left to hunt for it.
+      var countEl = document.getElementById('shopCount');
+      if(countEl){
+        countEl.textContent = anyFilter
+          ? (shown === 0 ? 'No pieces match' : shown + ' of ' + cards.length + ' pieces')
+          : '';
+      }
 
       // The form shows for ANY active size filter, not only a zero-result
       // one. A visitor who filters to Small, sees what there is and wants
@@ -2358,8 +2471,8 @@
       // all — and with 36 Mediums on the site, there are far more of her.
       // The "nothing available" line above it is what's conditional now.
       if(emptyMsg){
-        emptyMsg.classList.toggle('visible', size !== 'all');
-        emptyMsg.classList.toggle('no-results', size !== 'all' && available === 0);
+        emptyMsg.classList.toggle('visible', anyFilter);
+        emptyMsg.classList.toggle('no-results', anyFilter && available === 0);
       }
 
       // Tell the waitlist form which size was asked for. This is the whole
@@ -2370,15 +2483,23 @@
       // assigned only inside the zero-result branch, which no chip could
       // reach — so it was never set, and every signup arrived with size null.
       var SIZE_WORDS = { S:'Small', M:'Medium', L:'Large' };
+      // Only a SIZE tells us something we can act on later. Someone filtering
+      // by price or searching "sequin" hasn't given us a size, so the form asks
+      // for one as usual and nothing false is sent to the server.
       var label = document.querySelector('.waitlist-size-label');
       if(label){
-        label.textContent = SIZE_WORDS[size] ? 'in ' + SIZE_WORDS[size] : 'in your size';
+        label.textContent = SIZE_WORDS[activeSize] ? 'in ' + SIZE_WORDS[activeSize] : 'in your size';
       }
-      window.anokhiWaitlistSize = SIZE_WORDS[size] ? size : null;
+      window.anokhiWaitlistSize = SIZE_WORDS[activeSize] ? activeSize : null;
 
       document.querySelectorAll('[data-size]').forEach(function(btn){
-        btn.setAttribute('aria-pressed', String(btn.getAttribute('data-size') === size));
+        btn.setAttribute('aria-pressed', String(btn.getAttribute('data-size') === activeSize));
       });
+      document.querySelectorAll('[data-price]').forEach(function(btn){
+        btn.setAttribute('aria-pressed', String(btn.getAttribute('data-price') === activePrice));
+      });
+      var clearBtn = document.getElementById('shopSearchClear');
+      if(clearBtn) clearBtn.hidden = activeQuery === '';
 
       if(scrollToResults){
         // Land on the first piece that survived the filter. Cards carry
@@ -2393,9 +2514,58 @@
       }
     }
 
+    function clearAllFilters(scrollToResults){
+      activeSize = 'all';
+      activePrice = 'all';
+      activeQuery = '';
+      var input = document.getElementById('shopSearch');
+      if(input) input.value = '';
+      applyFilters(scrollToResults);
+    }
+
     document.querySelectorAll('[data-size]').forEach(function(btn){
-      btn.addEventListener('click', function(){ applyFilter(btn.getAttribute('data-size'), true); });
+      btn.addEventListener('click', function(){
+        activeSize = btn.getAttribute('data-size');
+        applyFilters(true);
+      });
     });
+
+    document.querySelectorAll('[data-price]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        activePrice = btn.getAttribute('data-price');
+        applyFilters(true);
+      });
+    });
+
+    document.querySelectorAll('[data-clear-filters]').forEach(function(btn){
+      btn.addEventListener('click', function(){ clearAllFilters(true); });
+    });
+
+    var searchInput = document.getElementById('shopSearch');
+    if(searchInput){
+      searchInput.addEventListener('input', function(){
+        activeQuery = searchInput.value.trim().toLowerCase();
+        // Deliberately no scroll while typing: the page moving under the
+        // keyboard on every keystroke is worse than having to scroll once.
+        applyFilters(false);
+      });
+      // Enter is the "I've finished typing" signal, so that's when we move.
+      searchInput.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          searchInput.blur();
+          applyFilters(true);
+        }
+      });
+    }
+    var searchClear = document.getElementById('shopSearchClear');
+    if(searchClear){
+      searchClear.addEventListener('click', function(){
+        activeQuery = '';
+        if(searchInput){ searchInput.value = ''; searchInput.focus(); }
+        applyFilters(false);
+      });
+    }
 
     // Category jumps, positioned by scrollToElement so the heading clears the
     // stacked sticky bars at any screen width.
@@ -2405,7 +2575,9 @@
         if(!sec) return;
         // If the chosen category is hidden by the current size filter, drop the
         // filter rather than scrolling to nothing.
-        if(sec.style.display === 'none') applyFilter('all');
+        // Clear everything, not just the size — a category can now be hidden
+        // by a price band or a search as well.
+        if(sec.style.display === 'none') clearAllFilters(false);
 
         // Hold off the scroll observer briefly. Without this it recalculates
         // mid-jump, when the section above still qualifies, and repaints the
