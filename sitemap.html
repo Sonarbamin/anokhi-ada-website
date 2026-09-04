@@ -7,12 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Yeseva+One&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+  /* Matches index.html, shipping-returns.html and the generated product pages.
+     These pages were left on the old maroon palette when the site moved to
+     charcoal/espresso, so a customer tapping a footer link landed on a page in
+     the previous brand colours. */
   :root{
-    --ivory:#FBF3E7;
-    --maroon:#5C1A2B;
-    --maroon-deep:#3D1120;
-    --gold:#B8863B;
-    --line:rgba(36,16,20,0.14);
+    --ivory:#FBF3E7; --ivory-dim:#F0E4D2; --maroon:#332920; --maroon-deep:#1C1712;
+    --gold:#A3895E; --gold-light:#C1A87E; --ink:#2A2420; --line:rgba(36,16,20,0.14);
   }
   *{ box-sizing:border-box; }
   /* Visible keyboard focus (WCAG 2.4.7). Browsers draw a default ring, but it
@@ -34,11 +35,34 @@
   }
   a{ color:inherit; text-decoration:none; }
   .wrap{ max-width:700px; margin:0 auto; padding:80px 32px; }
+  /* ---- MOBILE LAYOUT ----
+     Notched iPhones in landscape put the display cutout over the left or right
+     edge; env() keeps text clear of it and costs nothing on any other device.
+     The 600px rule trades side padding for line length — 32px each side of a
+     360px phone leaves under 300px to read in. */
+  .wrap{ padding-left:calc(32px + env(safe-area-inset-left, 0px));
+         padding-right:calc(32px + env(safe-area-inset-right, 0px)); }
+  @media (max-width:600px){
+    .wrap{ padding-left:calc(20px + env(safe-area-inset-left, 0px));
+           padding-right:calc(20px + env(safe-area-inset-right, 0px)); }
+  }
+  /* A header, so someone arriving from a search result or a footer link can get
+     back to the shop without scrolling to the bottom of a policy page. */
+  header{ padding:22px 0; border-bottom:1px solid var(--line); }
+  header .wrap{ display:flex; align-items:center; justify-content:space-between;
+                gap:14px; padding-top:0; padding-bottom:0; }
+  .logo{ display:flex; align-items:center; gap:11px; text-decoration:none; }
+  .logo img{ height:44px; width:auto; mix-blend-mode:multiply; }
+  .logo-name{ font-family:'Cormorant Garamond',serif; font-size:20px;
+              color:var(--maroon); font-weight:600; }
+  .back-link{ font-size:13px; color:var(--maroon); letter-spacing:0.04em;
+              text-decoration:underline; white-space:nowrap;
+              padding:12px 2px; min-height:44px; display:flex; align-items:center; }
   h1{
     font-family:'Cormorant Garamond',serif; font-size:clamp(36px,5vw,54px);
     color:var(--maroon); margin-bottom:8px;
   }
-  p.sub{ color:#6b5a53; font-size:15px; margin-bottom:40px; }
+  p.sub{ color:#6b5a53; font-size:16px; margin-bottom:40px; }
   .section-list{ list-style:none; padding:0; margin:0; }
   .section-list li{ border-bottom:1px solid var(--line); }
   .section-list a{
@@ -49,11 +73,21 @@
   .section-list .arrow{ font-size:20px; color:var(--gold); }
   .back{
     display:inline-block; margin-top:44px; font-size:13px; letter-spacing:0.05em;
-    text-transform:uppercase; border-bottom:1px solid var(--maroon); padding-bottom:2px;
+    text-transform:uppercase; border-bottom:1px solid var(--maroon);
+    padding:12px 2px; min-height:44px;
   }
 </style>
 </head>
 <body>
+<header>
+  <div class="wrap">
+    <a href="index.html" class="logo">
+      <img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo">
+      <span class="logo-name">Anokhi Ada</span>
+    </a>
+    <a href="index.html" class="back-link">&#8592; Back to shop</a>
+  </div>
+</header>
   <main>
 <div class="wrap">
     <h1>Site Map</h1>
@@ -86,6 +120,8 @@
       <li><a href="products/mint-green-zardozi-kurta-set.html">Mint Green Zardozi Kurta Set <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/ivory-chanderi-embroidered-kurta-set.html">Ivory Chanderi Embroidered Kurta Set <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/pink-short-kurta-and-sharara-set.html">Pink Short Kurta &amp; Sharara Set <span class="arrow">&#8250;</span></a></li>
+      <li><a href="products/black-printed-short-kurta-and-sharara-set.html">Black Printed Short Kurta &amp; Sharara Set <span class="arrow">&#8250;</span></a></li>
+      <li><a href="products/rani-pink-short-kurta-and-wide-leg-pants.html">Rani Pink Short Kurta &amp; Wide-Leg Pants <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/mustard-floral-saree.html">Mustard Floral Saree <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/fuchsia-banarasi.html">Fuchsia Banarasi <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/rust-circle-motif-saree.html">Rust Circle-Motif Saree <span class="arrow">&#8250;</span></a></li>
@@ -118,6 +154,10 @@
       <li><a href="products/yellow-organza-one-shoulder-top-and-wide-leg-pants.html">Yellow Organza One-Shoulder Top &amp; Wide-Leg Pants <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/white-printed-one-shoulder-top-and-printed-pants.html">White Printed One-Shoulder Top &amp; Printed Pants <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/pink-tissue-sequin-top-and-pants.html">Pink Tissue Sequin Top &amp; Pants <span class="arrow">&#8250;</span></a></li>
+      <li><a href="products/pink-one-shoulder-top-and-printed-pants.html">Pink One-Shoulder Top &amp; Printed Pants <span class="arrow">&#8250;</span></a></li>
+      <li><a href="products/red-bandhani-top-and-white-straight-pants.html">Red Bandhani Top &amp; White Straight Pants <span class="arrow">&#8250;</span></a></li>
+      <li><a href="products/rust-embroidered-top-and-wide-leg-pants.html">Rust Embroidered Top &amp; Wide-Leg Pants <span class="arrow">&#8250;</span></a></li>
+      <li><a href="products/rani-pink-sequin-kurta-and-wide-leg-pants.html">Rani Pink Sequin Kurta &amp; Wide-Leg Pants <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/black-and-gold-antique-work-evening-gown.html">Black &amp; Gold Antique-Work Evening Gown <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/orange-raw-silk-bridal-lehenga.html">Orange Raw Silk Bridal Lehenga <span class="arrow">&#8250;</span></a></li>
       <li><a href="products/pink-tissue-mirror-work-bridal-lehenga.html">Pink Tissue Mirror Work Bridal Lehenga <span class="arrow">&#8250;</span></a></li>

@@ -204,6 +204,10 @@ const STYLES = `
   h1,h2{ font-family:'Cormorant Garamond',Georgia,serif; margin:0;
          font-weight:600; color:var(--maroon); }
   .wrap{ max-width:1080px; margin:0 auto; padding:0 24px; }
+  /* Notched iPhones in landscape put the display cutout over the left or right
+     edge; env() keeps content clear of it and costs nothing on other devices. */
+  .wrap{ padding-left:calc(24px + env(safe-area-inset-left, 0px));
+         padding-right:calc(24px + env(safe-area-inset-right, 0px)); }
   header{ padding:24px 0; border-bottom:1px solid var(--line); }
   header .wrap{ display:flex; align-items:center; justify-content:space-between; }
   .logo{ display:flex; align-items:center; gap:12px; text-decoration:none; }
@@ -253,6 +257,15 @@ const STYLES = `
   @media (max-width:820px){
     .product{ grid-template-columns:1fr; gap:28px; }
     main{ padding:12px 0 56px; }
+  }
+  @media (max-width:600px){
+    .wrap{ padding-left:calc(18px + env(safe-area-inset-left, 0px));
+           padding-right:calc(18px + env(safe-area-inset-right, 0px)); }
+    /* Buy and Ask sat side by side and could crowd on a narrow phone; stacked,
+       each is a full-width target. 44px is Apple's minimum. */
+    .buy{ display:block; text-align:center; }
+    .ask{ display:block; margin:14px 0 0; text-align:center;
+          min-height:44px; line-height:44px; }
   }
 `;
 
