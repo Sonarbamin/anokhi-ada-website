@@ -360,7 +360,13 @@ function renderPage(p, index) {
 <meta name="twitter:image" content="${SITE}/images/${escapeHtml(lead.file)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Yeseva+One&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Non-blocking: media="print" stops the browser holding first paint for
+     this, and onload flips it to "all" the moment it arrives. The families
+     carry display=swap, so text paints in a fallback face straight away.
+     The <noscript> copy keeps fonts working with JavaScript disabled. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Yeseva+One&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Yeseva+One&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Yeseva+One&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"></noscript>
 <style>${STYLES}</style>
 <script type="application/ld+json">
 ${JSON.stringify(ld, null, 2)}

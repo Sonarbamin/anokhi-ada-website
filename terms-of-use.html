@@ -5,7 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Terms of Use — Anokhi Ada</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Non-blocking: media="print" stops the browser holding first paint for
+     this, and onload flips it to "all" the moment it arrives. The families
+     carry display=swap, so text paints in a fallback face straight away.
+     The <noscript> copy keeps fonts working with JavaScript disabled. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@400;500;600&display=swap" media="print" onload="this.media='all'; this.onload=null;">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Jost:wght@400;500;600&display=swap"></noscript>
 <style>
   /* Matches index.html, shipping-returns.html and the generated product pages.
      These pages were left on the old maroon palette when the site moved to

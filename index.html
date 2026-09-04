@@ -1470,7 +1470,7 @@
     </div>
     <div class="hero-frame">
       <div class="hero-frame-inner">
-        <img class="hero-slide active" data-index="0" src="images/anokhi-ada-navratri-lehenga.jpg" alt="Navratri in Full Bloom — Anokhi Ada. Purple mirror-work blouse with a floral-print lehenga and purple dupatta. Vibrant hues, artful details, a festive silhouette made for every twirl." loading="eager" fetchpriority="high"><img class="hero-slide" data-index="1" src="images/style-note-what-to-wear.jpg" alt="Two women in festive lehengas — a navy and yellow lehenga with a sheer navy dupatta, and a mustard mirror-work blouse with a red skirt and teal dupatta." loading="lazy"><img class="hero-slide" data-index="2" src="images/style-note-royal-evening.jpg" alt="Two women seated in evening lehengas — a black floral lehenga with a beaded blouse, and a purple mirror-work blouse with a printed skirt." loading="lazy"><img class="hero-slide" data-index="3" src="images/style-note-modern-heirloom.jpg" alt="A black floral-print lehenga with a beaded crop top, embroidered waistband and sheer black dupatta." loading="lazy"><img class="hero-slide" data-index="4" src="images/style-note-navratri-moodboard.jpg" alt="Three festive looks side by side — navy and yellow, black with a fuchsia dupatta, and mustard with red." loading="lazy"><button type="button" class="hero-nav hero-prev" aria-label="Previous slide">&#8249;</button><button type="button" class="hero-nav hero-next" aria-label="Next slide">&#8250;</button><div class="hero-dots"><button type="button" class="hero-dot active" data-index="0" aria-label="Show slide 1 of 5" aria-current="true"></button><button type="button" class="hero-dot" data-index="1" aria-label="Show slide 2 of 5" aria-current="false"></button><button type="button" class="hero-dot" data-index="2" aria-label="Show slide 3 of 5" aria-current="false"></button><button type="button" class="hero-dot" data-index="3" aria-label="Show slide 4 of 5" aria-current="false"></button><button type="button" class="hero-dot" data-index="4" aria-label="Show slide 5 of 5" aria-current="false"></button></div>
+        <img class="hero-slide active" data-index="0" src="images/anokhi-ada-navratri-lehenga.jpg" alt="Navratri in Full Bloom — Anokhi Ada. Purple mirror-work blouse with a floral-print lehenga and purple dupatta. Vibrant hues, artful details, a festive silhouette made for every twirl." loading="eager" fetchpriority="high"><img class="hero-slide" data-index="1" data-src="images/style-note-what-to-wear.jpg" alt="Two women in festive lehengas — a navy and yellow lehenga with a sheer navy dupatta, and a mustard mirror-work blouse with a red skirt and teal dupatta." loading="lazy" decoding="async"><img class="hero-slide" data-index="2" data-src="images/style-note-royal-evening.jpg" alt="Two women seated in evening lehengas — a black floral lehenga with a beaded blouse, and a purple mirror-work blouse with a printed skirt." loading="lazy" decoding="async"><img class="hero-slide" data-index="3" data-src="images/style-note-modern-heirloom.jpg" alt="A black floral-print lehenga with a beaded crop top, embroidered waistband and sheer black dupatta." loading="lazy" decoding="async"><img class="hero-slide" data-index="4" data-src="images/style-note-navratri-moodboard.jpg" alt="Three festive looks side by side — navy and yellow, black with a fuchsia dupatta, and mustard with red." loading="lazy" decoding="async"><button type="button" class="hero-nav hero-prev" aria-label="Previous slide">&#8249;</button><button type="button" class="hero-nav hero-next" aria-label="Next slide">&#8250;</button><div class="hero-dots"><button type="button" class="hero-dot active" data-index="0" aria-label="Show slide 1 of 5" aria-current="true"></button><button type="button" class="hero-dot" data-index="1" aria-label="Show slide 2 of 5" aria-current="false"></button><button type="button" class="hero-dot" data-index="2" aria-label="Show slide 3 of 5" aria-current="false"></button><button type="button" class="hero-dot" data-index="3" aria-label="Show slide 4 of 5" aria-current="false"></button><button type="button" class="hero-dot" data-index="4" aria-label="Show slide 5 of 5" aria-current="false"></button></div>
         <svg class="corner tl" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 60 C4 30 30 4 60 4" fill="none" stroke="#D9AE6C" stroke-width="1.4"/><circle cx="4" cy="60" r="3" fill="#D9AE6C"/></svg>
         <svg class="corner br" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 60 C4 30 30 4 60 4" fill="none" stroke="#D9AE6C" stroke-width="1.4"/><circle cx="4" cy="60" r="3" fill="#D9AE6C"/></svg>
       </div>
@@ -4285,6 +4285,24 @@
     var frame = document.querySelector('.hero-frame-inner');
     if(!frame) return;
     var imgs = Array.prototype.slice.call(frame.querySelectorAll('.hero-slide'));
+
+    // Slides 1-4 ship with data-src rather than src. loading="lazy" did nothing
+    // for them: all five are stacked inside the hero, so the browser counts
+    // them as visible and fetched four full-size photographs alongside the LCP
+    // image on first paint. They're loaded once the page has settled instead —
+    // and immediately if someone taps a dot or an arrow before that happens.
+    function hydrate(img){
+      if(img && img.dataset && img.dataset.src){
+        img.src = img.dataset.src;
+        delete img.dataset.src;
+      }
+    }
+    function hydrateAll(){ imgs.forEach(hydrate); }
+    if('requestIdleCallback' in window){
+      window.addEventListener('load', function(){ requestIdleCallback(hydrateAll, { timeout: 3000 }); });
+    } else {
+      window.addEventListener('load', function(){ setTimeout(hydrateAll, 1200); });
+    }
     var dots = Array.prototype.slice.call(frame.querySelectorAll('.hero-dot'));
     if(imgs.length < 2) return;
     var i = 0, timer = null, stopped = false;
@@ -4295,6 +4313,10 @@
 
     function show(n){
       i = (n + imgs.length) % imgs.length;
+      // Load the one about to be shown, plus the one after it, so a fast tap
+      // never lands on an empty frame.
+      hydrate(imgs[i]);
+      hydrate(imgs[(i + 1) % imgs.length]);
       imgs.forEach(function(img, k){ img.classList.toggle('active', k === i); });
       dots.forEach(function(d, k){
         d.classList.toggle('active', k === i);
