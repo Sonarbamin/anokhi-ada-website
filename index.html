@@ -1312,7 +1312,7 @@
 <div id="a11yAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
 <div class="promo-bar" id="promoBar">
-  <span>New Here? Take 15% Off Site-Wide — Code WELCOME15</span>
+  <span>New Here? Take 15% Off — Code WELCOME15 (excludes bridal)</span>
   <a href="#all-collections" class="promo-link">Shop Now</a>
   <button class="promo-close" id="promoClose" aria-label="Dismiss">&times;</button>
 </div>
@@ -1824,7 +1824,7 @@
 
     </div>
 
-    <p class="review-foot">Read all seven on our
+    <p class="review-foot">Read them all on our
       <a href="https://www.google.com/maps/place/Anokhi+Ada/@33.8737859,-84.3381782,17z/data=!3m1!4b1!4m6!3m5!1s0x88f50feadc4da2b7:0xcb1a9d5c2ad9fefd!8m2!3d33.8737815!4d-84.3356033!16s%2Fg%2F11vx3b0vm6" target="_blank" rel="noopener">Google listing</a>,
       or <a href="https://g.page/r/Cf3-2SpcnRrLEBM/review" target="_blank" rel="noopener">leave your own</a>.</p>
   </div>
@@ -2043,7 +2043,7 @@
       </tbody>
     </table>
 
-    <p class="size-guide-note">The size number on each piece is its bust measurement &#8212; a Size 36 corresponds to M. Every piece ships as-is with no alterations, so please check your measurements before ordering. If you&#8217;re between sizes or unsure, <a href="#contact">ask us</a> before you buy.</p>
+    <p class="size-guide-note">Each piece is listed in a single size, shown on its card. Match it to your bust measurement above &#8212; a 36in bust is an M. Every piece ships as-is with no alterations, so please check your measurements before ordering. If you&#8217;re between sizes or unsure, <a href="#contact">ask us</a> before you buy.</p>
   </div>
 </div>
 
@@ -3202,14 +3202,23 @@
 
   // ---- Checkout modal ----
   var checkoutIdempotencyKey = null;
-  var appliedPromo = null; // { code, percentOff } or null
+  var appliedPromo = null; // { code, percentOff, excludesBridal } or null
 
   // Single source of truth for the math — used by the summary display,
   // the wallet payment sheet total, and the final payment submission, so
   // all three always agree with each other.
   function calculateTotals(addrOverride){
     var subtotal = cart.reduce(function(sum, item){ return sum + item.price * item.qty; }, 0);
-    var discount = appliedPromo ? subtotal * (appliedPromo.percentOff / 100) : 0;
+    // Mirror of process-payment.js: a code marked excludesBridal discounts the
+    // non-bridal part of the bag only. Written the same way on both sides on
+    // purpose — this pair is what showed one price and charged another the last
+    // time it drifted.
+    var discountBase = (appliedPromo && appliedPromo.excludesBridal)
+      ? cart.reduce(function(sum, item){
+          return BRIDAL_NAMES.indexOf(item.name) !== -1 ? sum : sum + item.price * item.qty;
+        }, 0)
+      : subtotal;
+    var discount = appliedPromo ? discountBase * (appliedPromo.percentOff / 100) : 0;
     var discountedSubtotal = subtotal - discount;
     // Shipping is charged per order, so an empty cart owes nothing. Georgia
     // treats delivery charges on a taxable sale as taxable, so tax is applied
@@ -3376,9 +3385,28 @@
       var result = await response.json();
 
       if(result.valid){
-        appliedPromo = { code: code.toUpperCase(), percentOff: result.percentOff };
-        statusEl.textContent = 'Code applied — ' + result.percentOff + '% off.';
-        statusEl.style.color = '#2E7D32';
+        // Default to excluding bridal when the endpoint doesn't say. That errs
+        // towards showing a SMALLER discount than the server applies, which is
+        // the safe direction to be wrong in — the customer is never charged
+        // more than the summary promised.
+        var excludesBridal = result.excludesBridal !== false;
+        var bridalInBag = cartHasBridal();
+        var nonBridalTotal = cart.reduce(function(sum, item){
+          return BRIDAL_NAMES.indexOf(item.name) !== -1 ? sum : sum + item.price * item.qty;
+        }, 0);
+
+        if(excludesBridal && nonBridalTotal === 0){
+          // Bridal alone. Say so rather than applying a code worth nothing and
+          // leaving her to work out why the total didn't move.
+          appliedPromo = null;
+          statusEl.textContent = code.toUpperCase() + " doesn't apply to bridal pieces.";
+          statusEl.style.color = '#8C3A22';
+        } else {
+          appliedPromo = { code: code.toUpperCase(), percentOff: result.percentOff, excludesBridal: excludesBridal };
+          statusEl.textContent = 'Code applied — ' + result.percentOff + '% off'
+            + ((excludesBridal && bridalInBag) ? ', excluding the bridal piece in your bag.' : '.');
+          statusEl.style.color = '#2E7D32';
+        }
       } else {
         appliedPromo = null;
         statusEl.textContent = result.message || "That code isn't valid.";
