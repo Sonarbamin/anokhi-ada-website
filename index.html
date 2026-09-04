@@ -514,7 +514,19 @@
   }
   .modal-box h3{ font-size:26px; color:var(--maroon); margin-bottom:6px; }
   .modal-box p.sub{ font-size:13px; color:#6e615b; margin-bottom:20px; }
-  .modal-box input{ width:100%; background:var(--ivory-dim); border:1px solid var(--line-strong); color:var(--ink); padding:12px 14px; font-family:'Jost',Arial,sans-serif; font-size:16px; border-radius:2px; margin-bottom:12px; }
+  .modal-box input, .modal-box select{ width:100%; background:var(--ivory-dim); border:1px solid var(--line-strong); color:var(--ink); padding:12px 14px; font-family:'Jost',Arial,sans-serif; font-size:16px; border-radius:2px; margin-bottom:12px; }
+  /* The State dropdown sits in the same row as City and ZIP, so it has to match
+     them exactly. Browsers style a select with their own chrome by default;
+     appearance:none strips that back, and the arrow is drawn in. 16px font is
+     deliberate here as elsewhere — anything smaller makes iOS Safari zoom the
+     whole page when the field is tapped. */
+  .modal-box select{
+    -webkit-appearance:none; appearance:none; cursor:pointer;
+    padding-right:30px;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%232A2420' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 12px center;
+  }
+  .modal-box select:invalid{ color:#8a7a72; }
   /* Promo code + Apply sit on one row. The shared .modal-box input rule adds a
      12px bottom margin, which in a flex row shortens the input and leaves the
      button hanging below it — so it's cleared here and the two are stretched
@@ -2127,7 +2139,64 @@
         <label for="checkoutCity" class="sr-only">City</label>
         <input type="text" placeholder="City" required id="checkoutCity" style="flex:2; min-width:0;" maxlength="60">
         <label for="checkoutState" class="sr-only">State</label>
-        <input type="text" placeholder="State" required id="checkoutState" style="flex:1; min-width:0;" maxlength="30">
+        <!-- A list, not a text box. The State value decides the shipping fee and
+             whether Georgia sales tax is due, and "Ga." or a slipped keystroke
+             used to silently mean out-of-state: $14.99 instead of $9.99, and no
+             tax collected on an Atlanta delivery. -->
+        <select required id="checkoutState" style="flex:1; min-width:0;">
+          <option value="" disabled selected>State</option>
+          <option value="AL">Alabama</option>
+          <option value="AK">Alaska</option>
+          <option value="AZ">Arizona</option>
+          <option value="AR">Arkansas</option>
+          <option value="CA">California</option>
+          <option value="CO">Colorado</option>
+          <option value="CT">Connecticut</option>
+          <option value="DE">Delaware</option>
+          <option value="DC">District of Columbia</option>
+          <option value="FL">Florida</option>
+          <option value="GA">Georgia</option>
+          <option value="HI">Hawaii</option>
+          <option value="ID">Idaho</option>
+          <option value="IL">Illinois</option>
+          <option value="IN">Indiana</option>
+          <option value="IA">Iowa</option>
+          <option value="KS">Kansas</option>
+          <option value="KY">Kentucky</option>
+          <option value="LA">Louisiana</option>
+          <option value="ME">Maine</option>
+          <option value="MD">Maryland</option>
+          <option value="MA">Massachusetts</option>
+          <option value="MI">Michigan</option>
+          <option value="MN">Minnesota</option>
+          <option value="MS">Mississippi</option>
+          <option value="MO">Missouri</option>
+          <option value="MT">Montana</option>
+          <option value="NE">Nebraska</option>
+          <option value="NV">Nevada</option>
+          <option value="NH">New Hampshire</option>
+          <option value="NJ">New Jersey</option>
+          <option value="NM">New Mexico</option>
+          <option value="NY">New York</option>
+          <option value="NC">North Carolina</option>
+          <option value="ND">North Dakota</option>
+          <option value="OH">Ohio</option>
+          <option value="OK">Oklahoma</option>
+          <option value="OR">Oregon</option>
+          <option value="PA">Pennsylvania</option>
+          <option value="RI">Rhode Island</option>
+          <option value="SC">South Carolina</option>
+          <option value="SD">South Dakota</option>
+          <option value="TN">Tennessee</option>
+          <option value="TX">Texas</option>
+          <option value="UT">Utah</option>
+          <option value="VT">Vermont</option>
+          <option value="VA">Virginia</option>
+          <option value="WA">Washington</option>
+          <option value="WV">West Virginia</option>
+          <option value="WI">Wisconsin</option>
+          <option value="WY">Wyoming</option>
+        </select>
         <label for="checkoutZip" class="sr-only">ZIP code</label>
         <input type="text" placeholder="ZIP" required id="checkoutZip" style="flex:1; min-width:0;" maxlength="12">
       </div>
@@ -2700,9 +2769,23 @@
   function cartHasBridal(){
     return cart.some(function(item){ return BRIDAL_NAMES.indexOf(item.name) !== -1; });
   }
-  function getShippingFee(state, rush, hasBridal){
+  // Mirrors isGeorgiaDelivery in _tax-rates.js, but by ZIP RANGE rather than by
+  // the 751-entry lookup table, which the browser doesn't carry. Georgia's ZIPs
+  // are 30000-31999 and 39800-39999. This only affects the figure DISPLAYED
+  // before the server answers — the server does the real lookup and charges its
+  // own number either way.
+  function zipLooksGeorgian(zip){
+    var digits = String(zip == null ? '' : zip).replace(/\D/g, '').slice(0, 5);
+    if(digits.length !== 5) return false;
+    var n = Number(digits);
+    return (n >= 30000 && n <= 31999) || (n >= 39800 && n <= 39999);
+  }
+  function isGeorgiaDelivery(state, zip){
+    return isGeorgia(state) || zipLooksGeorgian(zip);
+  }
+  function getShippingFee(state, rush, hasBridal, zip){
     var base = hasBridal ? SHIPPING_BRIDAL
-                         : (isGeorgia(state) ? SHIPPING_GEORGIA : SHIPPING_OUT_OF_STATE);
+                         : (isGeorgiaDelivery(state, zip) ? SHIPPING_GEORGIA : SHIPPING_OUT_OF_STATE);
     return rush ? base + RUSH_SURCHARGE : base;
   }
   // ---- Studio pickup ----
@@ -3237,7 +3320,7 @@
     // would only ever rise once they start typing.
     var hasBridal = cartHasBridal();
     var shipping = (!cart.length || pickup) ? 0
-      : (addrForShipping ? getShippingFee(addrForShipping.state, rush, hasBridal)
+      : (addrForShipping ? getShippingFee(addrForShipping.state, rush, hasBridal, addrForShipping.zip)
                          : (hasBridal ? SHIPPING_BRIDAL : SHIPPING_GEORGIA) + (rush ? RUSH_SURCHARGE : 0));
     // taxKnown is false until there's enough of an address to source the sale.
     // Callers that must show a single number (the wallet sheet) fall back to
