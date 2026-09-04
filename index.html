@@ -985,6 +985,77 @@
     .shop-section .look-tag{ font-size:13.5px; }
     .shop-section .sale-now{ font-size:16px; }
   }
+
+  /* ---- TOUCH TARGETS AND MOBILE READABILITY ----
+     Appended last so these win over the equal-specificity rules above.
+     Apple asks for 44x44pt and Android for 48dp; several controls here sat at
+     38-40px, and a few — the menu burger and the promo bar's close button —
+     were only as big as the character drawn inside them.
+
+     Card heights change uniformly, so the row alignment the cards were tuned
+     for is preserved: every card grows by the same amount. */
+  @media (max-width:900px){
+
+    /* Menu burger: was a bare 22px glyph with no padding. */
+    .burger{
+      min-width:44px; min-height:44px; display:flex;
+      align-items:center; justify-content:center; padding:0;
+    }
+
+    /* Promo bar close: a 20px x in the corner of a full-width banner, easy to
+       miss and easy to hit the banner's link by mistake. */
+    .promo-close{
+      width:44px; height:44px; display:flex;
+      align-items:center; justify-content:center; right:6px;
+    }
+
+    /* Filter chips — the most-tapped controls on the page now that price and
+       search filters sit beside the size ones. */
+    .shop-chip{ min-height:44px; padding:11px 15px; font-size:12.5px; }
+
+    /* Add to Bag: the conversion button, at roughly 40px. */
+    .shop-section .add-cart-btn{ min-height:46px; padding:13px 20px; font-size:13.5px; }
+
+    /* View Details / Ask a Question sit directly under it, so they get a gap
+       as well as height — adjacent 44px targets with no space between them
+       are how a thumb lands on the wrong one. */
+    .shop-section .look-details,
+    .shop-section .look-enquire{ min-height:44px; padding:13px 0 7px; margin-top:6px; }
+
+    .lightbox-zoom-btn{ width:44px; height:44px; }
+    .nav-right .btn-appt{ min-height:44px; display:inline-flex; align-items:center; }
+
+    /* Size Guide is a small link inside the 19px slot that keeps every card's
+       price on the same line. The negative margins cancel the padding, so the
+       tappable box grows to ~41px while the slot's height — and the alignment
+       that depends on it — is untouched. */
+    .shop-section .look-size .size-guide-link{
+      display:inline-block; padding:12px 10px 10px; margin:-12px -10px -10px;
+      position:relative; font-size:12.5px;
+    }
+
+    /* The WhatsApp opt-in: a default checkbox is about 13px square. */
+    .waitlist-check{ font-size:14px; gap:11px; padding:4px 0; }
+    .waitlist-check input[type="checkbox"]{ width:20px; height:20px; flex:0 0 auto; }
+
+    /* ---- Readability ----
+       Nothing below 12.5px, and the copy people actually read on a phone
+       raised nearer 14. */
+    .shop-section .look-tag{ font-size:14px; line-height:1.5; }
+    .shop-section .look-size{ font-size:12.5px; }
+    .shop-section .sale-now{ font-size:17px; }
+    .waitlist-fine{ font-size:13px; }
+    .waitlist-intro{ font-size:15px; }
+    .shop-bar-count{ font-size:12px; }
+    .review-card cite{ font-size:13px; }
+    .modal-box p.sub{ font-size:14px; }
+    .foot-inner{ font-size:14px; }
+
+    /* Breathing room between cards so a mis-scroll doesn't land on the next
+       card's button. */
+    .lookbook-grid{ row-gap:34px; }
+  }
+
 </style>
 <script type="application/ld+json">
 {

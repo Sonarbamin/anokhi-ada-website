@@ -263,9 +263,17 @@ const STYLES = `
            padding-right:calc(18px + env(safe-area-inset-right, 0px)); }
     /* Buy and Ask sat side by side and could crowd on a narrow phone; stacked,
        each is a full-width target. 44px is Apple's minimum. */
-    .buy{ display:block; text-align:center; }
+    .buy{ display:block; text-align:center; min-height:48px; }
     .ask{ display:block; margin:14px 0 0; text-align:center;
           min-height:44px; line-height:44px; }
+    /* Header and breadcrumb links were bare 12-13px text with no padding. */
+    .back-link{ display:inline-flex; align-items:center;
+                min-height:44px; padding:0 2px; }
+    nav.crumbs{ font-size:13px; padding:14px 0 0; }
+    nav.crumbs a{ display:inline-block; padding:6px 0; }
+    /* Body copy on a phone: nothing under 13px. */
+    .facts{ font-size:15px; }
+    .size{ font-size:15px; }
   }
 `;
 
