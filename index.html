@@ -215,6 +215,11 @@
     display:none; padding:40px 0; text-align:center; color:#6b5a53; font-size:15px;
   }
   .shop-empty.visible{ display:block; }
+  /* The "nothing available" line belongs above the form only when the filter
+     really did come back empty. The form itself shows for ANY active size
+     filter — see applyFilter. */
+  .shop-empty-msg{ display:none; margin:0 0 6px; }
+  .shop-empty.no-results .shop-empty-msg{ display:block; }
 
   /* ---- SIZE WAITLIST ----
      Shown in the same block as the "no pieces in that size" message. A visitor
@@ -1631,44 +1636,7 @@
   </div>
 </section>
 
-<div class="wrap"><div class="shop-empty" id="shopEmpty">
-  <p style="margin:0;">No pieces in that size right now. <button type="button" class="shop-chip" data-size="all">Show all sizes</button></p>
 
-  <div class="waitlist">
-    <p class="waitlist-intro">Every piece is one of a kind, and new stock arrives often.
-      Leave your details and we&rsquo;ll write to you when something comes in
-      <span class="waitlist-size-label">in your size</span>.</p>
-
-    <form class="waitlist-form" data-source="size-filter">
-      <label for="wlEmail-size" class="sr-only">Email address</label>
-      <input type="email" id="wlEmail-size" class="wl-email" placeholder="Email address" required maxlength="100" autocomplete="email">
-
-      <label class="waitlist-check" for="wlWhatsapp-size">
-        <input type="checkbox" id="wlWhatsapp-size" class="wl-optin">
-        <span>Message me on WhatsApp too &mdash; often the quickest way to see a new piece</span>
-      </label>
-
-      <div class="waitlist-phone">
-        <label for="wlPhone-size" class="sr-only">Mobile number for WhatsApp</label>
-        <input type="tel" id="wlPhone-size" class="wl-phone" placeholder="Mobile number, with country code" maxlength="20" autocomplete="tel">
-      </div>
-
-      <!-- Honeypot. Off-screen rather than display:none, matching the enquiry
-           form — some bots skip hidden fields but fill anything in the DOM. -->
-      <div class="hp-field" aria-hidden="true">
-        <label for="wlWebsite-size">Leave this field empty</label>
-        <input type="text" id="wlWebsite-size" class="wl-website" name="website" tabindex="-1" autocomplete="off">
-      </div>
-
-      <div class="waitlist-status" aria-live="polite" aria-atomic="true"></div>
-      <button type="submit">Notify Me</button>
-      <p class="waitlist-fine">We only write about new arrivals, and you can stop at any time.
-        Your details are never shared or sold.</p>
-    </form>
-
-    <p class="waitlist-done">Thank you &mdash; we&rsquo;ll be in touch when something arrives.</p>
-  </div>
-</div></div>
 
 <section class="section shop-section" id="gowns" style="scroll-margin-top:300px;">
   <div class="wrap">
@@ -1707,6 +1675,47 @@
     </div>
   </div>
 </section>
+
+<div class="wrap"><div class="shop-empty" id="shopEmpty">
+  <div class="shop-empty-msg">
+    <p style="margin:0;">Nothing available in that size right now. <button type="button" class="shop-chip" data-size="all">Show all sizes</button></p>
+  </div>
+
+  <div class="waitlist">
+    <p class="waitlist-intro">Every piece is one of a kind, and new stock arrives often.
+      Leave your details and we&rsquo;ll write to you when something comes in
+      <span class="waitlist-size-label">in your size</span>.</p>
+
+    <form class="waitlist-form" data-source="size-filter">
+      <label for="wlEmail-size" class="sr-only">Email address</label>
+      <input type="email" id="wlEmail-size" class="wl-email" placeholder="Email address" required maxlength="100" autocomplete="email">
+
+      <label class="waitlist-check" for="wlWhatsapp-size">
+        <input type="checkbox" id="wlWhatsapp-size" class="wl-optin">
+        <span>Message me on WhatsApp too &mdash; often the quickest way to see a new piece</span>
+      </label>
+
+      <div class="waitlist-phone">
+        <label for="wlPhone-size" class="sr-only">Mobile number for WhatsApp</label>
+        <input type="tel" id="wlPhone-size" class="wl-phone" placeholder="Mobile number, with country code" maxlength="20" autocomplete="tel">
+      </div>
+
+      <!-- Honeypot. Off-screen rather than display:none, matching the enquiry
+           form — some bots skip hidden fields but fill anything in the DOM. -->
+      <div class="hp-field" aria-hidden="true">
+        <label for="wlWebsite-size">Leave this field empty</label>
+        <input type="text" id="wlWebsite-size" class="wl-website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="waitlist-status" aria-live="polite" aria-atomic="true"></div>
+      <button type="submit">Notify Me</button>
+      <p class="waitlist-fine">We only write about new arrivals, and you can stop at any time.
+        Your details are never shared or sold.</p>
+    </form>
+
+    <p class="waitlist-done">Thank you &mdash; we&rsquo;ll be in touch when something arrives.</p>
+  </div>
+</div></div>
 
 <section class="section" id="services" style="scroll-margin-top:300px;">
   <div class="wrap">
@@ -2231,18 +2240,30 @@
     }
     window.anokhiScrollTo = scrollToElement;
 
+    // Sold flags arrive from the inventory endpoint long after this runs, so
+    // the counts above are recomputed once they land. See the inventory fetch.
+    window.anokhiRefreshFilter = function(){ applyFilter(activeSize, false); };
+
     // scrollToResults is passed only from a chip tap. Filtering on its own
     // leaves the page where it was — which, once the sections around you are
     // hidden, means landing in the middle of some unrelated category rather
     // than on the first piece in your size.
     function applyFilter(size, scrollToResults){
       activeSize = size;
-      var shown = 0;
+      var shown = 0;      // cards left on screen, sold ones included
+      var available = 0;  // cards that can actually be bought
 
       cards.forEach(function(card){
         var match = (size === 'all') || (sizeOf(card) === size);
         card.style.display = match ? '' : 'none';
-        if(match) shown++;
+        if(match){
+          shown++;
+          // Sold pieces stay visible on purpose, so they must not count
+          // towards "is there anything here for her". Counting them is why
+          // the last Small selling still read as one Small in stock, and why
+          // the empty state could never fire.
+          if(card.getAttribute('data-sold-out') !== 'true') available++;
+        }
       });
 
       // A category with nothing left is hidden outright — heading included —
@@ -2260,19 +2281,29 @@
         sec.style.display = (size === 'all' || visible > 0) ? '' : 'none';
       });
 
-      if(emptyMsg) emptyMsg.classList.toggle('visible', shown === 0);
+      // The form shows for ANY active size filter, not only a zero-result
+      // one. A visitor who filters to Small, sees what there is and wants
+      // none of it has told us exactly as much as one who sees nothing at
+      // all — and with 36 Mediums on the site, there are far more of her.
+      // The "nothing available" line above it is what's conditional now.
+      if(emptyMsg){
+        emptyMsg.classList.toggle('visible', size !== 'all');
+        emptyMsg.classList.toggle('no-results', size !== 'all' && available === 0);
+      }
 
       // Tell the waitlist form which size was asked for. This is the whole
       // value of capturing here rather than in the footer: the visitor has
       // already told us their size, so we never have to ask.
-      if(shown === 0){
-        var SIZE_WORDS = { S:'Small', M:'Medium', L:'Large' };
-        var label = document.querySelector('.waitlist-size-label');
-        if(label){
-          label.textContent = SIZE_WORDS[size] ? 'in ' + SIZE_WORDS[size] : 'in your size';
-        }
-        window.anokhiWaitlistSize = size;
+      //
+      // Set on every filter change and cleared on 'all'. It used to be
+      // assigned only inside the zero-result branch, which no chip could
+      // reach — so it was never set, and every signup arrived with size null.
+      var SIZE_WORDS = { S:'Small', M:'Medium', L:'Large' };
+      var label = document.querySelector('.waitlist-size-label');
+      if(label){
+        label.textContent = SIZE_WORDS[size] ? 'in ' + SIZE_WORDS[size] : 'in your size';
       }
+      window.anokhiWaitlistSize = SIZE_WORDS[size] ? size : null;
 
       document.querySelectorAll('[data-size]').forEach(function(btn){
         btn.setAttribute('aria-pressed', String(btn.getAttribute('data-size') === size));
@@ -3483,6 +3514,11 @@
         }
       });
 
+      // Recount the size filter now that sold pieces are marked. Without this
+      // a size whose only remaining piece has sold still reads as in stock,
+      // and the empty state never appears.
+      if(window.anokhiRefreshFilter) window.anokhiRefreshFilter();
+
       // Availability used to be patched here, because this page carried a full
       // Product node for all 47 pieces and would otherwise keep telling Google
       // that a sold lehenga was in stock. Each piece now has its own page
@@ -3613,6 +3649,9 @@
         btn.disabled = true;
         var original = btn.textContent;
         btn.textContent = 'Saving…';
+        // Set only from a server response we can read; a network failure must
+        // not put a raw fetch error in front of a customer.
+        var friendly = null;
 
         try{
           await ensureRecaptcha();
@@ -3623,7 +3662,18 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
-          if(!response.ok){ throw new Error('Could not save. Please try again.'); }
+          if(!response.ok){
+            // Show the server's own message when it sent one. It carries the
+            // only explanation a rejected phone number ever gets — that it
+            // needs a country code — and discarding it left the visitor who
+            // typed a bare 10-digit number with "something went wrong" and no
+            // idea what to change.
+            try{
+              var body = await response.json();
+              if(body && body.message) friendly = body.message;
+            } catch(parseErr){ /* no JSON body; fall back to the generic text */ }
+            throw new Error('subscribe failed: ' + response.status);
+          }
 
           if(window.gtag){
             gtag('event', 'sign_up', {
@@ -3636,7 +3686,7 @@
           doneEl.classList.add('visible');
         } catch(err){
           console.error('Waitlist signup error:', err);
-          statusEl.textContent = 'Something went wrong — please try again, or send us an enquiry instead.';
+          statusEl.textContent = friendly || 'Something went wrong — please try again, or send us an enquiry instead.';
           statusEl.classList.add('visible');
           btn.disabled = false;
           btn.textContent = original;
