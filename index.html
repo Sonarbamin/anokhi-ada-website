@@ -1503,11 +1503,11 @@
     <div class="shop-bar-divider" aria-hidden="true"></div>
     <div class="shop-bar-group" role="group" aria-label="Filter by price">
       <span class="shop-bar-label">Price</span>
-      <button type="button" class="shop-chip" data-price="all" aria-pressed="true">All</button>
-      <button type="button" class="shop-chip" data-price="0-299" aria-pressed="false">Under $300<span class="chip-count" data-price-count="0-299"></span></button>
-      <button type="button" class="shop-chip" data-price="300-599" aria-pressed="false">$300&ndash;600<span class="chip-count" data-price-count="300-599"></span></button>
-      <button type="button" class="shop-chip" data-price="600-999" aria-pressed="false">$600&ndash;1,000<span class="chip-count" data-price-count="600-999"></span></button>
-      <button type="button" class="shop-chip" data-price="1000-" aria-pressed="false">$1,000+<span class="chip-count" data-price-count="1000-"></span></button>
+      <button type="button" class="shop-chip" data-price-band="all" aria-pressed="true">All</button>
+      <button type="button" class="shop-chip" data-price-band="0-299" aria-pressed="false">Under $300<span class="chip-count" data-price-count="0-299"></span></button>
+      <button type="button" class="shop-chip" data-price-band="300-599" aria-pressed="false">$300&ndash;600<span class="chip-count" data-price-count="300-599"></span></button>
+      <button type="button" class="shop-chip" data-price-band="600-999" aria-pressed="false">$600&ndash;1,000<span class="chip-count" data-price-count="600-999"></span></button>
+      <button type="button" class="shop-chip" data-price-band="1000-" aria-pressed="false">$1,000+<span class="chip-count" data-price-count="1000-"></span></button>
     </div>
     <div class="shop-bar-divider" aria-hidden="true"></div>
     <div class="shop-bar-group shop-bar-search">
@@ -2566,8 +2566,8 @@
       document.querySelectorAll('[data-size]').forEach(function(btn){
         btn.setAttribute('aria-pressed', String(btn.getAttribute('data-size') === activeSize));
       });
-      document.querySelectorAll('[data-price]').forEach(function(btn){
-        btn.setAttribute('aria-pressed', String(btn.getAttribute('data-price') === activePrice));
+      document.querySelectorAll('[data-price-band]').forEach(function(btn){
+        btn.setAttribute('aria-pressed', String(btn.getAttribute('data-price-band') === activePrice));
       });
       var clearBtn = document.getElementById('shopSearchClear');
       if(clearBtn) clearBtn.hidden = activeQuery === '';
@@ -2601,9 +2601,14 @@
       });
     });
 
-    document.querySelectorAll('[data-price]').forEach(function(btn){
+    // data-price-band, NOT data-price: every Add to Bag button already carries
+    // data-price (its dollar amount), so [data-price] matched all 53 of them
+    // and bound this filter handler to every one. Adding a piece to the bag set
+    // activePrice to that piece's price, which matches no band, so every card
+    // was filtered out and the whole catalogue vanished.
+    document.querySelectorAll('[data-price-band]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        activePrice = btn.getAttribute('data-price');
+        activePrice = btn.getAttribute('data-price-band');
         applyFilters(true);
       });
     });
