@@ -2645,31 +2645,38 @@
 
     // Category jumps, positioned by scrollToElement so the heading clears the
     // stacked sticky bars at any screen width.
+    // Everything a category jump has to do, in one place. The SHOP dropdown
+    // calls this too (via window.anokhiJumpTo): it used to scroll correctly but
+    // skip the two steps below it, so the observer recalculated mid-jump while
+    // the section ABOVE still qualified and painted the highlight onto that
+    // chip — choosing Sarees lit up Suits.
+    function jumpToSection(id){
+      var sec = document.getElementById(id);
+      if(!sec) return;
+
+      // If the chosen category is hidden by the current filters, drop them
+      // rather than scrolling to nothing.
+      if(sec.style.display === 'none') clearAllFilters(false);
+
+      // Hold the scroll observer off for the duration of the jump.
+      suppressObserverUntil = Date.now() + 700;
+
+      // Highlight immediately rather than waiting for the observer, which only
+      // fires when a section CROSSES its detection band — so tapping a category
+      // you are already beside changed nothing and looked ignored.
+      document.querySelectorAll('[data-jump]').forEach(function(other){
+        other.classList.toggle('active', other.getAttribute('data-jump') === id);
+      });
+
+      scrollToElement(sec);
+    }
+    window.anokhiJumpTo = jumpToSection;
+
     document.querySelectorAll('[data-jump]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var sec = document.getElementById(btn.getAttribute('data-jump'));
         if(!sec) return;
-        // If the chosen category is hidden by the current size filter, drop the
-        // filter rather than scrolling to nothing.
-        // Clear everything, not just the size — a category can now be hidden
-        // by a price band or a search as well.
-        if(sec.style.display === 'none') clearAllFilters(false);
-
-        // Hold off the scroll observer briefly. Without this it recalculates
-        // mid-jump, when the section above still qualifies, and repaints the
-        // highlight onto the previous chip — the tap appears to select the
-        // wrong category.
-        suppressObserverUntil = Date.now() + 700;
-
-        // Highlight straight away rather than waiting for the scroll observer.
-        // That observer only fires when a section CROSSES into its detection
-        // band, so tapping a category you are already beside changed nothing
-        // and the tap looked ignored. It still takes over as you scroll on.
-        document.querySelectorAll('[data-jump]').forEach(function(other){
-          other.classList.toggle('active', other === btn);
-        });
-
-        scrollToElement(sec);
+        jumpToSection(btn.getAttribute('data-jump'));
       });
     });
 
@@ -2765,11 +2772,13 @@
         close();
         if(sec){
           e.preventDefault();
-          // Same measured positioning as the shop chips, so a jump from the
-          // menu lands on the heading rather than short of it. Falls back if
-          // the shop bar block hasn't defined the helper.
-          if(typeof window.anokhiScrollTo === 'function'){
-            window.anokhiScrollTo(sec);
+          // The SAME routine the chips use — position, clear any filter hiding
+          // the section, suppress the observer for the jump, and set the
+          // highlight. This previously called anokhiScrollTo directly, which
+          // did only the first of those, so the highlight landed on whichever
+          // section the observer saw mid-scroll.
+          if(typeof window.anokhiJumpTo === 'function'){
+            window.anokhiJumpTo(id);
           } else {
             sec.scrollIntoView({ block:'start' });
           }
