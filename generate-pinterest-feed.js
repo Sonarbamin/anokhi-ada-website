@@ -250,12 +250,33 @@ function extractProducts(html) {
     // First image in the card is the lead photo — the full view where one exists.
     const image = pick(/src="images\/([^"]+)"/, 'image');
 
+    // Every OTHER photo on the card, in the order they appear, for
+    // g:additional_image_link. These files are already in the repo and already
+    // shown on the site; the feed simply never mentioned them, so Merchant
+    // Center scored the shop at one image per offer while most pieces have two
+    // or three. Gallery cards repeat a photo as a thumbnail, hence the dedupe.
+    //
+    // data-src is matched as well as src: the hero slides are held back that
+    // way, and a product gallery could reasonably do the same later.
+    const seenImages = new Set([image]);
+    const additionalImages = [];
+    const imageRe = /(?:src|data-src)="images\/([^"]+)"/g;
+    let imageMatch;
+    while ((imageMatch = imageRe.exec(card)) !== null) {
+      const file = imageMatch[1];
+      if (seenImages.has(file)) continue;
+      seenImages.add(file);
+      // Google accepts up to 10 additional images per offer.
+      if (additionalImages.length < 10) additionalImages.push(file);
+    }
+
     // slug drives the link and the product page; id is what Google and
     // Pinterest key on, and may be shortened by ID_OVERRIDES.
     const slug = slugify(name);
     return {
       id: ID_OVERRIDES[slug] || slug,
-      slug, name, description, price, size, image, section: sectionOf[i],
+      slug, name, description, price, size, image, additionalImages,
+      section: sectionOf[i],
     };
   });
 }
@@ -293,6 +314,9 @@ function renderFeed(products) {
         // scroll. g:id is unchanged, so existing pins keep their history.
         '      <link>' + SITE + '/products/' + p.slug + '.html</link>',
         '      <g:image_link>' + SITE + '/images/' + p.image + '</g:image_link>',
+        ...p.additionalImages.map(function (file) {
+          return '      <g:additional_image_link>' + SITE + '/images/' + file + '</g:additional_image_link>';
+        }),
         '      <g:price>' + p.price + '.00 USD</g:price>',
         '      <g:availability>in stock</g:availability>',
         shippingFor(p),
@@ -363,6 +387,11 @@ function validate(products) {
       );
     }
     if (!/^\d+$/.test(p.price)) problems.push('"' + p.name + '" has a bad price: ' + p.price);
+    p.additionalImages.forEach(function (file) {
+      if (!/\.(jpe?g|png|webp)$/i.test(file)) {
+        problems.push('"' + p.name + '" has a bad additional image filename: ' + file);
+      }
+    });
     if (!/\.(jpe?g|png|webp)$/i.test(p.image)) {
       problems.push('"' + p.name + '" has a bad image filename: ' + p.image);
     }
@@ -388,6 +417,13 @@ function validate(products) {
   if (fs.existsSync(imagesDir)) {
     const onDisk = new Set(fs.readdirSync(imagesDir));
     products.forEach(p => {
+      p.additionalImages.forEach(function (file) {
+        if (!onDisk.has(file)) {
+          problems.push(
+            '"' + p.name + '" references images/' + file + ', which is not in the repo'
+          );
+        }
+      });
       if (!onDisk.has(p.image)) {
         problems.push(
           '"' + p.name + '" references images/' + p.image + ', which is not in the repo'
