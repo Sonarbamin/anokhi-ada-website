@@ -3316,6 +3316,12 @@
     return scriptPromises[src];
   }
 
+  // Google Customer Reviews. Loaded ONLY after a payment succeeds — someone
+  // browsing the catalogue never fetches it. platform.js calls the function
+  // named in its onload parameter, so window.renderOptIn is defined first.
+  var GCR_MERCHANT_ID = 5841087059;
+  var GCR_SCRIPT_URL = 'https://apis.google.com/js/platform.js?onload=renderOptIn';
+
   var SQUARE_SDK_URL = 'https://web.squarecdn.com/v1/square.js';
   var RECAPTCHA_URL = 'https://www.google.com/recaptcha/api.js?render=' + RECAPTCHA_SITE_KEY;
 
@@ -3538,10 +3544,74 @@
       });
     }
 
-    showOrderConfirmation(buyerInfo.name, buyerInfo.email);
+    showOrderConfirmation(buyerInfo.name, buyerInfo.email, checkoutIdempotencyKey, wantsRush(), isPickup());
   }
 
-  function showOrderConfirmation(name, email){
+  // Working days from today, weekends skipped. Public holidays are not
+  // accounted for — the estimate only needs to be close, and being a day late
+  // is better than a survey landing before the parcel does.
+  function addBusinessDays(count){
+    var d = new Date();
+    var added = 0;
+    while(added < count){
+      d.setDate(d.getDate() + 1);
+      var day = d.getDay();
+      if(day !== 0 && day !== 6) added++;
+    }
+    // YYYY-MM-DD in local time. toISOString() would convert to UTC and, for an
+    // evening order in Atlanta, report tomorrow's date.
+    return d.getFullYear() + '-'
+      + String(d.getMonth() + 1).padStart(2, '0') + '-'
+      + String(d.getDate()).padStart(2, '0');
+  }
+
+  // The far end of each published window, from shipping-returns.html: standard
+  // is up to 3 business days to dispatch plus up to 5 in transit; rush is next
+  // business day plus 1-2; studio pickup is ready within 1-2.
+  function estimatedDeliveryDate(rush, pickup){
+    if(pickup) return addBusinessDays(2);
+    return addBusinessDays(rush ? 3 : 8);
+  }
+
+  // Google's post-purchase survey opt-in. Everything it needs is already in
+  // hand at this point, so there is no extra call to the backend.
+  //
+  // orderId is the same idempotency key the page sends to Analytics as the
+  // purchase transaction_id, so the two Google products reference an order
+  // identically. It is NOT the Square payment id — to trace a survey back to a
+  // sale in Square, match on the customer's email and the date.
+  function renderReviewsOptIn(email, orderId, rush, pickup){
+    if(!email || !orderId) return;
+
+    window.renderOptIn = function(){
+      if(!window.gapi) return;
+      window.gapi.load('surveyoptin', function(){
+        try{
+          window.gapi.surveyoptin.render({
+            merchant_id: GCR_MERCHANT_ID,
+            order_id: orderId,
+            email: email,
+            delivery_country: 'US',   // the shop ships nowhere else
+            estimated_delivery_date: estimatedDeliveryDate(rush, pickup)
+            // No products/gtin array: every piece is one-of-a-kind and has no
+            // GTIN. The field is optional and a fabricated value would be worse
+            // than none.
+          });
+        } catch(err){
+          console.error('Customer Reviews opt-in failed to render:', err);
+        }
+      });
+    };
+
+    // The order is already paid and confirmed. If this never loads — blocked by
+    // an ad blocker, offline, CSP — the customer sees her confirmation exactly
+    // as before and nothing is lost.
+    loadScript(GCR_SCRIPT_URL).catch(function(){
+      console.warn('Customer Reviews script did not load; opt-in skipped.');
+    });
+  }
+
+  function showOrderConfirmation(name, email, orderId, rush, pickup){
     var box = document.getElementById('checkoutBox');
     box.innerHTML =
       '<div class="order-confirm">' +
@@ -3551,6 +3621,8 @@
         '<p class="sub" style="margin-top:-8px;">Loved your piece? <a href="https://g.page/r/Cf3-2SpcnRrLEBM/review" target="_blank" rel="noopener" style="color:var(--maroon); border-bottom:1px solid var(--maroon);">Leave us a review</a>.</p>' +
         '<button class="btn btn-solid" id="checkoutDoneBtn" style="width:100%;">Done</button>' +
       '</div>';
+    renderReviewsOptIn(email, orderId, rush, pickup);
+
     document.getElementById('checkoutDoneBtn').addEventListener('click', function(){
       cart = [];
       checkoutIdempotencyKey = null;
