@@ -235,6 +235,10 @@ const STYLES = `
             letter-spacing:0.14em; text-transform:uppercase; color:var(--gold);
             margin-bottom:12px; }
   h1{ font-size:clamp(26px,3.4vw,38px); line-height:1.15; margin-bottom:14px; }
+  /* Shown only while a sitewide sale is running — the server says whether it
+     is, on the same request that reports what has sold. */
+  .price-was{ font-size:0.62em; color:#9a8b84; text-decoration:line-through; margin-right:9px; }
+  .price-now.reduced{ color:#8C3A22; }
   .price{ font-size:22px; color:var(--maroon); margin:0 0 6px; }
   .size{ font-size:14px; color:#6b5a53; margin:0 0 20px; }
   .desc{ font-size:15.5px; color:#5a4a44; margin:0 0 24px; }
@@ -405,7 +409,7 @@ ${shots}
       <div class="detail">
         <div class="eyebrow">${escapeHtml(label)}</div>
         <h1>${escapeHtml(p.name)}</h1>
-        <p class="price">$${escapeHtml(p.price)}</p>
+        <p class="price"><span class="price-was" hidden></span><span class="price-now">$${escapeHtml(p.price)}</span></p>
         <p class="size">${escapeHtml(p.size)} &mdash; one piece only, in one size</p>
 
         <div class="sold">This piece has sold. It was one-of-a-kind, so it won&rsquo;t be
@@ -454,6 +458,25 @@ ${shots}
     fetch('https://anokhi-ada-backend.vercel.app/api/inventory')
       .then(function(res){ return res.json(); })
       .then(function(data){
+        // Mark the price down when the server says a sale is running. The
+        // rounding here mirrors salePrice() in the backend's _sale.js exactly:
+        // floor to a whole dollar. If they drift, this page shows one figure
+        // and the checkout charges another.
+        var sale = data && data.sale;
+        if(sale && sale.active){
+          var nowEl = document.querySelector('.price-now');
+          var wasEl = document.querySelector('.price-was');
+          if(nowEl && wasEl){
+            var full = parseFloat(nowEl.textContent.replace(/[^0-9.]/g, ''));
+            if(isFinite(full)){
+              wasEl.textContent = '$' + full.toLocaleString();
+              wasEl.hidden = false;
+              nowEl.textContent = '$' + Math.floor(full * (100 - sale.percent) / 100).toLocaleString();
+              nowEl.classList.add('reduced');
+            }
+          }
+        }
+
         var sold = (data && data.soldItems) || [];
         if(sold.indexOf(NAME) === -1) return;
         document.body.setAttribute('data-sold-out', 'true');
