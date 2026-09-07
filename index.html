@@ -92,6 +92,11 @@
        breaks the nav and card layouts. This pins it to the intended size. */
     -webkit-text-size-adjust:100%; text-size-adjust:100%;
   }
+  /* A guard, not a fix. Nothing here should be wider than the screen — but when
+     something is, a phone shows the whole site shifted to one side with a bar
+     of empty page beside it, which reads as broken. This keeps that failure
+     quiet while the real cause is found. */
+  html, body{ overflow-x:hidden; max-width:100%; }
   /* Skips the ~300ms delay some Android browsers still apply to taps while
      they wait to see whether a double-tap is coming. */
   button, a, .btn, .shop-chip, .gallery-dots .dot, .gallery-nav, label{ touch-action:manipulation; }
@@ -442,7 +447,12 @@
   .anniversary-line{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.1em;
     text-transform:uppercase; color:var(--gold-text); margin-top:6px;
+    /* Its own block, and NOT subject to the nowrap set on the wordmark above
+       it — inheriting that is what stretched the header wider than the phone
+       and pushed the whole page off to one side. */
+    display:block; white-space:normal;
   }
+  .anniv-short{ display:none; }
   .sale-strip{
     background:var(--maroon); color:var(--ivory); text-align:center;
     padding:9px 16px; font-family:'Space Mono',monospace; font-size:12px;
@@ -1478,7 +1488,7 @@
 
 <nav class="nav" aria-label="Main navigation">
   <div class="nav-inner">
-    <a href="#" onclick="window.scrollTo({top:0});return false;" style="display:flex; align-items:center; gap:10px;"><img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo" style="height:192px; width:auto; mix-blend-mode:multiply;"><span class="logo wordmark">Anokhi<span> Ada</span><span style="font-family:'Jost',Arial,sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--maroon); font-weight:500; display:block; margin-top:2px;">by Sona Amin</span><span class="anniversary-line">Twenty Years Dressing Atlanta &middot; 2006&ndash;2026</span></a>
+    <a href="#" onclick="window.scrollTo({top:0});return false;" style="display:flex; align-items:center; gap:10px;"><img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo" style="height:192px; width:auto; mix-blend-mode:multiply;"><span class="logo wordmark">Anokhi<span> Ada</span><span style="font-family:'Jost',Arial,sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--maroon); font-weight:500; display:block; margin-top:2px;">by Sona Amin</span><span class="anniversary-line"><span class="anniv-long">Twenty Years Dressing Atlanta &middot; 2006&ndash;2026</span><span class="anniv-short">20 Years &middot; 2006&ndash;2026</span></span></a>
     <div class="nav-links">
       <div class="nav-dropdown">
         <button type="button" class="nav-shop-toggle" aria-expanded="false" aria-controls="shopMenu">SHOP <span class="nav-caret" aria-hidden="true">&#9660;</span></button>
