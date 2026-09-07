@@ -92,11 +92,13 @@
        breaks the nav and card layouts. This pins it to the intended size. */
     -webkit-text-size-adjust:100%; text-size-adjust:100%;
   }
-  /* A guard, not a fix. Nothing here should be wider than the screen — but when
-     something is, a phone shows the whole site shifted to one side with a bar
-     of empty page beside it, which reads as broken. This keeps that failure
-     quiet while the real cause is found. */
-  html, body{ overflow-x:hidden; max-width:100%; }
+  /* A guard against sideways scroll, using CLIP rather than HIDDEN.
+     overflow-x:hidden here turns the page into a scroll container, which
+     silently stops position:sticky working ANYWHERE inside it — the header and
+     the filter bar both stopped following the scroll when this was set to
+     hidden. clip trims the overflow without creating that scroll container,
+     so sticky keeps working. Don't change it back. */
+  html, body{ overflow-x:clip; }
   /* Skips the ~300ms delay some Android browsers still apply to taps while
      they wait to see whether a double-tap is coming. */
   button, a, .btn, .shop-chip, .gallery-dots .dot, .gallery-nav, label{ touch-action:manipulation; }
