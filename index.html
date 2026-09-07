@@ -967,7 +967,11 @@
        The shop bar keeps sticking — it's the useful one — and now sits at the
        very top once the header has gone. */
     .nav{ position:static; }
-    .shop-bar{ top:0; }
+    /* Always on, never faded in. On a wide screen the bar appears once the shop
+       comes into view, which is elegant — but on a phone the invisible bar
+       still occupies its space, so a visitor scrolling past sees an empty gap
+       where the filters should be, and never gets the filters at all. */
+    .shop-bar{ top:0; opacity:1; visibility:visible; transform:none; }
     .shop-bar-inner{ padding:8px 16px; gap:7px; }
     .shop-chip{ padding:9px 13px; }
 
