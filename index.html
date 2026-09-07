@@ -209,6 +209,9 @@
     background:var(--maroon); border-color:var(--maroon); color:var(--ivory);
   }
   .shop-chip .chip-count{ opacity:0.6; font-weight:400; margin-left:4px; }
+  /* Phones only — on a wide screen every filter is on show and there is
+     nothing to unfold. */
+  .shop-filters-toggle{ display:none; }
   .shop-bar-search{ flex:1 1 210px; min-width:170px; position:relative; }
   .shop-search-input{
     width:100%; background:var(--ivory-dim); border:1px solid var(--line-strong);
@@ -938,7 +941,37 @@
        156px rendered a mark only ~50px tall. Cropped, 72px is a VISIBLY larger
        logo than the old 156px setting while taking less than half the bar
        height. max-width stays as a guard on very narrow screens. */
-    img[alt="Anokhi Ada logo"]{ height:144px !important; max-width:52vw; object-fit:contain; }
+    /* 144px of logo, a wordmark wrapping onto two lines and an anniversary line
+       wrapping onto four left almost no screen for the clothes. At phone size
+       the crest is an ornament, not a signboard — the shop's name is spelled
+       out in live text right beside it, so the image needn't carry it too. */
+    img[alt="Anokhi Ada logo"]{ height:64px !important; max-width:26vw; object-fit:contain; }
+    .nav-inner{ padding:10px 20px; gap:10px; }
+    .logo{ font-size:21px; line-height:1.15; }
+    .wordmark{ white-space:nowrap; }
+    .anniv-long{ display:none; }
+    .anniv-short{ display:inline; }
+    .anniversary-line{ font-size:9px; letter-spacing:0.06em; margin-top:3px; }
+
+    /* On a phone the header scrolls away instead of pinning itself to the top.
+       The shop bar keeps sticking — it's the useful one — and now sits at the
+       very top once the header has gone. */
+    .nav{ position:static; }
+    .shop-bar{ top:0; }
+    .shop-bar-inner{ padding:8px 16px; gap:7px; }
+    .shop-chip{ padding:9px 13px; }
+
+    /* Three rows of chips plus a search field owned most of the screen. Only
+       the collections row stays out; size, price and search fold behind the
+       Filters button and open when asked for. */
+    .shop-bar [aria-label="Filter by size"],
+    .shop-bar [aria-label="Filter by price"],
+    .shop-bar .shop-bar-search{ display:none; }
+    .shop-bar.filters-open [aria-label="Filter by size"],
+    .shop-bar.filters-open [aria-label="Filter by price"]{ display:flex; }
+    .shop-bar.filters-open .shop-bar-search{ display:block; }
+    .shop-filters-toggle{ display:inline-flex; align-items:center; }
+    .shop-bar-count{ order:99; }
   }
   @media (max-width:520px){
     .wrap{ padding:0 20px; } .nav-inner{ padding:16px 20px; }
@@ -1533,6 +1566,8 @@
       <input type="search" id="shopSearch" class="shop-search-input" placeholder="Search colour, fabric, garment" autocomplete="off">
       <button type="button" class="shop-search-clear" id="shopSearchClear" aria-label="Clear search" hidden>&times;</button>
     </div>
+    <button type="button" class="shop-chip shop-filters-toggle" id="shopFiltersToggle"
+            aria-expanded="false" aria-controls="shopBar">Filters</button>
     <span class="shop-bar-count" id="shopCount" role="status" aria-live="polite" aria-atomic="true"></span>
   </div>
 </div>
@@ -2655,6 +2690,17 @@
     document.querySelectorAll('[data-clear-filters]').forEach(function(btn){
       btn.addEventListener('click', function(){ clearAllFilters(true); });
     });
+
+    var filtersToggle = document.getElementById('shopFiltersToggle');
+    if(filtersToggle){
+      filtersToggle.addEventListener('click', function(){
+        var bar = document.getElementById('shopBar');
+        if(!bar) return;
+        var open = bar.classList.toggle('filters-open');
+        filtersToggle.setAttribute('aria-expanded', String(open));
+        filtersToggle.textContent = open ? 'Hide filters' : 'Filters';
+      });
+    }
 
     var searchInput = document.getElementById('shopSearch');
     if(searchInput){
