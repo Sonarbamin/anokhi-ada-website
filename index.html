@@ -512,6 +512,9 @@
     /* min-height:0 lets a flex child shrink below its natural size; without it
        the photo refuses to give ground and pushes the controls off the end. */
     min-height:0; max-height:100%;
+    /* The wrapper ignores taps so the space beside the photo still closes the
+       viewer; the photo itself takes them back so zoom and swipe keep working. */
+    pointer-events:auto;
     object-fit:contain; border-radius:2px; transition:transform 0.15s ease;
   }
   .lightbox-zoom-controls{
@@ -545,6 +548,10 @@
     color:rgba(251,243,231,0.85); font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.06em;
   }
   .lightbox-close{
+    /* Above the photo wrapper. That wrapper now stretches to fill the column,
+       so without this it covers the corner and swallows the tap — the X looked
+       present and did nothing. */
+    z-index:202;
     position:absolute; top:8px; right:12px; background:none; border:none; color:var(--ivory);
     font-size:34px; line-height:1; cursor:pointer; opacity:0.85; width:44px; height:44px; display:flex; align-items:center; justify-content:center;
   }
@@ -2314,7 +2321,7 @@
   <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">&#8249;</button>
   <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">&#8250;</button>
   <span class="lightbox-counter" id="lightboxCounter"></span>
-  <div class="lightbox-img-wrap" style="position:relative; display:flex; min-height:0; flex:1 1 auto; align-items:center; justify-content:center;">
+  <div class="lightbox-img-wrap" style="position:relative; display:flex; min-height:0; flex:1 1 auto; align-items:center; justify-content:center; pointer-events:none; width:100%;">
     <img id="lightboxImg" src="" alt="">
   </div>
   <div class="lightbox-zoom-controls">
