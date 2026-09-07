@@ -493,14 +493,21 @@
      invisible-but-present overlay is what went on swallowing taps across the
      whole page after the viewer closed. */
   .lbx{
-    position:fixed; inset:0; height:100dvh; z-index:200;
+    /* Every control sits in a bar at the TOP. The bottom edge of a fixed
+       overlay is the one iOS keeps moving as Safari's toolbar collapses and
+       expands — three separate attempts to place the zoom buttons down there
+       each worked in one toolbar state and not the other. The top edge never
+       moves. No viewport height is set here either; the box is whatever the
+       browser says the screen is, and the photo takes what's left below the
+       bar. */
+    position:fixed; inset:0; z-index:200;
     background:rgba(20,10,12,0.94);
-    display:grid; grid-template-rows:auto minmax(0,1fr) auto;
+    display:grid; grid-template-rows:auto minmax(0,1fr);
     padding:6px 10px calc(6px + env(safe-area-inset-bottom, 0px));
   }
   .lbx[hidden]{ display:none; }
   .lbx-close{
-    justify-self:end; width:44px; height:44px; padding:0;
+    margin-left:6px; width:44px; height:44px; padding:0;
     background:none; border:none; color:var(--ivory); font-size:32px; line-height:1;
     opacity:0.85; cursor:pointer; display:flex; align-items:center; justify-content:center;
   }
@@ -515,7 +522,8 @@
     border-radius:2px; transition:transform 0.15s ease; touch-action:pan-y;
   }
   .lbx-bar{
-    display:flex; align-items:center; justify-content:center; gap:12px; padding:10px 0 4px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:4px 0 8px; flex-wrap:nowrap;
   }
   .lbx-btn{
     width:44px; height:44px; border-radius:50%; padding:0;
@@ -2291,16 +2299,16 @@
 </div>
 
 <div class="lbx" id="lightboxOverlay" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
-  <button class="lbx-close" id="lightboxClose" aria-label="Close photo viewer">&times;</button>
-  <div class="lbx-stage" id="lightboxStage">
-    <img id="lightboxImg" src="" alt="">
-  </div>
   <div class="lbx-bar">
     <button type="button" class="lbx-btn" id="lightboxPrev" aria-label="Previous photo">&#8249;</button>
     <button type="button" class="lbx-btn" id="lightboxZoomOut" aria-label="Zoom out">&minus;</button>
     <span class="lbx-counter" id="lightboxCounter"></span>
     <button type="button" class="lbx-btn" id="lightboxZoomIn" aria-label="Zoom in">&plus;</button>
     <button type="button" class="lbx-btn" id="lightboxNext" aria-label="Next photo">&#8250;</button>
+    <button type="button" class="lbx-close" id="lightboxClose" aria-label="Close photo viewer">&times;</button>
+  </div>
+  <div class="lbx-stage" id="lightboxStage">
+    <img id="lightboxImg" src="" alt="">
   </div>
 </div>
 
