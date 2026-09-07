@@ -482,79 +482,57 @@
   }
 
   /* ---- CART DRAWER ---- */
-  .lightbox-overlay{
-    /* inset:0 makes this box as tall as the LARGE viewport, so its bottom edge
-       sits underneath Safari's toolbar — and the zoom buttons, anchored to that
-       bottom edge, sit under the toolbar with it. Sizing the box to 100dvh ends
-       it where the screen actually ends. (top:0 plus a height wins over the
-       bottom:0 that inset sets, which is what we want here.) */
-    position:fixed; inset:0; height:100dvh; background:rgba(20,10,12,0.92); z-index:200;
-    /* A COLUMN, not a centred box with things pinned to its bottom edge. The
-       counter and the zoom buttons are now laid out below the photo in normal
-       flow, so they sit next to it whatever iOS decides the bottom of the
-       screen is this second. Anchoring them to that edge is why zoom appeared
-       only sometimes: Safari's toolbar collapses and expands, and the edge
-       moves with it. */
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
-    opacity:0; pointer-events:none; transition:opacity 0.25s ease;
-    padding:12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  /* ---- PHOTO VIEWER ----
+     Rebuilt as a three-row grid: close button, photo, control bar. Nothing is
+     pinned to the bottom of the screen and nothing is measured against the
+     viewport, because iOS moves that edge whenever Safari's toolbar collapses.
+     The photo takes whatever height is left after the two bars have theirs, so
+     the controls cannot be pushed off the screen.
+
+     Shown and hidden with the `hidden` attribute rather than opacity — an
+     invisible-but-present overlay is what went on swallowing taps across the
+     whole page after the viewer closed. */
+  .lbx{
+    position:fixed; inset:0; height:100dvh; z-index:200;
+    background:rgba(20,10,12,0.94);
+    display:grid; grid-template-rows:auto minmax(0,1fr) auto;
+    padding:6px 10px calc(6px + env(safe-area-inset-bottom, 0px));
   }
-  .lightbox-overlay.open{ opacity:1; pointer-events:auto; }
-  .lightbox-overlay img{
-    max-width:98vw;
-    /* 96vh measures the viewport as if Safari's toolbar were hidden, so with
-       the toolbar showing the photo is taller than the screen and pushes the
-       zoom buttons — anchored to the bottom — out of sight. Scrolling collapses
-       the toolbar, the space grows, and they appear: which is why zoom only
-       showed up after a swipe. dvh tracks the space actually visible, and the
-       130px reserves room for the buttons instead of letting the photo take it.
-       vh stays first as a fallback for browsers without dvh. */
-    /* min-height:0 lets a flex child shrink below its natural size; without it
-       the photo refuses to give ground and pushes the controls off the end. */
-    min-height:0; max-height:100%;
-    object-fit:contain; border-radius:2px; transition:transform 0.15s ease;
+  .lbx[hidden]{ display:none; }
+  .lbx-close{
+    justify-self:end; width:44px; height:44px; padding:0;
+    background:none; border:none; color:var(--ivory); font-size:32px; line-height:1;
+    opacity:0.85; cursor:pointer; display:flex; align-items:center; justify-content:center;
   }
-  .lightbox-zoom-controls{
-    position:static; flex:0 0 auto;
-    display:flex; gap:10px; z-index:201;
+  .lbx-close:hover{ opacity:1; }
+  /* minmax(0,1fr) above plus min-height:0 here is what lets this row shrink.
+     Without it a tall photo refuses to give ground and pushes the bar off. */
+  .lbx-stage{
+    min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
-  .lightbox-zoom-btn{
-    width:40px; height:40px; border-radius:50%; background:rgba(251,243,231,0.15);
-    border:1px solid rgba(251,243,231,0.4); color:var(--ivory); font-size:20px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; transition:background 0.2s ease;
+  .lbx-stage img{
+    max-width:100%; max-height:100%; object-fit:contain;
+    border-radius:2px; transition:transform 0.15s ease; touch-action:pan-y;
   }
-  .lightbox-zoom-btn:hover{ background:rgba(251,243,231,0.3); }
-  .lightbox-nav{
-    position:absolute; top:50%; transform:translateY(-50%); z-index:201;
-    width:48px; height:48px; border-radius:50%; background:rgba(251,243,231,0.15);
-    border:1px solid rgba(251,243,231,0.4); color:var(--ivory); font-size:24px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; transition:background 0.2s ease;
+  .lbx-bar{
+    display:flex; align-items:center; justify-content:center; gap:12px; padding:10px 0 4px;
   }
-  .lightbox-nav:hover{ background:rgba(251,243,231,0.3); }
-  /* Same reasoning as the cards: on a touch screen these sit over the garment
-     and nobody reaches for them. Swiping replaces them — see the handler. */
-  @media (hover:none){
-    .lightbox-nav{ display:none !important; }
+  .lbx-btn{
+    width:44px; height:44px; border-radius:50%; padding:0;
+    background:rgba(251,243,231,0.15); border:1px solid rgba(251,243,231,0.4);
+    color:var(--ivory); font-size:20px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s ease, opacity 0.2s ease;
   }
-  .lightbox-prev{ left:12px; }
-  .lightbox-next{ right:12px; }
-  .lightbox-counter{
-    /* Moved off the top, where it landed on the filter chips showing through
-       the backdrop. Below the photo it reads as part of the viewer. */
-    position:static; flex:0 0 auto; order:3; z-index:201;
-    color:rgba(251,243,231,0.85); font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.06em;
+  .lbx-btn:hover{ background:rgba(251,243,231,0.3); }
+  .lbx-btn:disabled{ opacity:0.3; cursor:default; }
+  .lbx-btn[hidden]{ display:none; }
+  .lbx-counter{
+    min-width:56px; text-align:center; color:rgba(251,243,231,0.85);
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.06em;
   }
-  .lightbox-close{
-    /* Above the photo wrapper. That wrapper now stretches to fill the column,
-       so without this it covers the corner and swallows the tap — the X looked
-       present and did nothing. */
-    z-index:202;
-    position:absolute; top:8px; right:12px; background:none; border:none; color:var(--ivory);
-    font-size:34px; line-height:1; cursor:pointer; opacity:0.85; width:44px; height:44px; display:flex; align-items:center; justify-content:center;
-  }
-  .lightbox-close:hover{ opacity:1; }
   .zoomable{ cursor:zoom-in; }
-  .look-media img, .about-visual img, .lightbox-overlay img{
+  .look-media img, .about-visual img, .lbx-stage img{
     -webkit-user-drag:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
   }
   .cart-overlay{
@@ -1141,7 +1119,6 @@
     .shop-section .look-details,
     .shop-section .look-enquire{ min-height:44px; padding:13px 0 7px; margin-top:6px; }
 
-    .lightbox-zoom-btn{ width:44px; height:44px; }
     .nav-right .btn-appt{ min-height:44px; display:inline-flex; align-items:center; }
 
     /* Size Guide is a small link inside the 19px slot that keeps every card's
@@ -2313,17 +2290,17 @@
   </div>
 </div>
 
-<div class="lightbox-overlay" id="lightboxOverlay" role="dialog" aria-modal="true" aria-label="Image zoom view">
-  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
-  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">&#8249;</button>
-  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">&#8250;</button>
-  <span class="lightbox-counter" id="lightboxCounter"></span>
-  <div class="lightbox-img-wrap" style="position:relative; display:flex; min-height:0; flex:1 1 auto; align-items:center; justify-content:center; width:100%;">
+<div class="lbx" id="lightboxOverlay" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+  <button class="lbx-close" id="lightboxClose" aria-label="Close photo viewer">&times;</button>
+  <div class="lbx-stage" id="lightboxStage">
     <img id="lightboxImg" src="" alt="">
   </div>
-  <div class="lightbox-zoom-controls">
-    <button class="lightbox-zoom-btn" id="lightboxZoomOut" aria-label="Zoom out">&minus;</button>
-    <button class="lightbox-zoom-btn" id="lightboxZoomIn" aria-label="Zoom in">&plus;</button>
+  <div class="lbx-bar">
+    <button type="button" class="lbx-btn" id="lightboxPrev" aria-label="Previous photo">&#8249;</button>
+    <button type="button" class="lbx-btn" id="lightboxZoomOut" aria-label="Zoom out">&minus;</button>
+    <span class="lbx-counter" id="lightboxCounter"></span>
+    <button type="button" class="lbx-btn" id="lightboxZoomIn" aria-label="Zoom in">&plus;</button>
+    <button type="button" class="lbx-btn" id="lightboxNext" aria-label="Next photo">&#8250;</button>
   </div>
 </div>
 
@@ -4463,100 +4440,109 @@
     if(e.target === sizeGuide) closeSizeGuide();
   });
 
-  var lightbox = document.getElementById('lightboxOverlay');
-  var lightboxImg = document.getElementById('lightboxImg');
-  var zoomLevel = 1;
-  var lightboxGallery = [];
-  var lightboxIndex = 0;
-
-  function applyZoom(){
-    var wrap = document.querySelector('.lightbox-img-wrap');
-    wrap.style.transform = 'scale(' + zoomLevel + ')';
-  }
-
-  // Shows whichever photo is at lightboxIndex, and hides the prev/next
-  // buttons entirely when a product only has one photo — there's nothing
-  // to navigate to, so showing arrows that do nothing would be confusing.
-  function showLightboxPhoto(index){
-    lightboxIndex = (index + lightboxGallery.length) % lightboxGallery.length;
-    var photo = lightboxGallery[lightboxIndex];
-    lightboxImg.src = photo.src;
-    lightboxImg.alt = photo.alt || '';
-    zoomLevel = 1;
-    applyZoom();
-
-    var hasMultiple = lightboxGallery.length > 1;
-    document.getElementById('lightboxPrev').style.display = hasMultiple ? 'flex' : 'none';
-    document.getElementById('lightboxNext').style.display = hasMultiple ? 'flex' : 'none';
-    document.getElementById('lightboxCounter').textContent = hasMultiple
-      ? (lightboxIndex + 1) + ' / ' + lightboxGallery.length
-      : '';
-  }
-
-  function openLightbox(gallery, startIndex){
-    lightboxGallery = gallery;
-    showLightboxPhoto(startIndex || 0);
-    lightbox.classList.add('open');
-    activateModal(lightbox, closeLightbox);
-  }
-  document.addEventListener('contextmenu', function(e){
-    if(e.target.tagName === 'IMG'){ e.preventDefault(); }
-  });
-
-  function closeLightbox(){
-    lightbox.classList.remove('open');
-    deactivateModal();
-  }
-
-  document.getElementById('lightboxPrev').addEventListener('click', function(e){
-    e.stopPropagation();
-    showLightboxPhoto(lightboxIndex - 1);
-  });
-  document.getElementById('lightboxNext').addEventListener('click', function(e){
-    e.stopPropagation();
-    showLightboxPhoto(lightboxIndex + 1);
-  });
-  document.addEventListener('keydown', function(e){
-    if(!lightbox.classList.contains('open')) return;
-    if(e.key === 'ArrowLeft'){ showLightboxPhoto(lightboxIndex - 1); }
-    if(e.key === 'ArrowRight'){ showLightboxPhoto(lightboxIndex + 1); }
-  });
-
-  // Swipe between photos, replacing the arrows that are hidden on touch.
+  // ---- Photo viewer ----
+  // Prev/next live in the control bar beside zoom rather than floating over the
+  // garment, so they work the same with a mouse or a thumb and never cover the
+  // thing being looked at. Swiping does the same job on a touch screen.
   (function(){
-    var startX = 0, startY = 0, tracking = false;
+    var overlay  = document.getElementById('lightboxOverlay');
+    var stage    = document.getElementById('lightboxStage');
+    var img      = document.getElementById('lightboxImg');
+    var counter  = document.getElementById('lightboxCounter');
+    var prevBtn  = document.getElementById('lightboxPrev');
+    var nextBtn  = document.getElementById('lightboxNext');
+    var zoomIn   = document.getElementById('lightboxZoomIn');
+    var zoomOut  = document.getElementById('lightboxZoomOut');
+    var closeBtn = document.getElementById('lightboxClose');
+    if(!overlay) return;
 
-    lightbox.addEventListener('touchstart', function(e){
-      // While zoomed in, a drag is the customer moving around the photograph —
-      // the detail she opened the viewer to look at. Changing the picture out
-      // from under her would be the opposite of what she asked for.
-      if(e.touches.length !== 1 || zoomLevel !== 1) return;
+    var photos = [];
+    var index = 0;
+    var zoom = 1;
+
+    function setZoom(level){
+      zoom = Math.min(Math.max(level, 1), 3);
+      img.style.transform = 'scale(' + zoom + ')';
+      zoomOut.disabled = zoom <= 1;
+      zoomIn.disabled = zoom >= 3;
+    }
+
+    function render(){
+      var photo = photos[index] || {};
+      img.src = photo.src || '';
+      img.alt = photo.alt || '';
+      setZoom(1);
+      var many = photos.length > 1;
+      prevBtn.hidden = !many;
+      nextBtn.hidden = !many;
+      counter.textContent = many ? (index + 1) + ' / ' + photos.length : '';
+    }
+
+    function go(step){
+      if(photos.length < 2) return;
+      index = (index + step + photos.length) % photos.length;
+      render();
+      announce((img.alt || 'Photo') + ', ' + (index + 1) + ' of ' + photos.length);
+    }
+
+    function openViewer(list, startIndex){
+      if(!list || !list.length) return;
+      photos = list;
+      index = Math.min(Math.max(startIndex || 0, 0), list.length - 1);
+      render();
+      overlay.hidden = false;
+      activateModal(overlay, closeViewer);
+    }
+
+    function closeViewer(){
+      overlay.hidden = true;
+      setZoom(1);
+      deactivateModal();
+    }
+
+    closeBtn.addEventListener('click', closeViewer);
+    prevBtn.addEventListener('click', function(){ go(-1); });
+    nextBtn.addEventListener('click', function(){ go(1); });
+    zoomIn.addEventListener('click', function(){ setZoom(zoom + 0.25); });
+    zoomOut.addEventListener('click', function(){ setZoom(zoom - 0.25); });
+
+    // Tap the dark space to close. Checking what was tapped, rather than
+    // switching pointer events off for parts of the page — that trick leaked
+    // out of the viewer and blocked the rest of the site.
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay || e.target === stage) closeViewer();
+    });
+
+    document.addEventListener('keydown', function(e){
+      if(overlay.hidden) return;
+      if(e.key === 'ArrowLeft') go(-1);
+      if(e.key === 'ArrowRight') go(1);
+    });
+
+    // Swipe, ignored while zoomed in: a drag then is the customer moving around
+    // the detail she opened the viewer to see.
+    var startX = 0, startY = 0, tracking = false;
+    stage.addEventListener('touchstart', function(e){
+      if(e.touches.length !== 1 || zoom !== 1) return;
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       tracking = true;
     }, { passive: true });
-
-    lightbox.addEventListener('touchend', function(e){
+    stage.addEventListener('touchend', function(e){
       if(!tracking) return;
       tracking = false;
-      if(lightboxGallery.length < 2) return;
-      var touch = e.changedTouches[0];
-      var dx = touch.clientX - startX;
-      var dy = touch.clientY - startY;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - startX;
+      var dy = t.clientY - startY;
       if(Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
-      showLightboxPhoto(lightboxIndex + (dx < 0 ? 1 : -1));
+      go(dx < 0 ? 1 : -1);
     }, { passive: true });
+
+    window.anokhiOpenLightbox = openViewer;
   })();
 
-  document.getElementById('lightboxZoomIn').addEventListener('click', function(e){
-    e.stopPropagation();
-    zoomLevel = Math.min(zoomLevel + 0.25, 3);
-    applyZoom();
-  });
-  document.getElementById('lightboxZoomOut').addEventListener('click', function(e){
-    e.stopPropagation();
-    zoomLevel = Math.max(zoomLevel - 0.25, 1);
-    applyZoom();
+  document.addEventListener('contextmenu', function(e){
+    if(e.target.tagName === 'IMG'){ e.preventDefault(); }
   });
 
   // .look-media covers every product card — both the multi-photo sale
@@ -4574,9 +4560,9 @@
         var siblingImgs = Array.prototype.slice.call(galleryContainer.querySelectorAll('.gallery-img'));
         var gallery = siblingImgs.map(function(el){ return { src: el.src, alt: el.alt }; });
         var startIndex = siblingImgs.indexOf(img);
-        openLightbox(gallery, startIndex);
+        window.anokhiOpenLightbox(gallery, startIndex);
       } else {
-        openLightbox([{ src: img.src, alt: img.alt }], 0);
+        window.anokhiOpenLightbox([{ src: img.src, alt: img.alt }], 0);
       }
     });
   });
@@ -4614,13 +4600,6 @@
         gtag('event', 'ask_a_question_click', { product_name: productName, sold_out: !!isSoldOut });
       }
     });
-  });
-
-  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', function(e){
-    if(e.target === lightbox || e.target.classList.contains('lightbox-img-wrap')){
-      closeLightbox();
-    }
   });
 
   // "Book a Private Styling" — matches both the nav and hero buttons (both
