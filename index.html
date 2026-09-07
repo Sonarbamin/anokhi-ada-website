@@ -489,8 +489,15 @@
        it where the screen actually ends. (top:0 plus a height wins over the
        bottom:0 that inset sets, which is what we want here.) */
     position:fixed; inset:0; height:100dvh; background:rgba(20,10,12,0.92); z-index:200;
-    display:flex; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity 0.25s ease; padding:12px;
+    /* A COLUMN, not a centred box with things pinned to its bottom edge. The
+       counter and the zoom buttons are now laid out below the photo in normal
+       flow, so they sit next to it whatever iOS decides the bottom of the
+       screen is this second. Anchoring them to that edge is why zoom appeared
+       only sometimes: Safari's toolbar collapses and expands, and the edge
+       moves with it. */
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+    opacity:0; pointer-events:none; transition:opacity 0.25s ease;
+    padding:12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
   }
   .lightbox-overlay.open{ opacity:1; pointer-events:auto; }
   .lightbox-overlay img{
@@ -502,13 +509,13 @@
        showed up after a swipe. dvh tracks the space actually visible, and the
        130px reserves room for the buttons instead of letting the photo take it.
        vh stays first as a fallback for browsers without dvh. */
-    max-height:96vh;
-    max-height:calc(100dvh - 130px);
+    /* min-height:0 lets a flex child shrink below its natural size; without it
+       the photo refuses to give ground and pushes the controls off the end. */
+    min-height:0; max-height:100%;
     object-fit:contain; border-radius:2px; transition:transform 0.15s ease;
   }
   .lightbox-zoom-controls{
-    position:absolute; bottom:calc(20px + env(safe-area-inset-bottom, 0px));
-    left:50%; transform:translateX(-50%);
+    position:static; flex:0 0 auto;
     display:flex; gap:10px; z-index:201;
   }
   .lightbox-zoom-btn{
@@ -534,8 +541,7 @@
   .lightbox-counter{
     /* Moved off the top, where it landed on the filter chips showing through
        the backdrop. Below the photo it reads as part of the viewer. */
-    position:absolute; bottom:calc(74px + env(safe-area-inset-bottom, 0px));
-    left:50%; transform:translateX(-50%); z-index:201;
+    position:static; flex:0 0 auto; order:3; z-index:201;
     color:rgba(251,243,231,0.85); font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.06em;
   }
   .lightbox-close{
@@ -2308,7 +2314,7 @@
   <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">&#8249;</button>
   <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">&#8250;</button>
   <span class="lightbox-counter" id="lightboxCounter"></span>
-  <div class="lightbox-img-wrap" style="position:relative; display:inline-flex;">
+  <div class="lightbox-img-wrap" style="position:relative; display:flex; min-height:0; flex:1 1 auto; align-items:center; justify-content:center;">
     <img id="lightboxImg" src="" alt="">
   </div>
   <div class="lightbox-zoom-controls">
