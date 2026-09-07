@@ -483,7 +483,12 @@
 
   /* ---- CART DRAWER ---- */
   .lightbox-overlay{
-    position:fixed; inset:0; background:rgba(20,10,12,0.92); z-index:200;
+    /* inset:0 makes this box as tall as the LARGE viewport, so its bottom edge
+       sits underneath Safari's toolbar — and the zoom buttons, anchored to that
+       bottom edge, sit under the toolbar with it. Sizing the box to 100dvh ends
+       it where the screen actually ends. (top:0 plus a height wins over the
+       bottom:0 that inset sets, which is what we want here.) */
+    position:fixed; inset:0; height:100dvh; background:rgba(20,10,12,0.92); z-index:200;
     display:flex; align-items:center; justify-content:center;
     opacity:0; pointer-events:none; transition:opacity 0.25s ease; padding:12px;
   }
@@ -502,7 +507,8 @@
     object-fit:contain; border-radius:2px; transition:transform 0.15s ease;
   }
   .lightbox-zoom-controls{
-    position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+    position:absolute; bottom:calc(20px + env(safe-area-inset-bottom, 0px));
+    left:50%; transform:translateX(-50%);
     display:flex; gap:10px; z-index:201;
   }
   .lightbox-zoom-btn{
@@ -528,7 +534,8 @@
   .lightbox-counter{
     /* Moved off the top, where it landed on the filter chips showing through
        the backdrop. Below the photo it reads as part of the viewer. */
-    position:absolute; bottom:74px; left:50%; transform:translateX(-50%); z-index:201;
+    position:absolute; bottom:calc(74px + env(safe-area-inset-bottom, 0px));
+    left:50%; transform:translateX(-50%); z-index:201;
     color:rgba(251,243,231,0.85); font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.06em;
   }
   .lightbox-close{
@@ -3345,7 +3352,13 @@
   }
 
   function activateModal(container, onClose){
-    var entry = { container: container, onClose: onClose, returnFocus: document.activeElement };
+    // Only remember something worth returning to. When a photo is tapped the
+    // active element is the <body> — images aren't focusable — and calling
+    // focus() on the body scrolls it into view, which means the top of the
+    // page. That is why closing a zoomed photo jumped you back to the header.
+    var opener = document.activeElement;
+    if(opener === document.body || opener === document.documentElement) opener = null;
+    var entry = { container: container, onClose: onClose, returnFocus: opener };
 
     entry.keydownHandler = function(e){
       if(modalStack[modalStack.length - 1] !== entry) return; // not the topmost modal — ignore
@@ -3368,7 +3381,10 @@
     modalStack.push(entry);
 
     var focusable = getFocusable(container);
-    if(focusable.length){ focusable[0].focus(); }
+    if(focusable.length){
+      try{ focusable[0].focus({ preventScroll: true }); }
+      catch(err){ focusable[0].focus(); }
+    }
   }
 
   function deactivateModal(){
@@ -3376,7 +3392,10 @@
     if(!entry) return;
     document.removeEventListener('keydown', entry.keydownHandler);
     if(entry.returnFocus && typeof entry.returnFocus.focus === 'function'){
-      entry.returnFocus.focus();
+      // preventScroll: focus() scrolls its target into view by default, which
+      // moves the page out from under someone who only closed a dialog.
+      try{ entry.returnFocus.focus({ preventScroll: true }); }
+      catch(err){ entry.returnFocus.focus(); }
     }
   }
 
