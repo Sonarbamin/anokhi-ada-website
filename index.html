@@ -427,6 +427,24 @@
   /* ---- SALE SECTION ---- */
   .sale-price-row{ display:flex; align-items:baseline; gap:8px; margin-top:4px; }
   .sale-now{ font-family:'Space Mono',monospace; font-size:14px; color:var(--maroon); font-weight:700; }
+  /* Added only while the anniversary sale runs. The original stays on screen
+     struck through — a reduced price with nothing beside it is just a price. */
+  .sale-was{
+    font-family:'Space Mono',monospace; font-size:12.5px; color:#9a8b84;
+    text-decoration:line-through; text-decoration-thickness:1px;
+  }
+  .sale-now.sale-reduced{ color:#8C3A22; }
+  /* The anniversary line under the wordmark. Quiet on purpose: twenty years is
+     the story, and it shouldn't read like a discount sticker. */
+  .anniversary-line{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--gold-text); margin-top:6px;
+  }
+  .sale-strip{
+    background:var(--maroon); color:var(--ivory); text-align:center;
+    padding:9px 16px; font-family:'Space Mono',monospace; font-size:12px;
+    letter-spacing:0.08em; text-transform:uppercase;
+  }
   .add-cart-btn{
     display:inline-block; margin-top:auto; font-size:13px; letter-spacing:0.05em; text-transform:uppercase;
     background:var(--maroon); color:var(--ivory); border:none; padding:12px 20px; border-radius:2px; cursor:pointer;
@@ -1094,278 +1112,278 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "Mustard Floral Saree",
-          "url": "https://anokhi-ada.com/products/mustard-floral-saree.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Fuchsia Banarasi",
-          "url": "https://anokhi-ada.com/products/fuchsia-banarasi.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": "Rust Circle-Motif Saree",
-          "url": "https://anokhi-ada.com/products/rust-circle-motif-saree.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 4,
-          "name": "Emerald Sequin Halter Saree",
-          "url": "https://anokhi-ada.com/products/emerald-sequin-halter-saree.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 5,
-          "name": "Light Blue Banarasi Minakari Saree",
-          "url": "https://anokhi-ada.com/products/light-blue-banarasi-minakari-saree.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 6,
-          "name": "Ivory Ready-to-Wear Saree",
-          "url": "https://anokhi-ada.com/products/ivory-ready-to-wear-saree.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 7,
-          "name": "Purple Lace Ready-to-Wear Saree",
-          "url": "https://anokhi-ada.com/products/purple-lace-ready-to-wear-saree.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 8,
           "name": "Red Floral Organza Kurta Set",
           "url": "https://anokhi-ada.com/products/red-floral-organza-kurta-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 9,
+          "position": 2,
           "name": "Orange Kora Embroidered Sharara Set",
           "url": "https://anokhi-ada.com/products/orange-kora-embroidered-sharara-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 10,
+          "position": 3,
           "name": "Light Blue Chanderi Embroidered Kurta Set",
           "url": "https://anokhi-ada.com/products/light-blue-chanderi-embroidered-kurta-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 11,
+          "position": 4,
           "name": "Color-Blocked Silk Anarkali Set",
           "url": "https://anokhi-ada.com/products/color-blocked-silk-anarkali-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 12,
-          "name": "Blush Pink Beaded Sharara Set",
-          "url": "https://anokhi-ada.com/products/blush-pink-beaded-sharara-set.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 13,
-          "name": "Mint Green Zardozi Kurta Set",
-          "url": "https://anokhi-ada.com/products/mint-green-zardozi-kurta-set.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 14,
-          "name": "Ivory Chanderi Embroidered Kurta Set",
-          "url": "https://anokhi-ada.com/products/ivory-chanderi-embroidered-kurta-set.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 15,
-          "name": "Pink Short Kurta & Sharara Set",
-          "url": "https://anokhi-ada.com/products/pink-short-kurta-and-sharara-set.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 16,
-          "name": "Black Printed Short Kurta & Sharara Set",
-          "url": "https://anokhi-ada.com/products/black-printed-short-kurta-and-sharara-set.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 17,
-          "name": "Rani Pink Short Kurta & Wide-Leg Pants",
-          "url": "https://anokhi-ada.com/products/rani-pink-short-kurta-and-wide-leg-pants.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 18,
+          "position": 5,
           "name": "Purple Zardozi Embroidered Kurta Set",
           "url": "https://anokhi-ada.com/products/purple-zardozi-embroidered-kurta-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 19,
-          "name": "Black Mirror Work Cape Set",
-          "url": "https://anokhi-ada.com/products/black-mirror-work-cape-set.html"
+          "position": 6,
+          "name": "Mint Green Zardozi Kurta Set",
+          "url": "https://anokhi-ada.com/products/mint-green-zardozi-kurta-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 20,
-          "name": "Brown Sequin Embroidered Sharara Set",
-          "url": "https://anokhi-ada.com/products/brown-sequin-embroidered-sharara-set.html"
+          "position": 7,
+          "name": "Ivory Chanderi Embroidered Kurta Set",
+          "url": "https://anokhi-ada.com/products/ivory-chanderi-embroidered-kurta-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 21,
-          "name": "Maroon Zardozi Halter Top & Wide-Leg Pants",
-          "url": "https://anokhi-ada.com/products/maroon-zardozi-halter-top-and-wide-leg-pants.html"
+          "position": 8,
+          "name": "Pink Short Kurta & Sharara Set",
+          "url": "https://anokhi-ada.com/products/pink-short-kurta-and-sharara-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 22,
-          "name": "Yellow Organza One-Shoulder Top & Wide-Leg Pants",
-          "url": "https://anokhi-ada.com/products/yellow-organza-one-shoulder-top-and-wide-leg-pants.html"
+          "position": 9,
+          "name": "Black Printed Short Kurta & Sharara Set",
+          "url": "https://anokhi-ada.com/products/black-printed-short-kurta-and-sharara-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 23,
-          "name": "White Printed One-Shoulder Top & Printed Pants",
-          "url": "https://anokhi-ada.com/products/white-printed-one-shoulder-top-and-printed-pants.html"
+          "position": 10,
+          "name": "Rani Pink Short Kurta & Wide-Leg Pants",
+          "url": "https://anokhi-ada.com/products/rani-pink-short-kurta-and-wide-leg-pants.html"
         },
         {
           "@type": "ListItem",
-          "position": 24,
-          "name": "Pink Tissue Sequin Top & Pants",
-          "url": "https://anokhi-ada.com/products/pink-tissue-sequin-top-and-pants.html"
+          "position": 11,
+          "name": "Mustard Floral Saree",
+          "url": "https://anokhi-ada.com/products/mustard-floral-saree.html"
         },
         {
           "@type": "ListItem",
-          "position": 25,
-          "name": "Pink One-Shoulder Top & Printed Pants",
-          "url": "https://anokhi-ada.com/products/pink-one-shoulder-top-and-printed-pants.html"
+          "position": 12,
+          "name": "Fuchsia Banarasi",
+          "url": "https://anokhi-ada.com/products/fuchsia-banarasi.html"
         },
         {
           "@type": "ListItem",
-          "position": 26,
-          "name": "Red Bandhani Top & White Straight Pants",
-          "url": "https://anokhi-ada.com/products/red-bandhani-top-and-white-straight-pants.html"
+          "position": 13,
+          "name": "Rust Circle-Motif Saree",
+          "url": "https://anokhi-ada.com/products/rust-circle-motif-saree.html"
         },
         {
           "@type": "ListItem",
-          "position": 27,
-          "name": "Rust Embroidered Top & Wide-Leg Pants",
-          "url": "https://anokhi-ada.com/products/rust-embroidered-top-and-wide-leg-pants.html"
+          "position": 14,
+          "name": "Light Blue Banarasi Minakari Saree",
+          "url": "https://anokhi-ada.com/products/light-blue-banarasi-minakari-saree.html"
         },
         {
           "@type": "ListItem",
-          "position": 28,
-          "name": "Rani Pink Sequin Kurta & Wide-Leg Pants",
-          "url": "https://anokhi-ada.com/products/rani-pink-sequin-kurta-and-wide-leg-pants.html"
+          "position": 15,
+          "name": "Emerald Sequin Halter Saree",
+          "url": "https://anokhi-ada.com/products/emerald-sequin-halter-saree.html"
         },
         {
           "@type": "ListItem",
-          "position": 29,
-          "name": "Blue Printed Lehenga & One-Shoulder Blouse",
-          "url": "https://anokhi-ada.com/products/blue-printed-lehenga-and-one-shoulder-blouse.html"
+          "position": 16,
+          "name": "Ivory Ready-to-Wear Saree",
+          "url": "https://anokhi-ada.com/products/ivory-ready-to-wear-saree.html"
         },
         {
           "@type": "ListItem",
-          "position": 30,
-          "name": "Taupe Lehenga & Embroidered Vest",
-          "url": "https://anokhi-ada.com/products/taupe-lehenga-and-embroidered-vest.html"
+          "position": 17,
+          "name": "Purple Lace Ready-to-Wear Saree",
+          "url": "https://anokhi-ada.com/products/purple-lace-ready-to-wear-saree.html"
         },
         {
           "@type": "ListItem",
-          "position": 31,
-          "name": "Green Tissue Lehenga & Sequin Blouse",
-          "url": "https://anokhi-ada.com/products/green-tissue-lehenga-and-sequin-blouse.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 32,
-          "name": "Mustard Block-Print Chaniya Choli",
-          "url": "https://anokhi-ada.com/products/mustard-block-print-chaniya-choli.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 33,
+          "position": 18,
           "name": "Dusty Rose Floral Chaniya Choli",
           "url": "https://anokhi-ada.com/products/dusty-rose-floral-chaniya-choli.html"
         },
         {
           "@type": "ListItem",
-          "position": 34,
+          "position": 19,
+          "name": "Mustard Block-Print Chaniya Choli",
+          "url": "https://anokhi-ada.com/products/mustard-block-print-chaniya-choli.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 20,
           "name": "Purple Mirror Work Printed Chaniya Choli",
           "url": "https://anokhi-ada.com/products/purple-mirror-work-printed-chaniya-choli.html"
         },
         {
           "@type": "ListItem",
-          "position": 35,
+          "position": 21,
           "name": "Vintage Hand-Embroidered Chaniya Choli",
           "url": "https://anokhi-ada.com/products/vintage-hand-embroidered-chaniya-choli.html"
         },
         {
           "@type": "ListItem",
-          "position": 36,
+          "position": 22,
           "name": "Nude Embroidered Net Lehenga Set",
           "url": "https://anokhi-ada.com/products/nude-embroidered-net-lehenga-set.html"
         },
         {
           "@type": "ListItem",
-          "position": 37,
-          "name": "Lavender Sequin Palazzo Set",
-          "url": "https://anokhi-ada.com/products/lavender-sequin-palazzo-set.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 38,
+          "position": 23,
           "name": "Grey Tissue Crop Top & Red Pleated Skirt",
           "url": "https://anokhi-ada.com/products/grey-tissue-crop-top-and-red-pleated-skirt.html"
         },
         {
           "@type": "ListItem",
-          "position": 39,
+          "position": 24,
           "name": "Blush Georgette Lehenga & Halter Blouse",
           "url": "https://anokhi-ada.com/products/blush-georgette-lehenga-and-halter-blouse.html"
         },
         {
           "@type": "ListItem",
-          "position": 40,
-          "name": "Yellow Printed Wide-Leg Pants & Embroidered Crop Top",
-          "url": "https://anokhi-ada.com/products/yellow-printed-wide-leg-pants-and-embroidered-crop-top.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 41,
+          "position": 25,
           "name": "Lavender Draped Lehenga & Embroidered Blouse",
           "url": "https://anokhi-ada.com/products/lavender-draped-lehenga-and-embroidered-blouse.html"
         },
         {
           "@type": "ListItem",
-          "position": 42,
+          "position": 26,
           "name": "Mustard Crushed Lehenga & Embroidered Blouse",
           "url": "https://anokhi-ada.com/products/mustard-crushed-lehenga-and-embroidered-blouse.html"
         },
         {
           "@type": "ListItem",
-          "position": 43,
+          "position": 27,
           "name": "Purple Draped Lehenga & Embroidered Blouse",
           "url": "https://anokhi-ada.com/products/purple-draped-lehenga-and-embroidered-blouse.html"
         },
         {
           "@type": "ListItem",
-          "position": 44,
+          "position": 28,
           "name": "Chartreuse Draped Lehenga & Sequined Blouse",
           "url": "https://anokhi-ada.com/products/chartreuse-draped-lehenga-and-sequined-blouse.html"
         },
         {
           "@type": "ListItem",
-          "position": 45,
+          "position": 29,
           "name": "Grey Tissue Draped Lehenga & Embroidered Blouse",
           "url": "https://anokhi-ada.com/products/grey-tissue-draped-lehenga-and-embroidered-blouse.html"
         },
         {
           "@type": "ListItem",
-          "position": 46,
+          "position": 30,
+          "name": "Blue Printed Lehenga & One-Shoulder Blouse",
+          "url": "https://anokhi-ada.com/products/blue-printed-lehenga-and-one-shoulder-blouse.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 31,
+          "name": "Taupe Lehenga & Embroidered Vest",
+          "url": "https://anokhi-ada.com/products/taupe-lehenga-and-embroidered-vest.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 32,
+          "name": "Green Tissue Lehenga & Sequin Blouse",
+          "url": "https://anokhi-ada.com/products/green-tissue-lehenga-and-sequin-blouse.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 33,
           "name": "Blush Pink Asymmetric Top & Skirt",
           "url": "https://anokhi-ada.com/products/blush-pink-asymmetric-top-and-skirt.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 34,
+          "name": "Lavender Sequin Palazzo Set",
+          "url": "https://anokhi-ada.com/products/lavender-sequin-palazzo-set.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 35,
+          "name": "Yellow Printed Wide-Leg Pants & Embroidered Crop Top",
+          "url": "https://anokhi-ada.com/products/yellow-printed-wide-leg-pants-and-embroidered-crop-top.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 36,
+          "name": "Blush Pink Beaded Sharara Set",
+          "url": "https://anokhi-ada.com/products/blush-pink-beaded-sharara-set.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 37,
+          "name": "Black Mirror Work Cape Set",
+          "url": "https://anokhi-ada.com/products/black-mirror-work-cape-set.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 38,
+          "name": "Brown Sequin Embroidered Sharara Set",
+          "url": "https://anokhi-ada.com/products/brown-sequin-embroidered-sharara-set.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 39,
+          "name": "Maroon Zardozi Halter Top & Wide-Leg Pants",
+          "url": "https://anokhi-ada.com/products/maroon-zardozi-halter-top-and-wide-leg-pants.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 40,
+          "name": "Yellow Organza One-Shoulder Top & Wide-Leg Pants",
+          "url": "https://anokhi-ada.com/products/yellow-organza-one-shoulder-top-and-wide-leg-pants.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 41,
+          "name": "White Printed One-Shoulder Top & Printed Pants",
+          "url": "https://anokhi-ada.com/products/white-printed-one-shoulder-top-and-printed-pants.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 42,
+          "name": "Pink Tissue Sequin Top & Pants",
+          "url": "https://anokhi-ada.com/products/pink-tissue-sequin-top-and-pants.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 43,
+          "name": "Pink One-Shoulder Top & Printed Pants",
+          "url": "https://anokhi-ada.com/products/pink-one-shoulder-top-and-printed-pants.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 44,
+          "name": "Red Bandhani Top & White Straight Pants",
+          "url": "https://anokhi-ada.com/products/red-bandhani-top-and-white-straight-pants.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 45,
+          "name": "Rust Embroidered Top & Wide-Leg Pants",
+          "url": "https://anokhi-ada.com/products/rust-embroidered-top-and-wide-leg-pants.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 46,
+          "name": "Rani Pink Sequin Kurta & Wide-Leg Pants",
+          "url": "https://anokhi-ada.com/products/rani-pink-sequin-kurta-and-wide-leg-pants.html"
         },
         {
           "@type": "ListItem",
@@ -1413,21 +1431,21 @@
     }
   ]
 }
-  </script>
+</script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
 <div id="a11yAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
 <div class="promo-bar" id="promoBar">
-  <span>New Here? Take 15% Off — Code WELCOME15 (excludes bridal)</span>
+  <span>Twenty Years &mdash; 25% Off Everything Through 30 September</span>
   <a href="#all-collections" class="promo-link">Shop Now</a>
   <button class="promo-close" id="promoClose" aria-label="Dismiss">&times;</button>
 </div>
 
 <nav class="nav" aria-label="Main navigation">
   <div class="nav-inner">
-    <a href="#" onclick="window.scrollTo({top:0});return false;" style="display:flex; align-items:center; gap:10px;"><img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo" style="height:192px; width:auto; mix-blend-mode:multiply;"><span class="logo wordmark">Anokhi<span> Ada</span><span style="font-family:'Jost',Arial,sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--maroon); font-weight:500; display:block; margin-top:2px;">by Sona Amin</span></a>
+    <a href="#" onclick="window.scrollTo({top:0});return false;" style="display:flex; align-items:center; gap:10px;"><img src="images/anokhi-ada-logo.jpg" alt="Anokhi Ada logo" style="height:192px; width:auto; mix-blend-mode:multiply;"><span class="logo wordmark">Anokhi<span> Ada</span><span style="font-family:'Jost',Arial,sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; color:var(--maroon); font-weight:500; display:block; margin-top:2px;">by Sona Amin</span><span class="anniversary-line">Twenty Years Dressing Atlanta &middot; 2006&ndash;2026</span></a>
     <div class="nav-links">
       <div class="nav-dropdown">
         <button type="button" class="nav-shop-toggle" aria-expanded="false" aria-controls="shopMenu">SHOP <span class="nav-caret" aria-hidden="true">&#9660;</span></button>
@@ -1589,6 +1607,7 @@
       <div class="look-card" id="ivory-chanderi-embroidered-kurta-set"><div class="look-media saree-gallery" style="position:relative;"><img class="gallery-img active" data-index="0" src="images/ivory-chanderi-embroidered-kurta-set-full-view.jpg" alt="Ivory chanderi kurta set with pants, full view" loading="lazy"><img class="gallery-img" data-index="1" src="images/ivory-chanderi-embroidered-kurta-set-embroidery-detail.jpg" alt="Ivory chanderi kurta, hand-embroidered floral yoke with sequins and beadwork" loading="lazy"><img class="gallery-img" data-index="2" src="images/ivory-chanderi-embroidered-kurta-set-lace-trim-detail.jpg" alt="Ivory chanderi kurta, lace trim beside the embroidered panel" loading="lazy"><img class="gallery-img" data-index="3" src="images/ivory-chanderi-embroidered-kurta-set-hem-detail.jpg" alt="Ivory chanderi kurta, scalloped lace hem over matching pants" loading="lazy"><button class="gallery-nav gallery-prev" aria-label="Previous photo">&#8249;</button><button class="gallery-nav gallery-next" aria-label="Next photo">&#8250;</button><div class="gallery-dots"><button type="button" class="dot active" data-index="0" aria-label="Show photo 1 of 4" aria-current="true"></button><button type="button" class="dot" data-index="1" aria-label="Show photo 2 of 4" aria-current="false"></button><button type="button" class="dot" data-index="2" aria-label="Show photo 3 of 4" aria-current="false"></button><button type="button" class="dot" data-index="3" aria-label="Show photo 4 of 4" aria-current="false"></button></div></div><div class="look-body"><span class="look-plate">Look 07</span><h3 class="look-name">Ivory Chanderi Embroidered Kurta Set</h3><div class="look-tag">Ivory chanderi kurta, hand-embroidered with lace trims, with pants.</div><div class="sale-price-row"><span class="sale-now">$575</span></div><div class="look-size">Size L<button type="button" class="size-guide-link">Size Guide</button></div><div class="look-terms"><span class="look-ship">Shipping $9.99 in Georgia &middot; $14.99 elsewhere in the US, or collect free from the studio</span><span class="look-final">Final sale &mdash; one piece only, no returns or exchanges</span></div><button class="add-cart-btn" data-name="Ivory Chanderi Embroidered Kurta Set" data-price="575" data-color="#EFE6D2">Add to Bag</button><a href="products/ivory-chanderi-embroidered-kurta-set.html" class="look-details">View Details</a><a href="#contact" class="look-enquire">Ask a Question</a></div></div>
 
       <div class="look-card" id="pink-short-kurta-and-sharara-set"><div class="look-media saree-gallery" style="position:relative;"><img class="gallery-img active" data-index="0" src="images/pink-short-kurta-sharara-set-full-view.jpg" alt="Pink short kurta with sharara and dupatta, full view" loading="lazy"><img class="gallery-img" data-index="1" src="images/pink-short-kurta-sharara-set-embroidery-detail.jpg" alt="Pink short kurta, gold floral embroidery across the front" loading="lazy"><img class="gallery-img" data-index="2" src="images/pink-short-kurta-sharara-set-dupatta-detail.jpg" alt="Pink dupatta with scattered gold motifs and tie detail" loading="lazy"><button class="gallery-nav gallery-prev" aria-label="Previous photo">&#8249;</button><button class="gallery-nav gallery-next" aria-label="Next photo">&#8250;</button><div class="gallery-dots"><button type="button" class="dot active" data-index="0" aria-label="Show photo 1 of 3" aria-current="true"></button><button type="button" class="dot" data-index="1" aria-label="Show photo 2 of 3" aria-current="false"></button><button type="button" class="dot" data-index="2" aria-label="Show photo 3 of 3" aria-current="false"></button></div></div><div class="look-body"><span class="look-plate">Look 08</span><h3 class="look-name">Pink Short Kurta &amp; Sharara Set</h3><div class="look-tag">Pink short kurta with sharara and dupatta.</div><div class="sale-price-row"><span class="sale-now">$250</span></div><div class="look-size">Size M<button type="button" class="size-guide-link">Size Guide</button></div><div class="look-terms"><span class="look-ship">Shipping $9.99 in Georgia &middot; $14.99 elsewhere in the US, or collect free from the studio</span><span class="look-final">Final sale &mdash; one piece only, no returns or exchanges</span></div><button class="add-cart-btn" data-name="Pink Short Kurta &amp; Sharara Set" data-price="250" data-color="#C9184A">Add to Bag</button><a href="products/pink-short-kurta-and-sharara-set.html" class="look-details">View Details</a><a href="#contact" class="look-enquire">Ask a Question</a></div></div>
+
       <div class="look-card" id="black-printed-short-kurta-and-sharara-set"><div class="look-media"><img src="images/black-printed-short-kurta-sharara-set-full-view.jpg" alt="Black printed short kurta with matching printed sharara and gold-edged net dupatta, full view" style="width:100%; height:100%; object-fit:cover;" loading="lazy"></div><div class="look-body"><span class="look-plate">Look 09</span><h3 class="look-name">Black Printed Short Kurta &amp; Sharara Set</h3><div class="look-tag">Sleeveless short kurta in black, printed all over with trailing florals in dusty pink, rose and sage, with beaded and sequinned work at the neckline. Worn with a matching printed sharara, tiered and gathered for fullness, and a black net dupatta edged in gold.</div><div class="sale-price-row"><span class="sale-now">$445</span></div><div class="look-size">Size M<button type="button" class="size-guide-link">Size Guide</button></div><div class="look-terms"><span class="look-ship">Shipping $9.99 in Georgia &middot; $14.99 elsewhere in the US, or collect free from the studio</span><span class="look-final">Final sale &mdash; one piece only, no returns or exchanges</span></div><button class="add-cart-btn" data-name="Black Printed Short Kurta &amp; Sharara Set" data-price="445" data-color="#1C1B1B">Add to Bag</button><a href="products/black-printed-short-kurta-and-sharara-set.html" class="look-details">View Details</a><a href="#contact" class="look-enquire">Ask a Question</a></div></div>
       <div class="look-card" id="rani-pink-short-kurta-and-wide-leg-pants"><div class="look-media saree-gallery" style="position:relative;"><img class="gallery-img active" data-index="0" src="images/rani-pink-short-kurta-set-full-view.jpg" alt="Rani pink short kurta with silver sequin embroidery, wide-leg pants and net dupatta, full view" loading="lazy"><img class="gallery-img" data-index="1" src="images/rani-pink-short-kurta-set-back-detail.jpg" alt="Rani pink short kurta, open back with corded tie and beaded scalloped edge" loading="lazy"><button class="gallery-nav gallery-prev" aria-label="Previous photo">&#8249;</button><button class="gallery-nav gallery-next" aria-label="Next photo">&#8250;</button><div class="gallery-dots"><button type="button" class="dot active" data-index="0" aria-label="Show photo 1 of 2" aria-current="true"></button><button type="button" class="dot" data-index="1" aria-label="Show photo 2 of 2" aria-current="false"></button></div></div><div class="look-body"><span class="look-plate">Look 10</span><h3 class="look-name">Rani Pink Short Kurta &amp; Wide-Leg Pants</h3><div class="look-tag">Sleeveless short kurta in rani pink, hand-embroidered all over in silver sequins and thread work in a trailing floral vine, with a V neckline outlined in silver and a wide embroidered band at the hem. The back is open, tied with a corded bow and finished with a beaded scalloped edge. Worn with matching wide-leg pants and a net dupatta with a silver border.</div><div class="sale-price-row"><span class="sale-now">$325</span></div><div class="look-size">Size M<button type="button" class="size-guide-link">Size Guide</button></div><div class="look-terms"><span class="look-ship">Shipping $9.99 in Georgia &middot; $14.99 elsewhere in the US, or collect free from the studio</span><span class="look-final">Final sale &mdash; one piece only, no returns or exchanges</span></div><button class="add-cart-btn" data-name="Rani Pink Short Kurta &amp; Wide-Leg Pants" data-price="325" data-color="#D91E5A">Add to Bag</button><a href="products/rani-pink-short-kurta-and-wide-leg-pants.html" class="look-details">View Details</a><a href="#contact" class="look-enquire">Ask a Question</a></div></div>
 
@@ -1625,17 +1644,7 @@
       <div class="look-card" id="ivory-ready-to-wear-saree"><div class="look-media saree-gallery" style="position:relative;"><img class="gallery-img active" data-index="0" src="images/ivory-ready-to-wear-saree-model-full-view.jpg" alt="Ivory ready-to-wear saree with sequin blouse, full view" loading="lazy"><img class="gallery-img" data-index="1" src="images/ivory-ready-to-wear-saree-model-embroidery-detail.jpg" alt="Ivory ready-to-wear saree with sequin blouse, scalloped pearl-beaded neckline and border detail" loading="lazy"><img class="gallery-img" data-index="2" src="images/ivory-ready-to-wear-saree-model-back-view.jpg" alt="Ivory ready-to-wear saree with sequin blouse, scoop-back blouse with tie fastening, back view" loading="lazy"><button class="gallery-nav gallery-prev" aria-label="Previous photo">&#8249;</button><button class="gallery-nav gallery-next" aria-label="Next photo">&#8250;</button><div class="gallery-dots"><button type="button" class="dot active" data-index="0" aria-label="Show photo 1 of 3" aria-current="true"></button><button type="button" class="dot" data-index="1" aria-label="Show photo 2 of 3" aria-current="false"></button><button type="button" class="dot" data-index="2" aria-label="Show photo 3 of 3" aria-current="false"></button></div></div><div class="look-body"><span class="look-plate">Look 16</span><h3 class="look-name">Ivory Ready-to-Wear Saree</h3><div class="look-tag">Ivory ombr&eacute;-dyed ready saree with sequins blouse.</div><div class="sale-price-row"><span class="sale-now">$395</span></div><div class="look-size">Size M<button type="button" class="size-guide-link">Size Guide</button></div><div class="look-terms"><span class="look-ship">Shipping $9.99 in Georgia &middot; $14.99 elsewhere in the US, or collect free from the studio</span><span class="look-final">Final sale &mdash; one piece only, no returns or exchanges</span></div><button class="add-cart-btn" data-name="Ivory Ready-to-Wear Saree" data-price="395" data-color="#EDE3D2">Add to Bag</button><a href="products/ivory-ready-to-wear-saree.html" class="look-details">View Details</a><a href="#contact" class="look-enquire">Ask a Question</a></div></div>
 
       <div class="look-card" id="purple-lace-ready-to-wear-saree"><div class="look-media saree-gallery" style="position:relative;"><img class="gallery-img active" data-index="0" src="images/purple-lace-ready-to-wear-saree-model-full-view.jpg" alt="Purple lace ready-to-wear saree with lace blouse, full view" loading="lazy"><img class="gallery-img" data-index="1" src="images/purple-lace-ready-to-wear-saree-model-lace-detail.jpg" alt="Purple lace ready-to-wear saree, three-dimensional lace bodice detail" loading="lazy"><img class="gallery-img" data-index="2" src="images/purple-lace-ready-to-wear-saree-model-back-view.jpg" alt="Purple lace ready-to-wear saree, scoop-back lace blouse with corded tie and tasselled ends" loading="lazy"><button class="gallery-nav gallery-prev" aria-label="Previous photo">&#8249;</button><button class="gallery-nav gallery-next" aria-label="Next photo">&#8250;</button><div class="gallery-dots"><button type="button" class="dot active" data-index="0" aria-label="Show photo 1 of 3" aria-current="true"></button><button type="button" class="dot" data-index="1" aria-label="Show photo 2 of 3" aria-current="false"></button><button type="button" class="dot" data-index="2" aria-label="Show photo 3 of 3" aria-current="false"></button></div></div><div class="look-body"><span class="look-plate">Look 17</span><h3 class="look-name">Purple Lace Ready-to-Wear Saree</h3><div class="look-tag">Very light weight purple ready saree with net blouse with 3D work.</div><div class="sale-price-row"><span class="sale-now">$395</span></div><div class="look-size">Size S<button type="button" class="size-guide-link">Size Guide</button></div><div class="look-terms"><span class="look-ship">Shipping $9.99 in Georgia &middot; $14.99 elsewhere in the US, or collect free from the studio</span><span class="look-final">Final sale &mdash; one piece only, no returns or exchanges</span></div><button class="add-cart-btn" data-name="Purple Lace Ready-to-Wear Saree" data-price="395" data-color="#4A4173">Add to Bag</button><a href="products/purple-lace-ready-to-wear-saree.html" class="look-details">View Details</a><a href="#contact" class="look-enquire">Ask a Question</a></div></div>
-    </div>
-  </div>
-</section>
 
-<section class="section shop-section" id="chaniya-cholis" style="scroll-margin-top:300px;">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Chaniya Cholis</h2>
-      <p>Printed, mirrored and hand-embroidered chaniya cholis.</p>
-    </div>
-    <div class="lookbook-grid">
       <div class="look-card" id="dusty-rose-floral-chaniya-choli">
         <div class="look-media"><img src="images/navy-and-dusty-rose-floral-chaniya-choli-with-printed-dupatt.jpg" alt="Navy and dusty rose floral chaniya choli with printed dupatta" style="width:100%; height:100%; object-fit:cover;" loading="lazy"></div>
         <div class="look-body">
@@ -1668,7 +1677,17 @@
           <a href="products/purple-mirror-work-printed-chaniya-choli.html" class="look-details">View Details</a><a href="#contact" class="look-enquire">Ask a Question</a>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
+<section class="section shop-section" id="chaniya-cholis" style="scroll-margin-top:300px;">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Chaniya Cholis</h2>
+      <p>Printed, mirrored and hand-embroidered chaniya cholis.</p>
+    </div>
+    <div class="lookbook-grid">
       <div class="look-card" id="vintage-hand-embroidered-chaniya-choli">
         <div class="look-media"><img src="images/vintage-hand-embroidered-chaniya-choli.jpg" alt="Vintage hand-embroidered chaniya choli, full view" style="width:100%; height:100%; object-fit:cover;" loading="lazy"></div>
         <div class="look-body">
@@ -3634,13 +3653,32 @@
 
   // ---- Checkout modal ----
   var checkoutIdempotencyKey = null;
+  // Whether the anniversary sale is running is the SERVER's answer, delivered
+  // with the inventory check on page load — never worked out from the visitor's
+  // own clock, which can be wrong or simply set to another country. Until that
+  // answer arrives the page shows full prices, so it can never promise a
+  // discount the checkout won't honour.
+  var SALE = { active: false, percent: 0 };
+
+  // The exact mirror of salePrice() in the backend's _sale.js. Rounded DOWN to
+  // a whole dollar. If these two ever disagree, the customer is shown one
+  // figure and charged another — change them together.
+  function salePriceOf(price){
+    if(!SALE.active) return price;
+    return Math.floor(price * (100 - SALE.percent) / 100);
+  }
+
   var appliedPromo = null; // { code, percentOff, excludesBridal } or null
 
   // Single source of truth for the math — used by the summary display,
   // the wallet payment sheet total, and the final payment submission, so
   // all three always agree with each other.
   function calculateTotals(addrOverride){
-    var subtotal = cart.reduce(function(sum, item){ return sum + item.price * item.qty; }, 0);
+    // Full price, then the sale price. The difference is shown as its own line
+    // so the saving is visible rather than silently baked into the number.
+    var fullSubtotal = cart.reduce(function(sum, item){ return sum + item.price * item.qty; }, 0);
+    var subtotal = cart.reduce(function(sum, item){ return sum + salePriceOf(item.price) * item.qty; }, 0);
+    var saleSaving = fullSubtotal - subtotal;
     // Mirror of process-payment.js: a code marked excludesBridal discounts the
     // non-bridal part of the bag only. Written the same way on both sides on
     // purpose — this pair is what showed one price and charged another the last
@@ -3686,7 +3724,8 @@
     var taxKnown = addr !== null && rate !== null;
     var tax = taxKnown ? (discountedSubtotal + shipping) * rate : 0;
     var total = discountedSubtotal + shipping + tax;
-    return { subtotal: subtotal, discount: discount, shipping: shipping,
+    return { subtotal: subtotal, fullSubtotal: fullSubtotal, saleSaving: saleSaving,
+             discount: discount, shipping: shipping,
              tax: tax, rate: taxKnown ? rate : 0, taxKnown: taxKnown, rush: rush, pickup: pickup,
              shippingKnown: addrForShipping !== null, total: total };
   }
@@ -3704,12 +3743,15 @@
     var rows = cart.map(function(item){
       return '<div style="display:flex; justify-content:space-between; font-size:13.5px; padding:3px 0;">' +
         '<span>' + item.name + (item.qty > 1 ? ' &times; ' + item.qty : '') + '</span>' +
-        '<span class="mono">' + formatMoney(item.price * item.qty) + '</span></div>';
+        '<span class="mono">' + formatMoney(salePriceOf(item.price) * item.qty) + '</span></div>';
     }).join('');
+    var saleRow = totals.saleSaving > 0
+      ? '<div style="display:flex; justify-content:space-between; font-size:13.5px; padding:3px 0; color:#2E7D32;"><span>' + SALE.name + ' (&minus;' + SALE.percent + '%)</span><span class="mono">&minus;' + formatMoney(totals.saleSaving) + '</span></div>'
+      : '';
     var discountRow = appliedPromo
       ? '<div style="display:flex; justify-content:space-between; font-size:13.5px; padding:3px 0; color:#2E7D32;"><span>Promo (' + appliedPromo.code + ', -' + appliedPromo.percentOff + '%)</span><span class="mono">-' + formatMoney(totals.discount) + '</span></div>'
       : '';
-    summaryEl.innerHTML = rows + discountRow +
+    summaryEl.innerHTML = rows + saleRow + discountRow +
       '<div style="border-top:1px solid var(--line); margin-top:8px; padding-top:8px; display:flex; justify-content:space-between; font-size:13.5px; color:#6e615b;"><span>' + (totals.pickup ? 'Studio Pickup' : 'Shipping &amp; Handling' + (totals.rush ? ' (rush)' : '')) + '</span><span class="mono">' + (totals.pickup ? 'Free' : (totals.shippingKnown ? formatMoney(totals.shipping) : 'Enter address')) + '</span></div>' +
       // Until there's a State and (in Georgia) a ZIP, the rate is unknown, so
       // the row says so rather than showing a figure that will change.
@@ -3786,6 +3828,17 @@
   document.getElementById('promoApplyBtn').addEventListener('click', async function(){
     var input = document.getElementById('promoCodeInput');
     var statusEl = document.getElementById('promoStatus');
+
+    // A sitewide sale replaces codes rather than stacking with them. Said here
+    // as well as server-side so nobody fills in a whole checkout before being
+    // told. Their one-time code is not spent — it still works in October.
+    if(SALE.active){
+      statusEl.style.display = 'block';
+      statusEl.style.color = '#8C3A22';
+      statusEl.textContent = 'Our ' + SALE.name + ' ' + SALE.percent +
+        '% is already applied to every piece — a code can\u2019t be added on top.';
+      return;
+    }
     var code = input.value.trim();
 
     if(!code){
@@ -3941,12 +3994,45 @@
 
   renderCart();
 
+  // Marks every card down, once, when the server confirms the sale is running.
+  // The original price stays on screen struck through: a sale price with nothing
+  // to compare it to is just a price.
+  function applySalePricing(){
+    document.querySelectorAll('.look-card .sale-price-row').forEach(function(row){
+      if(row.querySelector('.sale-was')) return;
+      var now = row.querySelector('.sale-now');
+      if(!now) return;
+      var full = parseFloat(now.textContent.replace(/[^0-9.]/g, ''));
+      if(!isFinite(full)) return;
+
+      var was = document.createElement('span');
+      was.className = 'sale-was';
+      was.textContent = '$' + full.toLocaleString();
+      row.insertBefore(was, now);
+      now.textContent = '$' + salePriceOf(full).toLocaleString();
+      now.classList.add('sale-reduced');
+    });
+
+    document.querySelectorAll('.sale-banner-live').forEach(function(el){
+      el.hidden = false;
+    });
+  }
+
   // ---- Check inventory for sold-out one-of-a-kind items ----
   var INVENTORY_URL = 'https://anokhi-ada-backend.vercel.app/api/inventory';
 
   fetch(INVENTORY_URL)
     .then(function(res){ return res.json(); })
     .then(function(data){
+      // The server's answer, not the browser's clock. Applied before the sold
+      // flags so prices and badges land in the same repaint.
+      if(data.sale && data.sale.active){
+        SALE.active = true;
+        SALE.percent = data.sale.percent;
+        SALE.name = data.sale.name || SALE.name;
+        applySalePricing();
+      }
+
       var soldItems = data.soldItems || [];
       soldItems.forEach(function(name){
         var btn = document.querySelector('.add-cart-btn[data-name="' + name + '"]');
