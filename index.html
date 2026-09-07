@@ -746,6 +746,12 @@
   }
   .gallery-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.35s ease; pointer-events:none; }
   .gallery-img.active{ opacity:1; pointer-events:auto; }
+  /* Arrows are for a mouse. On a touch screen nobody uses them and they sit as
+     two dark discs across the middle of the garment — the one thing the card
+     exists to show. The dots stay, and swiping still works. */
+  @media (hover:none){
+    .gallery-nav{ display:none !important; }
+  }
   .gallery-nav{
     position:absolute; top:50%; transform:translateY(-50%); z-index:3;
     background:rgba(36,16,20,0.55); color:var(--ivory); border:none; width:44px; height:44px;
@@ -974,7 +980,12 @@
        still occupies its space, so a visitor scrolling past sees an empty gap
        where the filters should be, and never gets the filters at all. */
     .shop-bar{ top:0; opacity:1; visibility:visible; transform:none; }
-    .shop-bar-inner{ padding:8px 16px; gap:7px; }
+    .shop-bar-inner{ padding:8px 16px; gap:7px; flex-wrap:wrap; }
+    /* 80px above and below each section is considered on a desktop and just an
+       empty band on a phone — a third of a screen of nothing between the
+       collection tiles and the first garment. */
+    .section{ padding:34px 0; }
+    .shop-section{ padding-top:26px; }
     .shop-chip{ padding:9px 13px; }
 
     /* Three rows of chips plus a search field owned most of the screen. Only
@@ -986,7 +997,12 @@
     .shop-bar.filters-open [aria-label="Filter by size"],
     .shop-bar.filters-open [aria-label="Filter by price"]{ display:flex; }
     .shop-bar.filters-open .shop-bar-search{ display:block; }
-    .shop-filters-toggle{ display:inline-flex; align-items:center; }
+    .shop-filters-toggle{ display:inline-flex; align-items:center; flex:0 0 auto; }
+    /* Share the row with the Filters button instead of claiming the full width
+       and pushing it onto a second line. The collections scroll sideways in
+       whatever space is left. Two rows of bar, permanently on screen, cost
+       about 90px of every phone screen. */
+    .shop-bar [aria-label="Jump to a collection"]{ flex:1 1 0; min-width:0; }
     .shop-bar-count{ order:99; }
   }
   @media (max-width:520px){
@@ -4342,6 +4358,33 @@
         show(i, true);
       });
     });
+
+    // Swipe. The arrows are hidden on touch screens — they sat as two dark
+    // discs across the middle of the garment — so this is what replaces them.
+    // Without it the dots would be the only way to reach the other photos, and
+    // with an average of two and a half photographs per piece that is most of
+    // what there is to see.
+    if(slides.length > 1){
+      var startX = 0, startY = 0, tracking = false;
+      gallery.addEventListener('touchstart', function(e){
+        if(e.touches.length !== 1) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        tracking = true;
+      }, { passive: true });
+
+      gallery.addEventListener('touchend', function(e){
+        if(!tracking) return;
+        tracking = false;
+        var touch = e.changedTouches[0];
+        var dx = touch.clientX - startX;
+        var dy = touch.clientY - startY;
+        // Ignore anything that was really a vertical scroll, and anything too
+        // short to be deliberate — a tap must not change the photo.
+        if(Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
+        show(current + (dx < 0 ? 1 : -1), true);
+      }, { passive: true });
+    }
   });
 
   // ---- Click-to-enlarge photo viewer ----
