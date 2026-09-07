@@ -488,7 +488,19 @@
     opacity:0; pointer-events:none; transition:opacity 0.25s ease; padding:12px;
   }
   .lightbox-overlay.open{ opacity:1; pointer-events:auto; }
-  .lightbox-overlay img{ max-width:98vw; max-height:96vh; object-fit:contain; border-radius:2px; transition:transform 0.15s ease; }
+  .lightbox-overlay img{
+    max-width:98vw;
+    /* 96vh measures the viewport as if Safari's toolbar were hidden, so with
+       the toolbar showing the photo is taller than the screen and pushes the
+       zoom buttons — anchored to the bottom — out of sight. Scrolling collapses
+       the toolbar, the space grows, and they appear: which is why zoom only
+       showed up after a swipe. dvh tracks the space actually visible, and the
+       130px reserves room for the buttons instead of letting the photo take it.
+       vh stays first as a fallback for browsers without dvh. */
+    max-height:96vh;
+    max-height:calc(100dvh - 130px);
+    object-fit:contain; border-radius:2px; transition:transform 0.15s ease;
+  }
   .lightbox-zoom-controls{
     position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
     display:flex; gap:10px; z-index:201;
@@ -506,10 +518,17 @@
     display:flex; align-items:center; justify-content:center; transition:background 0.2s ease;
   }
   .lightbox-nav:hover{ background:rgba(251,243,231,0.3); }
+  /* Same reasoning as the cards: on a touch screen these sit over the garment
+     and nobody reaches for them. Swiping replaces them — see the handler. */
+  @media (hover:none){
+    .lightbox-nav{ display:none !important; }
+  }
   .lightbox-prev{ left:12px; }
   .lightbox-next{ right:12px; }
   .lightbox-counter{
-    position:absolute; top:16px; left:50%; transform:translateX(-50%); z-index:201;
+    /* Moved off the top, where it landed on the filter chips showing through
+       the backdrop. Below the photo it reads as part of the viewer. */
+    position:absolute; bottom:74px; left:50%; transform:translateX(-50%); z-index:201;
     color:rgba(251,243,231,0.85); font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.06em;
   }
   .lightbox-close{
@@ -4473,6 +4492,32 @@
     if(e.key === 'ArrowLeft'){ showLightboxPhoto(lightboxIndex - 1); }
     if(e.key === 'ArrowRight'){ showLightboxPhoto(lightboxIndex + 1); }
   });
+
+  // Swipe between photos, replacing the arrows that are hidden on touch.
+  (function(){
+    var startX = 0, startY = 0, tracking = false;
+
+    lightbox.addEventListener('touchstart', function(e){
+      // While zoomed in, a drag is the customer moving around the photograph —
+      // the detail she opened the viewer to look at. Changing the picture out
+      // from under her would be the opposite of what she asked for.
+      if(e.touches.length !== 1 || zoomLevel !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
+    }, { passive: true });
+
+    lightbox.addEventListener('touchend', function(e){
+      if(!tracking) return;
+      tracking = false;
+      if(lightboxGallery.length < 2) return;
+      var touch = e.changedTouches[0];
+      var dx = touch.clientX - startX;
+      var dy = touch.clientY - startY;
+      if(Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
+      showLightboxPhoto(lightboxIndex + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  })();
 
   document.getElementById('lightboxZoomIn').addEventListener('click', function(e){
     e.stopPropagation();
