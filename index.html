@@ -554,6 +554,29 @@
     min-width:52px; text-align:center; color:rgba(251,243,231,0.7);
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.1em;
   }
+  /* Back to top. Only on phones: the header there scrolls away with the page,
+     so once you're into the collections the logo — which is what takes you
+     home — is far above you. On a desktop the header stays pinned and this
+     would be clutter.
+
+     z-index sits below the cart drawer and the photo viewer so it never floats
+     on top of an open dialog. */
+  .to-top{
+    display:none;
+    position:fixed; z-index:40;
+    right:14px; bottom:calc(14px + env(safe-area-inset-bottom, 0px));
+    width:44px; height:44px; border-radius:50%;
+    background:rgba(251,243,231,0.94); border:1px solid var(--line-strong);
+    color:var(--maroon); font-size:19px; line-height:1; cursor:pointer;
+    align-items:center; justify-content:center;
+    box-shadow:0 2px 10px rgba(36,16,20,0.16);
+    opacity:0; transform:translateY(6px); pointer-events:none;
+    transition:opacity 0.2s ease, transform 0.2s ease;
+  }
+  .to-top.visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  @media (max-width:900px){
+    .to-top{ display:flex; }
+  }
   .zoomable{ cursor:zoom-in; }
   .look-media img, .about-visual img, .lbx-stage img{
     -webkit-user-drag:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
@@ -2312,6 +2335,8 @@
     <p class="size-guide-note">Each piece is listed in a single size, shown on its card. Match it to your bust measurement above &#8212; a 36in bust is an M. Every piece ships as-is with no alterations, so please check your measurements before ordering. If you&#8217;re between sizes or unsure, <a href="#contact">ask us</a> before you buy.</p>
   </div>
 </div>
+
+<button type="button" class="to-top" id="toTopBtn" aria-label="Back to top">&#8593;</button>
 
 <div class="lbx" id="lightboxOverlay" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
   <div class="lbx-bar">
@@ -4468,6 +4493,31 @@
   sizeGuide.addEventListener('click', function(e){
     if(e.target === sizeGuide) closeSizeGuide();
   });
+
+  // ---- Back to top ----
+  (function(){
+    var btn = document.getElementById('toTopBtn');
+    if(!btn) return;
+    // Roughly a screen and a half down — far enough that the header is well
+    // out of sight, so the button never appears while it's still reachable.
+    var THRESHOLD = 900;
+    var ticking = false;
+
+    function update(){
+      btn.classList.toggle('visible', window.pageYOffset > THRESHOLD);
+      ticking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if(ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }, { passive: true });
+    update();
+
+    btn.addEventListener('click', function(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
 
   // ---- Photo viewer ----
   // Prev/next live in the control bar beside zoom rather than floating over the
