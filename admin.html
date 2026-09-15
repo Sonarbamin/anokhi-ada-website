@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Inventory — Anokhi Ada</title>
+<link rel="icon" href="images/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"></noscript>
+<style>
+  :root{
+    --ivory:#FBF3E7; --ivory-dim:#F0E4D2; --maroon:#332920; --gold:#A3895E;
+    --ink:#2A2420; --line:rgba(36,16,20,0.16); --line-strong:rgba(36,16,20,0.3);
+    --sold:#8C3A22; --ok:#2E7D32;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  a, button{ -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  body{
+    margin:0; background:var(--ivory); color:var(--ink); line-height:1.6;
+    font-family:'Jost',-apple-system,Segoe UI,Arial,sans-serif;
+  }
+  .wrap{
+    max-width:720px; margin:0 auto; padding:34px 20px 120px;
+    padding-left:calc(20px + env(safe-area-inset-left, 0px));
+    padding-right:calc(20px + env(safe-area-inset-right, 0px));
+  }
+  h1{
+    font-family:'Cormorant Garamond',Georgia,serif; font-weight:600;
+    font-size:30px; color:var(--maroon); margin:0 0 4px;
+  }
+  .sub{ color:#6b5a53; font-size:14.5px; margin:0 0 26px; }
+  .card{ background:#fff; border:1px solid var(--line); padding:22px 20px; }
+  label{ display:block; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; color:#6b5a53; margin-bottom:7px; }
+  input[type=password]{
+    width:100%; background:var(--ivory-dim); border:1px solid var(--line-strong);
+    color:var(--ink); padding:13px 14px; font-family:inherit; font-size:16px; border-radius:2px;
+  }
+  button{
+    font-family:inherit; font-size:15px; padding:14px 22px; border:0; cursor:pointer;
+    background:var(--maroon); color:var(--ivory); letter-spacing:0.03em; min-height:48px;
+  }
+  button:disabled{ opacity:0.4; cursor:default; }
+  button.ghost{ background:#fff; color:var(--maroon); border:1px solid var(--line-strong); }
+  button:focus-visible, input:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+  .msg{ font-size:14px; margin-top:14px; min-height:20px; }
+  .msg.bad{ color:var(--sold); }
+  .msg.good{ color:var(--ok); }
+
+  #list{ display:none; }
+  .count{
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--gold); margin:26px 0 10px;
+  }
+  .row{
+    display:flex; align-items:center; gap:14px;
+    padding:12px 4px; border-bottom:1px solid var(--line);
+  }
+  .row input[type=checkbox]{ width:24px; height:24px; flex:0 0 auto; accent-color:var(--sold); }
+  .row .name{ flex:1 1 auto; min-width:0; font-size:15.5px; }
+  .row .price{ font-family:'Space Mono',monospace; font-size:13px; color:#6b5a53; }
+  .row.is-sold .name{ color:var(--sold); text-decoration:line-through; text-decoration-thickness:1px; }
+  .row.changed{ background:#FFF6E8; }
+
+  /* The save bar follows you down a list of 53 rather than sitting at the
+     bottom where you'd have to scroll back to it. */
+  .savebar{
+    position:fixed; left:0; right:0; bottom:0; z-index:10;
+    background:#fff; border-top:1px solid var(--line-strong);
+    padding:12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+    display:none; align-items:center; justify-content:space-between; gap:14px;
+  }
+  .savebar.on{ display:flex; }
+  .savebar span{ font-size:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Inventory</h1>
+  <p class="sub">Tick a piece to mark it sold. Untick to put it back on sale.
+    Changes take effect on the website straight away &mdash; there is nothing to upload.</p>
+
+  <div class="card" id="lock">
+    <label for="pw">Password</label>
+    <input type="password" id="pw" autocomplete="current-password" enterkeyhint="go">
+    <p class="msg" id="lockMsg"></p>
+    <button id="unlock">Unlock</button>
+  </div>
+
+  <div id="list">
+    <p class="count" id="count"></p>
+    <div id="rows"></div>
+  </div>
+
+</div>
+
+<div class="savebar" id="savebar">
+  <span id="pending"></span>
+  <span>
+    <button class="ghost" id="discard">Discard</button>
+    <button id="save">Save</button>
+  </span>
+</div>
+
+<script>
+(function(){
+  var API = 'https://anokhi-ada-backend.vercel.app/api/admin-inventory';
+
+  // Held in memory only. Refreshing the page asks again — a shop laptop left
+  // open shouldn't stay unlocked, and nothing here is worth storing.
+  var password = null;
+  var products = [];
+  var changes = {};   // name -> true/false, only where it differs from stored
+
+  var lock = document.getElementById('lock');
+  var lockMsg = document.getElementById('lockMsg');
+  var list = document.getElementById('list');
+  var rows = document.getElementById('rows');
+  var savebar = document.getElementById('savebar');
+
+  function say(el, text, kind){
+    el.textContent = text;
+    el.className = 'msg' + (kind ? ' ' + kind : '');
+  }
+
+  async function call(payload){
+    var res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ password: password }, payload))
+    });
+    var data = null;
+    try{ data = await res.json(); } catch(e){ /* no body */ }
+    if(!res.ok) throw new Error((data && data.message) || 'Request failed.');
+    return data;
+  }
+
+  function soldCount(){
+    return products.filter(function(p){
+      return (p.name in changes) ? changes[p.name] : p.sold;
+    }).length;
+  }
+
+  function refreshCounts(){
+    var sold = soldCount();
+    document.getElementById('count').textContent =
+      sold + ' sold \u00b7 ' + (products.length - sold) + ' available \u00b7 ' + products.length + ' pieces';
+    var n = Object.keys(changes).length;
+    savebar.classList.toggle('on', n > 0);
+    document.getElementById('pending').textContent =
+      n === 1 ? '1 change' : n + ' changes';
+  }
+
+  function render(){
+    rows.innerHTML = '';
+    products.forEach(function(p){
+      var current = (p.name in changes) ? changes[p.name] : p.sold;
+
+      var row = document.createElement('div');
+      row.className = 'row' + (current ? ' is-sold' : '') + ((p.name in changes) ? ' changed' : '');
+
+      var box = document.createElement('input');
+      box.type = 'checkbox';
+      box.checked = current;
+      box.id = 'p' + products.indexOf(p);
+      box.setAttribute('aria-label', 'Mark ' + p.name + ' sold');
+
+      var name = document.createElement('label');
+      name.className = 'name';
+      name.setAttribute('for', box.id);
+      name.textContent = p.name;
+
+      var price = document.createElement('span');
+      price.className = 'price';
+      price.textContent = '$' + p.price;
+
+      box.addEventListener('change', function(){
+        // Putting something back on sale is the dangerous direction: the piece
+        // may genuinely have been bought. Marking sold needs no confirmation.
+        if(!box.checked && p.sold){
+          var ok = confirm('Put "' + p.name + '" back on sale?\n\nIt is currently marked sold. If it really did sell, someone could buy it again.');
+          if(!ok){ box.checked = true; return; }
+        }
+        if(box.checked === p.sold){ delete changes[p.name]; }
+        else { changes[p.name] = box.checked; }
+        render();
+      });
+
+      row.appendChild(box);
+      row.appendChild(name);
+      row.appendChild(price);
+      rows.appendChild(row);
+    });
+    refreshCounts();
+  }
+
+  async function load(){
+    var data = await call({ action: 'list' });
+    products = data.products || [];
+    changes = {};
+    lock.style.display = 'none';
+    list.style.display = 'block';
+    render();
+  }
+
+  document.getElementById('unlock').addEventListener('click', async function(){
+    var btn = this;
+    password = document.getElementById('pw').value;
+    if(!password){ say(lockMsg, 'Enter the password.', 'bad'); return; }
+    btn.disabled = true;
+    say(lockMsg, 'Checking\u2026');
+    try{
+      await load();
+    } catch(err){
+      password = null;
+      say(lockMsg, err.message, 'bad');
+    }
+    btn.disabled = false;
+  });
+
+  document.getElementById('pw').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') document.getElementById('unlock').click();
+  });
+
+  document.getElementById('discard').addEventListener('click', function(){
+    changes = {};
+    render();
+  });
+
+  document.getElementById('save').addEventListener('click', async function(){
+    var btn = this;
+    var pending = Object.keys(changes).length;
+    if(!pending) return;
+    btn.disabled = true;
+    btn.textContent = 'Saving\u2026';
+    try{
+      await call({ action: 'set', changes: changes });
+      // Re-read rather than assume, so the page shows what is actually stored.
+      await load();
+      say(lockMsg, '', '');
+      alert(pending === 1 ? 'Saved. 1 piece updated.' : 'Saved. ' + pending + ' pieces updated.');
+    } catch(err){
+      alert('Could not save: ' + err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = 'Save';
+  });
+})();
+</script>
+</body>
+</html>

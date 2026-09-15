@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# The inventory page. It is password-protected, so this is about tidiness
+# rather than security — a login screen has no business in search results.
+# Note that listing a path here tells anyone reading this file that it exists;
+# the password is what protects it, not this line.
+Disallow: /admin.html
+
 Sitemap: https://anokhi-ada.com/sitemap.xml
