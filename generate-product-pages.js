@@ -297,6 +297,7 @@ const STYLES = `
   .guide-tables table{ border-collapse:collapse; width:100%; margin:12px 0 20px; font-size:13px; }
   .guide-tables th,.guide-tables td{ border-bottom:1px solid var(--line); text-align:center; padding:8px 5px; }
   .guide-tables th:first-child{ text-align:left; }
+  @media(max-width:900px){ .look13-repeat{display:none;} }
   @media(max-width:820px){
     .product{ grid-template-rows:auto auto auto; }
     .detail{ grid-column:1; grid-row:1; }
@@ -456,7 +457,7 @@ ${shots}
       </div>
 
       <div class="product-info">
-        <p class="desc">${escapeHtml(p.description)}</p>
+        <p class="desc${p.id === 'white-silk-kaftan-with-hand-embroidery' ? ' look13-repeat' : ''}">${escapeHtml(p.description)}</p>
         <p><strong>Garment measurements:</strong> <a href="../index.html?enquire=${p.id}#contact">Ask us for this piece’s measurements</a> before ordering. The Size Guide shows body measurements, not the measurements of this garment.</p>
         <div class="facts">
           <p><strong>One-of-a-kind.</strong> There is exactly one of this piece, in
