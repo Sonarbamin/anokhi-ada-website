@@ -835,6 +835,7 @@
   .gallery-dots .dot.active{ background-color:var(--ivory); }
   .look-body{ padding:14px 16px 18px; display:flex; flex-direction:column; flex:1; }
   .look-name{ font-size:18px; color:var(--maroon); }
+  .cart-item-size{font-size:13px;margin:5px 0;}
   .look-tag{ font-size:13.5px; color:#6b5a53; margin-top:2px; line-height:1.5; }
   /* Description absorbs the leftover height in each card, so the price,
      size, and Add to Bag row all sit on the same line across a grid row
@@ -3290,6 +3291,18 @@
     return !!(el && el.checked) && !isPickup();
   }
 
+  // Resolve from the current catalogue so bags saved before sizes were added work too.
+  function cartSizeOf(item){
+    var buttons = document.querySelectorAll('.look-card .add-cart-btn');
+    for(var i=0; i<buttons.length; i++){
+      if(buttons[i].getAttribute('data-name') === item.name){
+        var el = buttons[i].closest('.look-card').querySelector('.look-size');
+        return el ? el.textContent.replace('Size Guide', '').trim() : '';
+      }
+    }
+    return '';
+  }
+
   function renderCart(){
     var itemsEl = document.getElementById('cartItems');
     var countEl = document.getElementById('cartCount');
@@ -3329,6 +3342,7 @@
         thumb +
         '<div class="cart-item-body">' +
           '<div class="cart-item-name">' + escapeHtml(item.name) + (item.qty > 1 ? ' &times; ' + escapeHtml(item.qty) : '') + '</div>' +
+          '<div class="cart-item-size">' + escapeHtml(cartSizeOf(item)) + '</div>' +
           '<div class="cart-item-price">' + formatMoney(salePriceOf(item.price) * item.qty) + (SALE.active ? ' <small>(sale price)</small>' : '') + '</div>' +
           '<button class="cart-item-remove" data-idx="' + idx + '">Remove</button>' +
         '</div>';
@@ -3949,7 +3963,7 @@
     var summaryEl = document.getElementById('checkoutSummary');
     var rows = cart.map(function(item){
       return '<div style="display:flex; justify-content:space-between; font-size:13.5px; padding:3px 0;">' +
-        '<span>' + item.name + (item.qty > 1 ? ' &times; ' + item.qty : '') + '</span>' +
+        '<span>' + escapeHtml(item.name) + (item.qty > 1 ? ' &times; ' + item.qty : '') + '<br><small>' + escapeHtml(cartSizeOf(item)) + '</small></span>' +
         '<span class="mono">' + formatMoney(item.price * item.qty) + '</span></div>';
     }).join('');
     var saleRow = totals.saleSaving > 0

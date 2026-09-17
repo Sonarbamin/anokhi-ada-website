@@ -287,6 +287,8 @@ const STYLES = `
   .detail{ grid-column:2; grid-row:1; }
   .product-info{ grid-column:2; grid-row:2; }
   .product{ row-gap:24px; grid-template-rows:max-content 1fr; }
+  .purchase-note{font-size:13px;line-height:1.5;margin:0 0 16px;}
+  .product-info{font-size:15px;line-height:1.6;}
   .product-size-guide{ margin:0 0 20px; font-size:14px; }
   .product-size-guide summary{ cursor:pointer; text-decoration:underline; padding:10px 0; min-height:44px; }
   .product-size-guide summary:focus-visible{ outline:2px solid var(--maroon); outline-offset:2px; }
@@ -298,8 +300,8 @@ const STYLES = `
   @media(max-width:820px){
     .product{ grid-template-rows:auto auto auto; }
     .detail{ grid-column:1; grid-row:1; }
-    .shots{ grid-column:1; grid-row:2; }
-    .product-info{ grid-column:1; grid-row:3; }
+    .shots{ grid-column:1; grid-row:3; }
+    .product-info{ grid-column:1; grid-row:2; }
   }
 
 `;
@@ -438,7 +440,7 @@ ${shots}
           <summary>Size Guide</summary>
           <p>All measurements are body measurements in inches, not garment measurements. Measure over light clothing, keeping the tape level and snug but not tight.</p>
           <div class="guide-tables">${GUIDE_TABLES}</div>
-          <p>Match the listed size to your bust measurement — a 36-inch bust is M. Every piece ships as-is with no alterations. If you are between sizes or unsure, <a href="../index.html?enquire=${p.id}#contact">ask us about this piece</a> before ordering.</p>
+          <p>Compare your bust, waist and hips with the chart. If your measurements fall into different sizes, ask us to check this specific piece before ordering. Every piece ships as-is with no alterations. If you are between sizes or unsure, <a href="../index.html?enquire=${p.id}#contact">ask us about this piece</a> before ordering.</p>
         </details>
 
 
@@ -447,6 +449,7 @@ ${shots}
 
 
 
+        <p class="purchase-note">Final sale — no returns or exchanges. Please check fit before ordering.</p>
         <a class="buy" href="../index.html?add=${p.id}#${p.id}">Add to Bag</a>
         <a class="ask" href="../index.html?enquire=${p.id}#contact">Ask a Question</a>
 
@@ -454,6 +457,7 @@ ${shots}
 
       <div class="product-info">
         <p class="desc">${escapeHtml(p.description)}</p>
+        <p><strong>Garment measurements:</strong> <a href="../index.html?enquire=${p.id}#contact">Ask us for this piece’s measurements</a> before ordering. The Size Guide shows body measurements, not the measurements of this garment.</p>
         <div class="facts">
           <p><strong>One-of-a-kind.</strong> There is exactly one of this piece, in
              ${escapeHtml(p.size.replace('Size ', 'size '))}. Once it sells it is gone,
@@ -461,7 +465,7 @@ ${shots}
           <p><strong>Shipping.</strong> ${p.section === 'bridal'
              ? 'Bridal pieces ship at a flat $40.00 anywhere in the US.'
              : '$9.99 within Georgia, $14.99 elsewhere in the US.'}
-             Studio pickup in Atlanta is free.
+             Studio pickup in Atlanta is free. Standard delivery usually takes 4–8 business days; rush delivery is approximately 2–3 business days for an additional $15.
              <a href="../shipping-returns.html">Full shipping &amp; returns</a>.</p>
           <p><strong>Not sure about the fit?</strong> Every piece ships as-is with no
              alterations. <a href="../index.html?enquire=${p.id}#contact">Ask us before you buy</a> and
