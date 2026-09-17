@@ -2724,6 +2724,31 @@
     var activeSize = 'all';
     var activePrice = 'all';
     var activeQuery = '';
+    var returningToShop = new URL(window.location.href).searchParams.get('return') === 'shop';
+    var returnProduct = returningToShop ? document.getElementById(window.location.hash.slice(1)) : null;
+    if(returningToShop){
+      try{
+        var saved = JSON.parse(sessionStorage.getItem('anokhiShopView') || '{}');
+        if(SHOP_SECTIONS.indexOf(saved.category) !== -1) activeCategory = saved.category;
+        if(['all','S','M','L'].indexOf(saved.size) !== -1) activeSize = saved.size;
+        if(saved.price === 'all' || Object.prototype.hasOwnProperty.call(PRICE_BANDS,saved.price)) activePrice = saved.price;
+        if(typeof saved.query === 'string') activeQuery = saved.query.slice(0,200);
+        if(['featured','price-asc','price-desc'].indexOf(saved.sort) !== -1) activeSort = saved.sort;
+      }catch(e){}
+      document.getElementById('shopSort').value = activeSort;
+      document.getElementById('shopSearch').value = activeQuery;
+      var returnUrl = new URL(window.location.href);
+      returnUrl.searchParams.delete('return');
+      history.replaceState(null,'',returnUrl.pathname + returnUrl.search + returnUrl.hash);
+    }
+    function saveShopView(){
+      try{sessionStorage.setItem('anokhiShopView',JSON.stringify({category:activeCategory,size:activeSize,price:activePrice,query:activeQuery,sort:activeSort}));}catch(e){}
+    }
+    function restoreShopPosition(){
+      if(!returnProduct || !returnProduct.classList.contains('look-card')) return;
+      if(returnProduct.style.display !== 'none') scrollToElement(returnProduct);
+    }
+
 
     // Set by a category tap; the scroll observer ignores updates until it
     // passes. See the note in the [data-jump] handler.
@@ -2752,13 +2777,14 @@
 
     // Sold flags arrive from the inventory endpoint long after this runs, so
     // the counts above are recomputed once they land. See the inventory fetch.
-    window.anokhiRefreshFilter = function(){ applyFilters(false); };
+    window.anokhiRefreshFilter = function(){ applyFilters(false); if(returningToShop){restoreShopPosition();returningToShop=false;} };
 
     // scrollToResults is passed only from a chip tap. Filtering on its own
     // leaves the page where it was — which, once the sections around you are
     // hidden, means landing in the middle of some unrelated category rather
     // than on the first piece in your size.
     function applyFilters(scrollToResults){
+      saveShopView();
       cards.forEach(function(card){originalParents.get(card).appendChild(card);});
       sortedSection.hidden = true;
       var terms = activeQuery.split(/\s+/).filter(Boolean);
@@ -3033,6 +3059,11 @@
     });
     if(emptyMsg) visibilityObserver.observe(emptyMsg);
     visibilityObserver.observe(sortedSection);
+    applyFilters(false);
+    if(returningToShop){
+      window.addEventListener('load', function(){requestAnimationFrame(restoreShopPosition);}, {once:true});
+    }
+
   })();
 
   // ---- SHOP dropdown ----

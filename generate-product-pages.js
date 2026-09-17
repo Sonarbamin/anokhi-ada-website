@@ -417,7 +417,7 @@ ${JSON.stringify(ld, null, 2)}
     <!-- Back to the piece itself, not the top of the homepage. The card carries
          id="<slug>" and scroll-margin-top, so the browser lands on it clear of
          the sticky header rather than dumping the visitor at the hero. -->
-    <div class="product-header-actions"><a href="../index.html#${p.id}" class="back-link">&#8592; Back to shop</a><a href="../index.html?bag=open#${p.id}" class="product-bag" id="productBagLink">Bag (<span id="productBagCount">0</span>)</a></div>
+    <div class="product-header-actions"><a href="../index.html?return=shop#${p.id}" class="back-link">&#8592; Back to shop</a><a href="../index.html?bag=open#${p.id}" class="product-bag" id="productBagLink">Bag (<span id="productBagCount">0</span>)</a></div>
   </div>
 </header>
 
