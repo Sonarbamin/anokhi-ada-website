@@ -3950,7 +3950,7 @@
     var rows = cart.map(function(item){
       return '<div style="display:flex; justify-content:space-between; font-size:13.5px; padding:3px 0;">' +
         '<span>' + item.name + (item.qty > 1 ? ' &times; ' + item.qty : '') + '</span>' +
-        '<span class="mono">' + formatMoney(salePriceOf(item.price) * item.qty) + '</span></div>';
+        '<span class="mono">' + formatMoney(item.price * item.qty) + '</span></div>';
     }).join('');
     var saleRow = totals.saleSaving > 0
       ? '<div style="display:flex; justify-content:space-between; font-size:13.5px; padding:3px 0; color:#2E7D32;"><span>' + SALE.name + ' (&minus;' + SALE.percent + '%)</span><span class="mono">&minus;' + formatMoney(totals.saleSaving) + '</span></div>'
