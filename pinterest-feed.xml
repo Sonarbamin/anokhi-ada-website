@@ -339,8 +339,39 @@
         <g:country>US</g:country>
         <g:price>14.99 USD</g:price>
       </g:shipping>
-      <g:color>Sage Green</g:color>
+      <g:color>Green</g:color>
       <g:size>M</g:size>
+      <g:size_system>US</g:size_system>
+      <g:gender>female</g:gender>
+      <g:age_group>adult</g:age_group>
+      <g:brand>Anokhi Ada</g:brand>
+      <g:condition>new</g:condition>
+      <g:identifier_exists>false</g:identifier_exists>
+      <g:google_product_category>Apparel &amp; Accessories &gt; Clothing &gt; Traditional &amp; Ceremonial Clothing</g:google_product_category>
+    </item>
+    <item>
+      <g:id>white-silk-kaftan-with-hand-embroidery</g:id>
+      <title>White silk kaftan with hand embroidery</title>
+      <description>White silk kaftan with hand embroidery</description>
+      <link>https://anokhi-ada.com/products/white-silk-kaftan-with-hand-embroidery.html</link>
+      <g:image_link>https://anokhi-ada.com/images/white-silk-kaftan-with-hand-embroidery-model-full-view.jpg</g:image_link>
+      <g:additional_image_link>https://anokhi-ada.com/images/white-silk-kaftan-with-hand-embroidery-front-detail.jpg</g:additional_image_link>
+      <g:additional_image_link>https://anokhi-ada.com/images/white-silk-kaftan-with-hand-embroidery-embroidery-detail.jpg</g:additional_image_link>
+      <g:additional_image_link>https://anokhi-ada.com/images/white-silk-kaftan-with-hand-embroidery-back-detail.jpg</g:additional_image_link>
+      <g:additional_image_link>https://anokhi-ada.com/images/white-silk-kaftan-with-hand-embroidery-cuff-detail.jpg</g:additional_image_link>
+      <g:price>585.00 USD</g:price>
+      <g:availability>in stock</g:availability>
+      <g:shipping>
+        <g:country>US</g:country>
+        <g:region>GA</g:region>
+        <g:price>9.99 USD</g:price>
+      </g:shipping>
+      <g:shipping>
+        <g:country>US</g:country>
+        <g:price>14.99 USD</g:price>
+      </g:shipping>
+      <g:color>White</g:color>
+      <g:size>L</g:size>
       <g:size_system>US</g:size_system>
       <g:gender>female</g:gender>
       <g:age_group>adult</g:age_group>
