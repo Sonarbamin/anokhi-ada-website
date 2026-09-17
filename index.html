@@ -1216,6 +1216,32 @@
     .shop-bar-count{ grid-column:1 / -1; grid-row:5; }
     .shop-bar-count:empty{ display:none; }
   }
+
+  /* Compact desktop shopping chrome; mobile rules remain unchanged. */
+  @media (min-width:901px){
+    .nav-inner{padding:8px 24px;gap:18px;}
+    .nav-inner > a > img{height:72px !important;width:72px !important;object-fit:contain;}
+    .nav .logo{font-size:24px;line-height:1.15;}
+    .nav .anniversary-line{font-size:9px;letter-spacing:0.06em;margin-top:4px;}
+    .nav-links{gap:20px;font-size:12px;letter-spacing:0.06em;}
+    .nav-links > *:not(:last-child)::after{right:-10px;}
+    .nav-right{gap:10px;}
+    .nav-right .btn-appt{padding:12px 16px;white-space:nowrap;}
+    .shop-bar-inner{padding:7px 24px;gap:8px 12px;}
+    .shop-bar-group{gap:6px;}
+    .shop-chip{padding:6px 10px;min-height:34px;letter-spacing:0.02em;}
+    .shop-bar-search{flex:1 1 190px;min-width:170px;}
+    .shop-bar-count:empty{display:none;}
+  }
+  @media (min-width:901px) and (max-width:1100px){
+    .nav-inner{gap:12px;padding-left:20px;padding-right:20px;}
+    .nav .anniv-long{display:none;}
+    .nav .anniv-short{display:inline;}
+    .nav-links{gap:16px;font-size:11px;}
+    .nav-links > *:not(:last-child)::after{right:-8px;}
+    .nav .btn-appt-long{display:none;}
+  }
+
 </style>
 <script type="application/ld+json">
 {
