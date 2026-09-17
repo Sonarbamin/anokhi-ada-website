@@ -1246,6 +1246,14 @@
   @media (max-width:900px){
     #white-silk-kaftan-with-hand-embroidery .look-tag{display:none;}
   }
+
+  .active-filter-summary{display:none;}
+  @media(max-width:900px){
+    .active-filter-summary:not([hidden]){display:flex;align-items:center;gap:10px;grid-column:1 / -1;grid-row:5;min-width:0;font-size:12px;}
+    .active-filter-summary span{flex:1;overflow-wrap:anywhere;max-height:3em;overflow:auto;}
+    .active-filter-summary button{background:none;border:0;text-decoration:underline;color:var(--maroon);min-height:44px;cursor:pointer;white-space:nowrap;}
+    .shop-bar-count{grid-row:6;}
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -1731,6 +1739,7 @@
     </div>
     <button type="button" class="shop-chip shop-filters-toggle" id="shopFiltersToggle"
             aria-expanded="false" aria-controls="shopBar">Filters</button>
+    <div class="active-filter-summary" id="activeFilterSummary" hidden><span id="activeFilterText"></span><button type="button" data-clear-filters>Clear filters</button></div>
     <span class="shop-bar-count" id="shopCount" role="status" aria-live="polite" aria-atomic="true"></span>
   </div>
 </div>
@@ -2791,6 +2800,24 @@
         countEl.textContent = anyFilter
           ? (shown === 0 ? 'No pieces match' : shown + ' of ' + cards.length + ' pieces')
           : '';
+      }
+
+      var summary = document.getElementById('activeFilterSummary');
+      if(summary){
+        var selected = [];
+        if(activeSize !== 'all') selected.push('Size ' + activeSize);
+        if(activePrice !== 'all'){
+          var priceButton = document.querySelector('[data-price-band="' + activePrice + '"]');
+          if(priceButton){
+            var labelCopy = priceButton.cloneNode(true);
+            var count = labelCopy.querySelector('.chip-count');
+            if(count) count.remove();
+            selected.push(labelCopy.textContent.trim());
+          }
+        }
+        if(activeQuery) selected.push('Search: ' + activeQuery);
+        document.getElementById('activeFilterText').textContent = selected.join(' · ');
+        summary.hidden = !anyFilter;
       }
 
       // The form shows for ANY active size filter, not only a zero-result
