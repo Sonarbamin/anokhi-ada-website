@@ -417,7 +417,7 @@ ${shots}
 
         <p class="desc">${escapeHtml(p.description)}</p>
 
-        <a class="buy" href="../index.html#${p.id}">Add to Bag</a>
+        <a class="buy" href="../index.html?add=${p.id}#${p.id}">Add to Bag</a>
         <a class="ask" href="../index.html#contact">Ask a Question</a>
 
         <div class="facts">

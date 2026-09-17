@@ -1198,6 +1198,20 @@
     .lookbook-grid{ row-gap:34px; }
   }
 
+
+  @media (max-width:900px){
+    .shop-bar-inner{ display:grid; grid-template-columns:minmax(0,1fr) auto; }
+    .shop-bar [aria-label="Jump to a collection"]{ grid-column:1; grid-row:1; width:100%; }
+    .shop-filters-toggle{ grid-column:2; grid-row:1; }
+    .shop-bar.filters-open .shop-bar-search{ grid-column:1 / -1; grid-row:2; min-width:0; width:100%; order:0; }
+    .shop-bar.filters-open [aria-label="Filter by size"]{ grid-column:1 / -1; grid-row:3; }
+    .shop-bar.filters-open [aria-label="Filter by price"]{ grid-column:1 / -1; grid-row:4; }
+    .shop-bar.filters-open [aria-label="Filter by size"],
+    .shop-bar.filters-open [aria-label="Filter by price"]{ flex-wrap:wrap; overflow:visible; }
+    .shop-bar.filters-open [aria-label="Filter by size"] .shop-bar-label, .shop-bar.filters-open [aria-label="Filter by price"] .shop-bar-label{ display:inline; flex:0 0 100%; }
+    .shop-bar-count{ grid-column:1 / -1; grid-row:5; }
+    .shop-bar-count:empty{ display:none; }
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -2648,21 +2662,6 @@
 
     var cards = Array.prototype.slice.call(document.querySelectorAll('.shop-section .look-card'));
 
-    // Counts on the chips, so the bar answers "is there anything for me?"
-    // before a single tap.
-    var counts = { S:0, M:0, L:0 };
-    cards.forEach(function(c){ var s = sizeOf(c); if(counts[s] !== undefined) counts[s]++; });
-    Object.keys(counts).forEach(function(k){
-      var el = document.querySelector('[data-size-count="' + k + '"]');
-      if(el) el.textContent = ' ' + counts[k];
-    });
-    Object.keys(PRICE_BANDS).forEach(function(band){
-      var el = document.querySelector('[data-price-count="' + band + '"]');
-      if(!el) return;
-      var n = cards.filter(function(c){ return priceMatches(c, band); }).length;
-      el.textContent = ' ' + n;
-    });
-
     var activeSize = 'all';
     var activePrice = 'all';
     var activeQuery = '';
@@ -2702,6 +2701,19 @@
     // than on the first piece in your size.
     function applyFilters(scrollToResults){
       var terms = activeQuery.split(/\s+/).filter(Boolean);
+      ['S','M','L'].forEach(function(size){
+        var el = document.querySelector('[data-size-count="' + size + '"]');
+        if(el) el.textContent = ' ' + cards.filter(function(card){
+          return sizeOf(card) === size && priceMatches(card, activePrice) && queryMatches(card, terms);
+        }).length;
+      });
+      Object.keys(PRICE_BANDS).forEach(function(band){
+        var el = document.querySelector('[data-price-count="' + band + '"]');
+        if(el) el.textContent = ' ' + cards.filter(function(card){
+          return (activeSize === 'all' || sizeOf(card) === activeSize)
+            && priceMatches(card, band) && queryMatches(card, terms);
+        }).length;
+      });
       // Any one of the three counts as filtering. Everything below that used to
       // ask "is a size chosen?" asks this instead.
       var anyFilter = activeSize !== 'all' || activePrice !== 'all' || terms.length > 0;
@@ -3307,7 +3319,7 @@
     var subtotal = 0;
     itemsEl.innerHTML = '';
     cart.forEach(function(item, idx){
-      subtotal += item.price * item.qty;
+      subtotal += salePriceOf(item.price) * item.qty;
       var row = document.createElement('div');
       row.className = 'cart-item';
       var thumb = item.image
@@ -3317,7 +3329,7 @@
         thumb +
         '<div class="cart-item-body">' +
           '<div class="cart-item-name">' + escapeHtml(item.name) + (item.qty > 1 ? ' &times; ' + escapeHtml(item.qty) : '') + '</div>' +
-          '<div class="cart-item-price">' + formatMoney(item.price * item.qty) + '</div>' +
+          '<div class="cart-item-price">' + formatMoney(salePriceOf(item.price) * item.qty) + (SALE.active ? ' <small>(sale price)</small>' : '') + '</div>' +
           '<button class="cart-item-remove" data-idx="' + idx + '">Remove</button>' +
         '</div>';
       itemsEl.appendChild(row);
@@ -4214,10 +4226,25 @@
   }
 
   // ---- Check inventory for sold-out one-of-a-kind items ----
+
+  function addRequestedProduct(){
+    var url = new URL(window.location.href);
+    var id = url.searchParams.get('add');
+    if(!id) return;
+    url.searchParams.delete('add');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+    var card = document.getElementById(id);
+    var btn = card && card.classList.contains('look-card') && card.querySelector('.add-cart-btn');
+    if(!btn) return;
+    if(btn.disabled){ announce('This piece is sold out. Please choose another piece.'); return; }
+    btn.click();
+    openCart();
+  }
+
   var INVENTORY_URL = 'https://anokhi-ada-backend.vercel.app/api/inventory';
 
   fetch(INVENTORY_URL)
-    .then(function(res){ return res.json(); })
+    .then(function(res){ if(!res.ok) throw new Error('Inventory unavailable'); return res.json(); })
     .then(function(data){
       // The server's answer, not the browser's clock. Applied before the sold
       // flags so prices and badges land in the same repaint.
@@ -4261,6 +4288,8 @@
       // a size whose only remaining piece has sold still reads as in stock,
       // and the empty state never appears.
       if(window.anokhiRefreshFilter) window.anokhiRefreshFilter();
+      renderCart();
+      renderCheckoutSummary();
 
       // Availability used to be patched here, because this page carried a full
       // Product node for all 47 pieces and would otherwise keep telling Google
@@ -4280,6 +4309,7 @@
         var names = soldWhileAway.map(function(item){ return item.name; }).join(', ');
         announce(names + (soldWhileAway.length > 1 ? ' sold while you were away and were removed from your bag.' : ' sold while you were away and was removed from your bag.'));
       }
+      addRequestedProduct();
     })
     .catch(function(err){
       console.error('Could not check inventory:', err);
