@@ -1254,6 +1254,9 @@
     .active-filter-summary button{background:none;border:0;text-decoration:underline;color:var(--maroon);min-height:44px;cursor:pointer;white-space:nowrap;}
     .shop-bar-count{grid-row:6;}
   }
+  .shop-sort{display:flex;align-items:center;gap:8px;font-size:12px;}
+  .shop-sort select{font:inherit;color:var(--maroon);background:var(--ivory);border:1px solid var(--line);border-radius:4px;padding:7px;min-height:36px;max-width:100%;}
+  @media(max-width:900px){.shop-sort{grid-column:1 / -1;grid-row:6;}.shop-sort select{min-height:44px;}.shop-bar-count{grid-row:7;}}
 </style>
 <script type="application/ld+json">
 {
@@ -1740,6 +1743,7 @@
     <button type="button" class="shop-chip shop-filters-toggle" id="shopFiltersToggle"
             aria-expanded="false" aria-controls="shopBar">Filters</button>
     <div class="active-filter-summary" id="activeFilterSummary" hidden><span id="activeFilterText"></span><button type="button" data-clear-filters>Clear filters</button></div>
+    <label class="shop-sort">Sort <select id="shopSort" aria-label="Sort products"><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
     <span class="shop-bar-count" id="shopCount" role="status" aria-live="polite" aria-atomic="true"></span>
   </div>
 </div>
@@ -2705,6 +2709,16 @@
 
     var cards = Array.prototype.slice.call(document.querySelectorAll('.shop-section .look-card'));
 
+    var originalParents = new Map(cards.map(function(card){return [card, card.parentNode];}));
+    var sortedSection = document.createElement('section');
+    sortedSection.id = 'sortedProducts';
+    sortedSection.className = 'shop-section';
+    sortedSection.hidden = true;
+    sortedSection.innerHTML = '<div class="wrap"><h2>Matching outfits</h2><div class="lookbook-grid"></div></div>';
+    document.getElementById('suits').before(sortedSection);
+    var sortedGrid = sortedSection.querySelector('.lookbook-grid');
+    var activeSort = 'featured';
+    document.getElementById('shopSort').addEventListener('change', function(){activeSort=this.value;applyFilters(true);});
     var activeCategory = 'all-collections';
     function categoryMatches(card){return activeCategory === 'all-collections' || card.closest('.shop-section').id === activeCategory;}
     var activeSize = 'all';
@@ -2745,6 +2759,8 @@
     // hidden, means landing in the middle of some unrelated category rather
     // than on the first piece in your size.
     function applyFilters(scrollToResults){
+      cards.forEach(function(card){originalParents.get(card).appendChild(card);});
+      sortedSection.hidden = true;
       var terms = activeQuery.split(/\s+/).filter(Boolean);
       ['S','M','L'].forEach(function(size){
         var el = document.querySelector('[data-size-count="' + size + '"]');
@@ -2869,6 +2885,13 @@
       var clearBtn = document.getElementById('shopSearchClear');
       if(clearBtn) clearBtn.hidden = activeQuery === '';
 
+      if(activeSort !== 'featured'){
+        var ordered = cards.filter(function(card){return card.style.display !== 'none';});
+        ordered.sort(function(a,b){var difference=priceOf(a)-priceOf(b);return (activeSort === 'price-desc' ? -difference : difference) || cards.indexOf(a)-cards.indexOf(b);});
+        ordered.forEach(function(card){sortedGrid.appendChild(card);});
+        sortedSection.hidden = ordered.length === 0;
+        SHOP_SECTIONS.forEach(function(id){if(id !== 'all-collections'){var section=document.getElementById(id);if(section) section.style.display='none';}});
+      }
       if(scrollToResults){
         // Land on the first piece that survived the filter. Cards carry
         // scroll-margin-top, so it sits clear of the sticky header. With
@@ -2878,7 +2901,7 @@
         for(var i = 0; i < cards.length; i++){
           if(cards[i].style.display !== 'none'){ first = cards[i]; break; }
         }
-        scrollToElement(first || emptyMsg);
+        scrollToElement((activeSort !== 'featured' ? sortedGrid.firstElementChild : first) || emptyMsg);
       }
     }
 
@@ -2965,7 +2988,7 @@
 
       activeCategory = id;
       applyFilters(false);
-      var target = sec.style.display === 'none' ? emptyMsg : sec;
+      var target = activeSort !== 'featured' && !sortedSection.hidden ? sortedSection : (sec.style.display === 'none' ? emptyMsg : sec);
       scrollToElement(target);
     }
 
@@ -3009,6 +3032,7 @@
       visibilityObserver.observe(sec);
     });
     if(emptyMsg) visibilityObserver.observe(emptyMsg);
+    visibilityObserver.observe(sortedSection);
   })();
 
   // ---- SHOP dropdown ----
