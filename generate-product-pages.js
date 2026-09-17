@@ -40,6 +40,10 @@ const ROOT = __dirname;
 const INPUT = path.join(ROOT, 'index.html');
 const OUT_DIR = path.join(ROOT, 'products');
 const SITEMAP = path.join(ROOT, 'sitemap.xml');
+const guideSource = fs.readFileSync(INPUT, 'utf8');
+const guideTables = guideSource.match(/<table class="size-guide-table">[\s\S]*?<\/table>/g);
+if (!guideTables || guideTables.length !== 2) throw new Error('Expected both catalogue size-guide tables');
+const GUIDE_TABLES = guideTables.map(t => t.replace('<span class="sr-only">Measurement</span>', 'Measurement')).join('\n');
 
 // Static pages that belong in the sitemap alongside the generated ones.
 const STATIC_PAGES = [
@@ -279,6 +283,25 @@ const STYLES = `
     .facts{ font-size:15px; }
     .size{ font-size:15px; }
   }
+  .shots{ grid-column:1; grid-row:1 / span 2; }
+  .detail{ grid-column:2; grid-row:1; }
+  .product-info{ grid-column:2; grid-row:2; }
+  .product{ row-gap:24px; grid-template-rows:max-content 1fr; }
+  .product-size-guide{ margin:0 0 20px; font-size:14px; }
+  .product-size-guide summary{ cursor:pointer; text-decoration:underline; padding:10px 0; min-height:44px; }
+  .product-size-guide summary:focus-visible{ outline:2px solid var(--maroon); outline-offset:2px; }
+  .product-size-guide p{ line-height:1.5; }
+  .guide-tables{ overflow-x:auto; }
+  .guide-tables table{ border-collapse:collapse; width:100%; margin:12px 0 20px; font-size:13px; }
+  .guide-tables th,.guide-tables td{ border-bottom:1px solid var(--line); text-align:center; padding:8px 5px; }
+  .guide-tables th:first-child{ text-align:left; }
+  @media(max-width:820px){
+    .product{ grid-template-rows:auto auto auto; }
+    .detail{ grid-column:1; grid-row:1; }
+    .shots{ grid-column:1; grid-row:2; }
+    .product-info{ grid-column:1; grid-row:3; }
+  }
+
 `;
 
 function renderPage(p, index) {
@@ -411,15 +434,26 @@ ${shots}
         <h1>${escapeHtml(p.name)}</h1>
         <p class="price"><span class="price-was" hidden></span><span class="price-now">$${escapeHtml(p.price)}</span></p>
         <p class="size">${escapeHtml(p.size)} &mdash; one piece only, in one size</p>
+        <details class="product-size-guide">
+          <summary>Size Guide</summary>
+          <p>All measurements are body measurements in inches, not garment measurements. Measure over light clothing, keeping the tape level and snug but not tight.</p>
+          <div class="guide-tables">${GUIDE_TABLES}</div>
+          <p>Match the listed size to your bust measurement — a 36-inch bust is M. Every piece ships as-is with no alterations. If you are between sizes or unsure, <a href="../index.html?enquire=${p.id}#contact">ask us about this piece</a> before ordering.</p>
+        </details>
+
 
         <div class="sold">This piece has sold. It was one-of-a-kind, so it won&rsquo;t be
           restocked &mdash; but we can often find something close. Ask us.</div>
 
-        <p class="desc">${escapeHtml(p.description)}</p>
+
 
         <a class="buy" href="../index.html?add=${p.id}#${p.id}">Add to Bag</a>
         <a class="ask" href="../index.html?enquire=${p.id}#contact">Ask a Question</a>
 
+      </div>
+
+      <div class="product-info">
+        <p class="desc">${escapeHtml(p.description)}</p>
         <div class="facts">
           <p><strong>One-of-a-kind.</strong> There is exactly one of this piece, in
              ${escapeHtml(p.size.replace('Size ', 'size '))}. Once it sells it is gone,
