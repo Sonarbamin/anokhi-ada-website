@@ -52,6 +52,8 @@
   .logo{ display:flex; align-items:center; gap:12px; text-decoration:none; }
   .logo img{ height:44px; width:auto; mix-blend-mode:multiply; }
   .logo span{ font-family:'Yeseva One',serif; font-size:20px; color:var(--maroon); }
+  .product-header-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
+  .product-bag{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;border:1px solid var(--line);white-space:nowrap;font-size:14px;}
   .back-link{ font-size:13px; color:var(--maroon); letter-spacing:0.04em;
               text-decoration:underline; }
   nav.crumbs{ font-size:12.5px; color:#6b5a53; padding:18px 0 0; }
@@ -210,7 +212,7 @@
     <!-- Back to the piece itself, not the top of the homepage. The card carries
          id="<slug>" and scroll-margin-top, so the browser lands on it clear of
          the sticky header rather than dumping the visitor at the hero. -->
-    <a href="../index.html#fuchsia-banarasi" class="back-link">&#8592; Back to shop</a>
+    <div class="product-header-actions"><a href="../index.html#fuchsia-banarasi" class="back-link">&#8592; Back to shop</a><a href="../index.html?bag=open#fuchsia-banarasi" class="product-bag" id="productBagLink">Bag (<span id="productBagCount">0</span>)</a></div>
   </div>
 </header>
 
@@ -297,6 +299,25 @@
 </footer>
 
 <script>
+  (function(){
+    function refreshBagCount(){
+      var count = 0;
+      try{
+        var items = JSON.parse(localStorage.getItem('anokhiAdaCart') || '[]');
+        if(Array.isArray(items)) items.forEach(function(item){
+          if(!item || typeof item.name !== 'string') return;
+          var qty = Math.floor(Number(item.qty));
+          count += Number.isFinite(qty) && qty > 0 ? qty : 1;
+        });
+      }catch(e){}
+      document.getElementById('productBagCount').textContent = count;
+      document.getElementById('productBagLink').setAttribute('aria-label', 'View bag, ' + count + (count === 1 ? ' item' : ' items'));
+    }
+    refreshBagCount();
+    window.addEventListener('pageshow',refreshBagCount);
+    window.addEventListener('storage',refreshBagCount);
+  })();
+
   // One-of-a-kind stock: ask the same endpoint the shop asks, so a sold piece
   // says so here too rather than inviting a click through to a dead Add to Bag.
   // Right-click / long-press on a photo does not offer "Save Image". Same
