@@ -4282,6 +4282,14 @@
   });
 
   renderCart();
+  // Open the existing bag directly from any product page.
+  (function(){
+    var url = new URL(window.location.href);
+    if(url.searchParams.get('bag') !== 'open') return;
+    openCart();
+    url.searchParams.delete('bag');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+  })();
 
   // Marks every card down, once, when the server confirms the sale is running.
   // The original price stays on screen struck through: a sale price with nothing
