@@ -418,7 +418,7 @@ ${shots}
         <p class="desc">${escapeHtml(p.description)}</p>
 
         <a class="buy" href="../index.html?add=${p.id}#${p.id}">Add to Bag</a>
-        <a class="ask" href="../index.html#contact">Ask a Question</a>
+        <a class="ask" href="../index.html?enquire=${p.id}#contact">Ask a Question</a>
 
         <div class="facts">
           <p><strong>One-of-a-kind.</strong> There is exactly one of this piece, in
@@ -430,7 +430,7 @@ ${shots}
              Studio pickup in Atlanta is free.
              <a href="../shipping-returns.html">Full shipping &amp; returns</a>.</p>
           <p><strong>Not sure about the fit?</strong> Every piece ships as-is with no
-             alterations. <a href="../index.html#contact">Ask us before you buy</a> and
+             alterations. <a href="../index.html?enquire=${p.id}#contact">Ask us before you buy</a> and
              we&rsquo;ll answer honestly.</p>
         </div>
       </div>

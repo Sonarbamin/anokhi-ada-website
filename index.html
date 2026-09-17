@@ -4721,33 +4721,45 @@
   // there was typed by the customer and is never overwritten.
   var lastEnquiryPrefill = null;
 
+  function prefillProductEnquiry(card){
+    if(!card || !card.classList.contains('look-card')) return;
+    var nameEl = card.querySelector('.look-name');
+    var productName = nameEl ? nameEl.textContent.trim() : '';
+    var messageBox = document.getElementById('enqMessage');
+    if(!messageBox || !productName) return;
+    var isSoldOut = card.getAttribute('data-sold-out') === 'true';
+    var productUrl = 'https://anokhi-ada.com/products/' + card.id + '.html';
+    var prefill = (isSoldOut
+      ? 'The ' + productName + ' sold — do you have anything similar?'
+      : "I'm interested in the " + productName + '.') + '\n' + productUrl + '\n\nMy question: ';
+    if(!messageBox.value || messageBox.value === lastEnquiryPrefill){
+      messageBox.value = prefill;
+      lastEnquiryPrefill = prefill;
+    }
+  }
+
   document.querySelectorAll('.look-enquire').forEach(function(link){
     link.addEventListener('click', function(){
       var card = link.closest('.look-card');
-      var nameEl = card ? card.querySelector('.look-name') : null;
-      var productName = nameEl ? nameEl.textContent.trim() : '';
-      var isSoldOut = card && card.getAttribute('data-sold-out') === 'true';
-      var messageBox = document.getElementById('enqMessage');
-      if (messageBox && productName) {
-        var prefill = isSoldOut
-          ? "The " + productName + " sold — do you have anything similar? "
-          : "I'm interested in the " + productName + " — ";
-        // Overwrite an empty box, or one still holding a prefill she hasn't
-        // touched — clicking Ask on a second piece should ask about that piece.
-        // The moment she types anything of her own, the text is hers and this
-        // leaves it alone: the alternative is wiping out a written message
-        // because she scrolled up to check the name of the piece.
-        var untouched = !messageBox.value || messageBox.value === lastEnquiryPrefill;
-        if (untouched) {
-          messageBox.value = prefill;
-          lastEnquiryPrefill = prefill;
-        }
-      }
-      if(window.gtag){
-        gtag('event', 'ask_a_question_click', { product_name: productName, sold_out: !!isSoldOut });
+      prefillProductEnquiry(card);
+      if(window.gtag && card){
+        gtag('event', 'ask_a_question_click', {
+          product_name: card.querySelector('.look-name').textContent.trim(),
+          sold_out: card.getAttribute('data-sold-out') === 'true'
+        });
       }
     });
   });
+
+  // Resolve only a catalogue slug, never arbitrary message text from the URL.
+  (function(){
+    var url = new URL(window.location.href);
+    var id = url.searchParams.get('enquire');
+    if(!id) return;
+    prefillProductEnquiry(document.getElementById(id));
+    url.searchParams.delete('enquire');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+  })();
 
   // "Book a Private Styling" — matches both the nav and hero buttons (both
   // are <a> tags with these classes); the checkout confirmation's "Done"
