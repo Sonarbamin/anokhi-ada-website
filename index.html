@@ -631,6 +631,9 @@
     padding-bottom:calc(32px + env(safe-area-inset-bottom, 0px));
   }
   .modal-box h3{ font-size:26px; color:var(--maroon); margin-bottom:6px; }
+  .checkout-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;}
+  .checkout-header h3{margin:0;}
+  .checkout-close{flex:0 0 44px;min-height:44px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:26px;cursor:pointer;}
   .modal-box p.sub{ font-size:13px; color:#6e615b; margin-bottom:20px; }
   .modal-box input, .modal-box select{ width:100%; background:var(--ivory-dim); border:1px solid var(--line-strong); color:var(--ink); padding:12px 14px; font-family:'Jost',Arial,sans-serif; font-size:16px; border-radius:2px; margin-bottom:12px; }
   /* The State dropdown sits in the same row as City and ZIP, so it has to match
@@ -2433,8 +2436,8 @@
 
 <div class="modal-overlay" id="checkoutOverlay">
   <div class="modal-box" id="checkoutBox" role="dialog" aria-modal="true" aria-labelledby="checkoutHeading">
-    <h3 id="checkoutHeading">Checkout</h3>
-    <p class="sub">Ships within the US only &mdash; 1&ndash;3 business days to dispatch, plus 3&ndash;5 business days in transit. Rush delivery below adds $15.00 and brings that down to roughly 2&ndash;3 business days in total. Shipping &amp; handling $9.99 in Georgia, $14.99 elsewhere, or $40.00 for bridal pieces. Collecting from the studio is free. Every piece ships as-is, with no alterations &mdash; all sales are final on these one-of-a-kind pieces.</p>
+    <div class="checkout-header"><h3 id="checkoutHeading">Checkout</h3><button type="button" class="checkout-close" id="checkoutCloseBtn" aria-label="Close checkout">&times;</button></div>
+    <p class="sub">US shipping or free Atlanta studio pickup. All sales are final; pieces ship as-is, without alterations.</p>
     <div id="checkoutSummary" style="background:rgba(36,16,20,0.04); border-radius:2px; padding:14px 16px; margin-bottom:16px;"></div>
     <div class="promo-row">
       <label for="promoCodeInput" class="sr-only">Promo code</label>
@@ -2445,16 +2448,16 @@
     <div class="fulfil-choice" role="radiogroup" aria-label="How would you like to receive your order?">
       <label for="fulfilShip" class="fulfil-row">
         <input type="radio" name="fulfilment" id="fulfilShip" value="ship" checked>
-        <span><strong>Ship it to me</strong><br><span class="fulfil-note">$9.99 within Georgia, $14.99 elsewhere in the US. Bridal pieces $40.00.</span></span>
+        <span><strong>Ship it to me</strong><br><span class="fulfil-note">$9.99 in Georgia; $14.99 elsewhere in the US. Orders containing bridal pieces: $40.00.<br>Usually arrives in 4&ndash;8 business days (1&ndash;3 to dispatch, plus 3&ndash;5 in transit).</span></span>
       </label>
       <label for="fulfilPickup" class="fulfil-row">
         <input type="radio" name="fulfilment" id="fulfilPickup" value="pickup">
-        <span><strong>Collect from the studio &mdash; free</strong><br><span class="fulfil-note">Atlanta, GA. We&#8217;ll email you the address and arrange a time within one business day.</span></span>
+        <span><strong>Collect from the studio &mdash; free</strong><br><span class="fulfil-note">Atlanta, GA. Ready in 1&ndash;2 business days. We&#8217;ll email you within one business day to arrange a time and share the address.</span></span>
       </label>
     </div>
     <label for="rushDelivery" class="rush-row" id="rushRow">
       <input type="checkbox" id="rushDelivery">
-      <span><strong>Rush delivery &mdash; add $15.00</strong><br><span class="rush-note">Dispatched the next business day instead of within 1&ndash;3, and sent by expedited courier &mdash; about 2&ndash;3 business days in total rather than up to 8.</span></span>
+      <span><strong>Rush delivery &mdash; add $15.00</strong><br><span class="rush-note">Usually arrives in 2&ndash;3 business days. Dispatches next business day by expedited courier.</span></span>
     </label>
     <button id="apple-pay-button" type="button" aria-label="Pay with Apple Pay" style="display:none; width:100%; height:44px; border-radius:4px; -webkit-appearance:-apple-pay-button; -apple-pay-button-type:buy; -apple-pay-button-style:black; margin-bottom:10px; border:none; padding:0;"></button>
     <div id="google-pay-button" style="display:none; height:44px; margin-bottom:10px;"></div>
@@ -4168,6 +4171,7 @@
 
   document.getElementById('checkoutOpenBtn').addEventListener('click', openCheckout);
   document.getElementById('checkoutCancelBtn').addEventListener('click', closeCheckout);
+  document.getElementById('checkoutCloseBtn').addEventListener('click', closeCheckout);
 
   document.getElementById('checkoutForm').addEventListener('submit', async function(e){
     e.preventDefault();
