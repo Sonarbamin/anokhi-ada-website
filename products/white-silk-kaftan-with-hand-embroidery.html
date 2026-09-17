@@ -134,10 +134,12 @@
   .guide-tables th:first-child{ text-align:left; }
   @media(max-width:900px){ .look13-repeat{display:none;} }
   @media(max-width:820px){
-    .product{ grid-template-rows:auto auto auto; }
+    .product{ grid-template-rows:auto; }
     .detail{ grid-column:1; grid-row:1; }
-    .shots{ grid-column:1; grid-row:3; }
-    .product-info{ grid-column:1; grid-row:2; }
+    .shots{ display:contents; }
+    .shots .shot{grid-column:1;}
+    .shots .shot:first-child{grid-row:2;}
+    .product-info{ grid-column:1; grid-row:3; }
   }
 
 </style>
