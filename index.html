@@ -1066,7 +1066,7 @@
        and pushing it onto a second line. The collections scroll sideways in
        whatever space is left. Two rows of bar, permanently on screen, cost
        about 90px of every phone screen. */
-    .shop-bar [aria-label="Jump to a collection"]{ flex:1 1 0; min-width:0; }
+    .shop-bar [aria-label="Filter by collection"]{ flex:1 1 0; min-width:0; }
     .shop-bar-count{ order:99; }
   }
   @media (max-width:520px){
@@ -1205,7 +1205,7 @@
 
   @media (max-width:900px){
     .shop-bar-inner{ display:grid; grid-template-columns:minmax(0,1fr) auto; }
-    .shop-bar [aria-label="Jump to a collection"]{ grid-column:1; grid-row:1; width:100%; }
+    .shop-bar [aria-label="Filter by collection"]{ grid-column:1; grid-row:1; width:100%; }
     .shop-filters-toggle{ grid-column:2; grid-row:1; }
     .shop-bar.filters-open .shop-bar-search{ grid-column:1 / -1; grid-row:2; min-width:0; width:100%; order:0; }
     .shop-bar.filters-open [aria-label="Filter by size"]{ grid-column:1 / -1; grid-row:3; }
@@ -1703,7 +1703,7 @@
 
 <div class="shop-bar" id="shopBar" role="region" aria-label="Filter and browse collections">
   <div class="shop-bar-inner">
-    <div class="shop-bar-group" role="group" aria-label="Jump to a collection">
+    <div class="shop-bar-group" role="group" aria-label="Filter by collection">
       <span class="shop-bar-label">Browse</span>
       <button type="button" class="shop-chip" data-jump="all-collections">All</button>
       <button type="button" class="shop-chip" data-jump="suits">Suits</button>
@@ -2705,13 +2705,15 @@
 
     var cards = Array.prototype.slice.call(document.querySelectorAll('.shop-section .look-card'));
 
+    var activeCategory = 'all-collections';
+    function categoryMatches(card){return activeCategory === 'all-collections' || card.closest('.shop-section').id === activeCategory;}
     var activeSize = 'all';
     var activePrice = 'all';
     var activeQuery = '';
 
     // Set by a category tap; the scroll observer ignores updates until it
     // passes. See the note in the [data-jump] handler.
-    var suppressObserverUntil = 0;
+
 
     // Shared so the header menu, which lives in its own block, positions its
     // jumps exactly like the chips do.
@@ -2747,24 +2749,24 @@
       ['S','M','L'].forEach(function(size){
         var el = document.querySelector('[data-size-count="' + size + '"]');
         if(el) el.textContent = ' ' + cards.filter(function(card){
-          return sizeOf(card) === size && priceMatches(card, activePrice) && queryMatches(card, terms);
+          return categoryMatches(card) && sizeOf(card) === size && priceMatches(card, activePrice) && queryMatches(card, terms);
         }).length;
       });
       Object.keys(PRICE_BANDS).forEach(function(band){
         var el = document.querySelector('[data-price-count="' + band + '"]');
         if(el) el.textContent = ' ' + cards.filter(function(card){
-          return (activeSize === 'all' || sizeOf(card) === activeSize)
+          return categoryMatches(card) && (activeSize === 'all' || sizeOf(card) === activeSize)
             && priceMatches(card, band) && queryMatches(card, terms);
         }).length;
       });
       // Any one of the three counts as filtering. Everything below that used to
       // ask "is a size chosen?" asks this instead.
-      var anyFilter = activeSize !== 'all' || activePrice !== 'all' || terms.length > 0;
+      var anyFilter = activeCategory !== 'all-collections' || activeSize !== 'all' || activePrice !== 'all' || terms.length > 0;
       var shown = 0;      // cards left on screen, sold ones included
       var available = 0;  // cards that can actually be bought
 
       cards.forEach(function(card){
-        var match = (activeSize === 'all' || sizeOf(card) === activeSize)
+        var match = categoryMatches(card) && (activeSize === 'all' || sizeOf(card) === activeSize)
                  && priceMatches(card, activePrice)
                  && queryMatches(card, terms);
         card.style.display = match ? '' : 'none';
@@ -2785,12 +2787,12 @@
         // 'all-collections' is the wrapper, and Bridal carries commissioning
         // copy and a CTA besides its cards — neither should vanish when a size
         // filter empties the grid. Their cards still hide individually.
-        if(!sec || id === 'all-collections' || id === 'bridal') return;
+        if(!sec || id === 'all-collections') return;
         var visible = Array.prototype.filter.call(
           sec.querySelectorAll('.look-card'),
           function(c){ return c.style.display !== 'none'; }
         ).length;
-        sec.style.display = (!anyFilter || visible > 0) ? '' : 'none';
+        sec.style.display = (!anyFilter || visible > 0 || (id === 'bridal' && activeCategory === 'bridal')) ? '' : 'none';
       });
 
       // How much of the catalogue survived. A live region, so a screen reader
@@ -2798,13 +2800,24 @@
       var countEl = document.getElementById('shopCount');
       if(countEl){
         countEl.textContent = anyFilter
-          ? (shown === 0 ? 'No pieces match' : shown + ' of ' + cards.length + ' pieces')
+          ? (shown === 0 ? 'No pieces match' : shown + ' matching ' + (shown === 1 ? 'piece' : 'pieces'))
           : '';
       }
 
+      document.querySelectorAll('[data-jump]').forEach(function(btn){
+        var selected = btn.getAttribute('data-jump') === activeCategory;
+        btn.classList.toggle('active', selected);
+        btn.setAttribute('aria-pressed', String(selected));
+      });
+      document.querySelectorAll('[data-count-for]').forEach(function(el){
+        var id = el.getAttribute('data-count-for');
+        var count = cards.filter(function(card){return card.closest('.shop-section').id === id && (activeSize === 'all' || sizeOf(card) === activeSize) && priceMatches(card, activePrice) && queryMatches(card, terms);}).length;
+        el.textContent = count + ((activeSize !== 'all' || activePrice !== 'all' || terms.length) ? ' matching' : '') + (count === 1 ? ' piece' : ' pieces');
+      });
       var summary = document.getElementById('activeFilterSummary');
       if(summary){
         var selected = [];
+        if(activeCategory !== 'all-collections') selected.push(document.getElementById(activeCategory).querySelector('h2').textContent);
         if(activeSize !== 'all') selected.push('Size ' + activeSize);
         if(activePrice !== 'all'){
           var priceButton = document.querySelector('[data-price-band="' + activePrice + '"]');
@@ -2870,6 +2883,7 @@
     }
 
     function clearAllFilters(scrollToResults){
+      activeCategory = 'all-collections';
       activeSize = 'all';
       activePrice = 'all';
       activeQuery = '';
@@ -2949,23 +2963,17 @@
       var sec = document.getElementById(id);
       if(!sec) return;
 
-      // If the chosen category is hidden by the current filters, drop them
-      // rather than scrolling to nothing.
-      if(sec.style.display === 'none') clearAllFilters(false);
-
-      // Hold the scroll observer off for the duration of the jump.
-      suppressObserverUntil = Date.now() + 700;
-
-      // Highlight immediately rather than waiting for the observer, which only
-      // fires when a section CROSSES its detection band — so tapping a category
-      // you are already beside changed nothing and looked ignored.
-      document.querySelectorAll('[data-jump]').forEach(function(other){
-        other.classList.toggle('active', other.getAttribute('data-jump') === id);
-      });
-
-      scrollToElement(sec);
+      activeCategory = id;
+      applyFilters(false);
+      var target = sec.style.display === 'none' ? emptyMsg : sec;
+      scrollToElement(target);
     }
+
     window.anokhiJumpTo = jumpToSection;
+    document.querySelectorAll('[data-count-for]').forEach(function(el){
+      var link = el.closest('a');
+      if(link) link.addEventListener('click', function(e){e.preventDefault();jumpToSection(el.getAttribute('data-count-for'));});
+    });
 
     document.querySelectorAll('[data-jump]').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -2997,35 +3005,10 @@
       bar.classList.toggle('visible', inView.size > 0);
     });
 
-    // Which section sits in the band just beneath the sticky header. The
-    // bottom margin of -75% narrows the observed band to the top quarter of
-    // the viewport, so exactly one section qualifies at a time.
-    var qualifying = new Set();
-    var currentObserver = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if(e.isIntersecting) qualifying.add(e.target.id);
-        else qualifying.delete(e.target.id);
-      });
-
-      if(Date.now() < suppressObserverUntil) return;
-
-      // Two sections can qualify at once as one scrolls out and the next
-      // scrolls in. Take the LOWER of them in document order — that is the one
-      // being scrolled into, and the one the shopper means. Taking whichever
-      // entry happened to report last is what highlighted the category above.
-      var current = null;
-      SHOP_SECTIONS.forEach(function(id){ if(qualifying.has(id)) current = id; });
-      if(!current) return;
-
-      jumpBtns.forEach(function(btn){
-        btn.classList.toggle('active', btn.getAttribute('data-jump') === current);
-      });
-    }, { rootMargin: '-160px 0px -75% 0px' });
-
     sections.forEach(function(sec){
       visibilityObserver.observe(sec);
-      currentObserver.observe(sec);
     });
+    if(emptyMsg) visibilityObserver.observe(emptyMsg);
   })();
 
   // ---- SHOP dropdown ----
