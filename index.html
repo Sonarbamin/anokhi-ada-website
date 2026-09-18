@@ -2044,7 +2044,9 @@
 
 <div class="wrap"><div class="shop-empty" id="shopEmpty">
   <div class="shop-empty-msg">
-    <p style="margin:0;">Nothing available to match that right now. <button type="button" class="shop-chip" data-clear-filters>Clear filters</button></p>
+    <p id="shopEmptyText" role="status" style="margin:0 0 12px;">No outfits match your selected filters.</p>
+    <button type="button" class="shop-chip" id="emptyClearSearch" hidden>Clear search</button>
+    <button type="button" class="shop-chip" data-clear-filters>Reset filters</button>
   </div>
 
   <div class="waitlist">
@@ -2881,6 +2883,12 @@
       if(emptyMsg){
         emptyMsg.classList.toggle('visible', anyFilter);
         emptyMsg.classList.toggle('no-results', anyFilter && available === 0);
+        var description = activeQuery ? '“' + activeQuery + '”' : 'your selection';
+        var hasOtherFilters = activeCategory !== 'all-collections' || activeSize !== 'all' || activePrice !== 'all';
+        document.getElementById('shopEmptyText').textContent = shown === 0
+          ? ('No outfits match ' + description + (activeQuery && hasOtherFilters ? ' with your selected filters' : '') + (activeQuery ? '. Try clearing your search or resetting the filters.' : '. Reset the filters to browse more outfits.'))
+          : 'The outfits matching your selection have sold. Try another search or reset the filters to browse more outfits.';
+        document.getElementById('emptyClearSearch').hidden = activeQuery === '';
       }
 
       // Tell the waitlist form which size was asked for. This is the whole
@@ -2991,6 +2999,12 @@
       });
     }
     var searchClear = document.getElementById('shopSearchClear');
+    document.getElementById('emptyClearSearch').addEventListener('click', function(){
+      activeQuery = '';
+      if(searchInput) searchInput.value = '';
+      applyFilters(true);
+      if(searchInput) searchInput.focus({preventScroll:true});
+    });
     if(searchClear){
       searchClear.addEventListener('click', function(){
         activeQuery = '';
