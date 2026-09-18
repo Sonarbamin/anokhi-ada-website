@@ -1052,12 +1052,10 @@
     .shop-section{ padding-top:26px; }
     .shop-chip{ padding:9px 13px; }
 
-    /* Three rows of chips plus a search field owned most of the screen. Only
-       the collections row stays out; size, price and search fold behind the
-       Filters button and open when asked for. */
+    /* Keep search visible; size and price expand through Filters. */
     .shop-bar [aria-label="Filter by size"],
-    .shop-bar [aria-label="Filter by price"],
-    .shop-bar .shop-bar-search{ display:none; }
+    .shop-bar [aria-label="Filter by price"]{ display:none; }
+    .shop-bar .shop-bar-search{ display:block; }
     .shop-bar.filters-open [aria-label="Filter by size"],
     .shop-bar.filters-open [aria-label="Filter by price"]{ display:flex; }
     .shop-bar.filters-open .shop-bar-search{ display:block; }
@@ -1207,7 +1205,7 @@
     .shop-bar-inner{ display:grid; grid-template-columns:minmax(0,1fr) auto; }
     .shop-bar [aria-label="Filter by collection"]{ grid-column:1; grid-row:1; width:100%; }
     .shop-filters-toggle{ grid-column:2; grid-row:1; }
-    .shop-bar.filters-open .shop-bar-search{ grid-column:1 / -1; grid-row:2; min-width:0; width:100%; order:0; }
+    .shop-bar .shop-bar-search{ grid-column:1 / -1; grid-row:2; min-width:0; width:100%; order:0; }
     .shop-bar.filters-open [aria-label="Filter by size"]{ grid-column:1 / -1; grid-row:3; }
     .shop-bar.filters-open [aria-label="Filter by price"]{ grid-column:1 / -1; grid-row:4; }
     .shop-bar.filters-open [aria-label="Filter by size"],
