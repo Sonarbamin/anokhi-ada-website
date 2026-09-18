@@ -2711,6 +2711,18 @@
       return true;
     }
 
+    // A colour named in the title is a stronger match than a detail in the description.
+    var searchColours = ['red','orange','yellow','green','blue','purple','pink','white','black','ivory','gold','silver','grey','gray','brown','maroon','navy','teal','mint','sage','lavender','blush','mustard','rust','fuchsia','rani','chartreuse','taupe','nude'];
+    function colourTerms(){
+      return searchWords(activeQuery).filter(function(word){return searchColours.indexOf(word) !== -1;});
+    }
+    function colourRelevance(card, colours){
+      var name = card.querySelector('.look-name');
+      var words = searchWords(name ? name.textContent : '');
+      return colours.filter(function(colour){return words.indexOf(colour) !== -1;}).length;
+    }
+    function useSortedResults(){return activeSort !== 'featured' || colourTerms().length > 0;}
+
     var cards = Array.prototype.slice.call(document.querySelectorAll('.shop-section .look-card'));
 
     var originalParents = new Map(cards.map(function(card){return [card, card.parentNode];}));
@@ -2921,9 +2933,16 @@
       var clearBtn = document.getElementById('shopSearchClear');
       if(clearBtn) clearBtn.hidden = activeQuery === '';
 
-      if(activeSort !== 'featured'){
+      if(useSortedResults()){
         var ordered = cards.filter(function(card){return card.style.display !== 'none';});
-        ordered.sort(function(a,b){var difference=priceOf(a)-priceOf(b);return (activeSort === 'price-desc' ? -difference : difference) || cards.indexOf(a)-cards.indexOf(b);});
+        var colours = colourTerms();
+        sortedSection.querySelector('h2').textContent = activeSort === 'featured' ? 'Best colour matches first' : 'Matching outfits';
+        ordered.sort(function(a,b){
+          var difference = activeSort === 'featured'
+            ? colourRelevance(b, colours) - colourRelevance(a, colours)
+            : (priceOf(a) - priceOf(b)) * (activeSort === 'price-desc' ? -1 : 1);
+          return difference || cards.indexOf(a)-cards.indexOf(b);
+        });
         ordered.forEach(function(card){sortedGrid.appendChild(card);});
         sortedSection.hidden = ordered.length === 0;
         SHOP_SECTIONS.forEach(function(id){if(id !== 'all-collections'){var section=document.getElementById(id);if(section) section.style.display='none';}});
@@ -2937,7 +2956,7 @@
         for(var i = 0; i < cards.length; i++){
           if(cards[i].style.display !== 'none'){ first = cards[i]; break; }
         }
-        scrollToElement((activeSort !== 'featured' ? sortedGrid.firstElementChild : first) || emptyMsg);
+        scrollToElement((useSortedResults() ? sortedGrid.firstElementChild : first) || emptyMsg);
       }
     }
 
@@ -3030,7 +3049,7 @@
 
       activeCategory = id;
       applyFilters(false);
-      var target = activeSort !== 'featured' && !sortedSection.hidden ? sortedSection : (sec.style.display === 'none' ? emptyMsg : sec);
+      var target = useSortedResults() && !sortedSection.hidden ? sortedSection : (sec.style.display === 'none' ? emptyMsg : sec);
       scrollToElement(target);
     }
 
