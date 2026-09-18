@@ -2686,6 +2686,9 @@
     // "pockets" find things without anyone tagging a single piece by hand.
     // Cached per card — the text never changes after load.
     var searchText = new WeakMap();
+    function searchWords(text){
+      return String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').match(/[a-z0-9]+/g) || [];
+    }
     function haystackOf(card){
       var cached = searchText.get(card);
       if(cached) return cached;
@@ -2700,9 +2703,10 @@
     // widening — two words should mean fewer results, not more.
     function queryMatches(card, terms){
       if(!terms.length) return true;
-      var hay = haystackOf(card);
-      for(var i = 0; i < terms.length; i++){
-        if(hay.indexOf(terms[i]) === -1) return false;
+      var words = searchWords(haystackOf(card));
+      var queryWords = searchWords(terms.join(' '));
+      for(var i = 0; i < queryWords.length; i++){
+        if(words.indexOf(queryWords[i]) === -1) return false;
       }
       return true;
     }
